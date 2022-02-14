@@ -1,0 +1,13 @@
+$ git status
+[...]
+#The stuff
+[...]
+.meta
+ParrelSync
+ScriptTemplates
+/Prefabs/Player (Test).prefab
+/Scenes/PlayScene(Offline).unity
+/Scenes/UI gradient scene.unity
+/Scripts/Offline
+/Scripts/Scripts (UI Gradient)
+/Scripts/SingleOnlineTest
