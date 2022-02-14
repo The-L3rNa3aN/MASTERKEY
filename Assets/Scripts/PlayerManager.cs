@@ -15,7 +15,7 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField] float horDist, verDist;
 
     [Header("Health and Attack related Vars")]
-    public int health = 3;
+    [SyncVar] public int health = 3;
 
     [Header("Normal Movement-Related Vars")]
     public string directLR, directUD;
