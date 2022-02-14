@@ -1,0 +1,163 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Mirror;
+
+public class Interpreter : MonoBehaviour
+{
+    public NetworkManager networkManager;
+    TerminalManager terminalManager;
+    public bool printOnAwake = false;
+
+    Dictionary<string, string> colors = new Dictionary<string, string>()
+    {
+        {"red", "#ff0000" },
+        {"light blue", "#7070ff" },
+        {"green", "#00ff00" },
+        {"orange", "ffab0f" },
+        {"yellow", "#ffea00" },
+        {"aqua", "#00f7ff" }
+    };
+
+    List<string> response = new List<string>();
+
+    private void Awake()
+    {
+        //printOnAwake = true;
+    }
+
+    private void Start()
+    {
+        terminalManager = GetComponent<TerminalManager>();
+    }
+
+    public List<string> Interpret(string userInput)
+    {
+        response.Clear();
+
+        string[] args = userInput.Split();
+
+        if(args[0] == "help")
+        {
+            response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
+            ListEntry("help", "Returns a list of commands.");
+            ListEntry("about", "Returns a small but brief paragraph about this game.");
+            ListEntry("clear", "Clears the terminal screen.");
+            ListEntry("play", "Lets you play the sample play scene.");
+            ListEntry("masterkey", "Prints some nice ASCII art of the title.");
+            ListEntry("exit", "Exits the game.");
+            return response;
+        }
+
+        if(args[0] == "about")
+        {
+            response.Add(ColorString("MASTERKEY", colors["green"]) + " is a game where you need to type in order to play, a little like other typing games but this time with a little action involved.");
+            return response;
+        }
+
+        if (args[0] == "clear")
+        {
+            terminalManager.ClearScreen();
+            return response;
+        }
+
+        if (args[0] == "play" && args[1] == "host")
+        {
+            //SceneManager.LoadScene("PlayScene");
+
+            networkManager.StartHost();
+            return response;
+        }
+
+        if(args[0] == "play" && args[1] == "client")
+        {
+            networkManager.StartClient();
+            return response;
+        }
+
+        if (args[0] == "masterkey" || printOnAwake == true)
+        {
+            LoadTitle("ascii.txt", "aqua", 2);
+            response.Add("At your service!");
+            printOnAwake = false;
+            return response;
+        }
+
+        if(args[0] == "Lernaean" || args[0] == "lernaean" || args[0] == "L3rNa3aN" || args[0] == "The Lernaean" || args[0] == "the lernaean" || args[0] == "The L3rNa3aN")
+        {
+            LoadTitle("lernaean 160.txt", "green", 2);
+            response.Add("What is it you want?");
+            return response;
+        }
+
+        if(args[0] == "Hi" || args[0] == "hi" || args[0] == "Hey" || args[0] == "hey")
+        {
+            response.Add("Hey!");
+            return response;
+        }
+
+        if(args[0] == "Shakira" || args[0] == "shakira")
+        {
+            response.Add("Three golden words: " + ColorString("HIPS DON'T LIE", colors["yellow"]));
+            return response;
+        }
+
+        if(args[0] == "who" || args[0] == "Who" && args[1] == "are" && args[2] == "you")
+        {
+            response.Add("I'm a machine written by The L3rNa3aN.");
+            return response;
+        }
+
+        if(args[0] == "exit")
+        {
+            Application.Quit();
+            return response;
+        }
+        else
+        {
+            response.Add(ColorString("Command not recognized. Type help for a list of commands.", colors["red"]));
+            return response;
+        }
+    }
+
+    public string ColorString(string s, string color)
+    {
+        string leftTag = "<color=" + color + ">";
+        string rightTag = "</color>";
+
+        return leftTag + s + rightTag;
+    }
+
+    void ListEntry(string a, string b)
+    {
+        response.Add(ColorString(a, colors["light blue"]) + ": " + ColorString(b, colors["red"]));
+    }
+
+    void LoadTitle(string path, string color, int spacing)
+    {
+        Debug.Log("start");
+        StreamReader file = new StreamReader(Path.Combine(Application.streamingAssetsPath, path));
+        Debug.Log(path);
+        for(int i = 0; i < spacing; i++)
+        {
+            response.Add("");
+            //Debug.Log(response);
+        }
+
+        while(!file.EndOfStream)
+        {
+            response.Add(ColorString(file.ReadLine(), colors[color]));
+        }
+
+        for (int i = 0; i < spacing; i++)
+        {
+            response.Add("");
+        }
+
+        file.Close();
+
+        Debug.Log("end");
+    }
+}
