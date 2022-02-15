@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: -0, y: 0.14}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -21.000011}
+  m_AnchoredPosition: {x: 0, y: -21.000008}
   m_SizeDelta: {x: 0.0001, y: -2.4718}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2189176160001406606
@@ -335,13 +335,20 @@ MonoBehaviour:
   gravity: -20
   playerCamera: {fileID: 2073578021652820910}
   terminal: {fileID: 2166470640614679359}
-  horDist: 0
-  verDist: 0
+  GFX: {fileID: 724321030141257388}
+  interp: 0.72
+  interpSpeed: 3
   health: 3
+  knockBackVector: {x: 0, y: 0, z: 0}
+  isAttacked: 0
+  attackerPos: {x: 0, y: 0, z: 0}
+  knockBackFriction: {x: 0, y: 0, z: 0}
   directLR: 
   directUD: 
   unitsLR: 0
   unitsUD: 0
+  horDist: 0
+  verDist: 0
   dest: {x: 0, y: 0, z: 0}
   dashDir: 
   dashOldPos: {x: 0, y: 0, z: 0}

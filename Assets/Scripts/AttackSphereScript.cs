@@ -9,9 +9,10 @@ public class AttackSphereScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.GetComponent<NetworkIdentity>().isLocalPlayer == false && other.gameObject.GetComponent<PlayerManager>())
+        if(other.gameObject.GetComponent<NetworkIdentity>().isLocalPlayer == false)
         {
-            other.gameObject.GetComponent<PlayerManager>().health -= 1;
+            other.gameObject.GetComponent<PlayerManager>().Damage(1);
+            other.gameObject.GetComponent<PlayerManager>().attackerPos = player.transform.position;    //Vector3 variable required for calculating knockback.
         }
     }
 }
