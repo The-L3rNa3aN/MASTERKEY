@@ -54,8 +54,7 @@ public class PlayerManager : NetworkBehaviour
 
         if (isAttacked == true)                                               //Knockback.
         {
-            //knockBackVector = (attackerPos - transform.position);
-            //Debug.Log(knockBackVector);
+            knockBackVector = (attackerPos - transform.position);
             isAttacked = false;
         }
 
@@ -182,7 +181,7 @@ public class PlayerManager : NetworkBehaviour
 
         characterController.Move(move * 3f * Time.deltaTime);
         characterController.Move(velocity * Time.deltaTime);
-        characterController.Move(knockBackVector * Time.deltaTime);             //FIX IT ASAP!!!
+        //characterController.Move(knockBackVector * Time.deltaTime);             //FIX IT ASAP!!!
     }
 
     public void StopMovement()
@@ -194,7 +193,11 @@ public class PlayerManager : NetworkBehaviour
         move = Vector3.zero;
     }
 
-    [Command(requiresAuthority = false)] public void Damage(int dmg) => health -= dmg;
+    [Command(requiresAuthority = false)] public void Damage(int dmg)
+    {
+        health -= dmg;
+        isAttacked = true;
+    }
 
     public void DirectionRotation()
     {
@@ -244,5 +247,11 @@ public class PlayerManager : NetworkBehaviour
 
         float angle = 2f * Mathf.Cos((u + v) / 2f) * Mathf.Cos((u - v) / 2f);
         return angle;
+    }
+
+    public Vector3 knockBackForce()
+    {
+        Vector3 test = Vector3.zero;
+        return test;
     }
 }
