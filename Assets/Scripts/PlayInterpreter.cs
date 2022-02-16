@@ -9,7 +9,6 @@ public class PlayInterpreter : MonoBehaviour
     PlayTerminalManager terminalManager;
     GameObject networkManager;
     public PlayerManager player;
-    public bool printOnAwake = false;
     public GameObject attackSphere;
     int units;
 
@@ -27,11 +26,6 @@ public class PlayInterpreter : MonoBehaviour
     };
 
     List<string> response = new List<string>();
-
-    private void Awake()
-    {
-        //printOnAwake = true;
-    }
 
     private void Start()
     {

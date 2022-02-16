@@ -52,6 +52,12 @@ public class PlayerManager : NetworkBehaviour
             return;
         }
 
+        /*if(health <= 0)                                                      //Zooms in the place where the player died.
+        {
+            playerCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(playerCamera.GetComponent<Camera>().fieldOfView, 60f - 30f, 0.5f * Time.deltaTime);
+        }
+        else { playerCamera.GetComponent<Camera>().fieldOfView = 60f; }      //Zooms back to its original value.*/
+
         if (isAttacked == true)                                               //Knockback.
         {
             knockBackVector = (attackerPos - transform.position);
@@ -184,6 +190,17 @@ public class PlayerManager : NetworkBehaviour
         //characterController.Move(knockBackVector * Time.deltaTime);             //FIX IT ASAP!!!
     }
 
+    /*[Server] IEnumerator Respawn()
+    {
+        NetworkServer.UnSpawn(gameObject);
+        //Transform newPos = NetworkManager.singleton.GetStartPosition();
+        transform.position = new Vector3(0f, 3f, 0f);
+        transform.rotation = Quaternion.Euler(Vector3.zero);
+        health = 3;
+        yield return new WaitForSeconds(3f);
+        NetworkServer.Spawn(gameObject);
+    }*/
+
     public void StopMovement()
     {
         directLR = null;
@@ -193,10 +210,15 @@ public class PlayerManager : NetworkBehaviour
         move = Vector3.zero;
     }
 
-    [Command(requiresAuthority = false)] public void Damage(int dmg)
+    [Command(requiresAuthority = false)] public void Damage(int dmg)              //Temporary solution. Find a better one.
     {
         health -= dmg;
-        isAttacked = true;
+        //isAttacked = true;
+
+        if(health <= 0)
+        {
+            //StartCoroutine(Respawn());
+        }
     }
 
     public void DirectionRotation()
