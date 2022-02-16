@@ -83,3 +83,4 @@ ScriptTemplates
 .claudiaideconfig
 .vs/Masterkey/v17/.suo
 .vs/Masterkey/v17/.suo
+*.log
