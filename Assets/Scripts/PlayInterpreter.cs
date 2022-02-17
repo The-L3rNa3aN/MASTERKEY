@@ -9,7 +9,6 @@ public class PlayInterpreter : MonoBehaviour
     PlayTerminalManager terminalManager;
     GameObject networkManager;
     public PlayerManager player;
-    public GameObject attackSphere;
     int units;
 
     [SerializeField] float dashTimer = 0f;
@@ -111,7 +110,7 @@ public class PlayInterpreter : MonoBehaviour
 
         if(args[0] == "attack")
         {
-            StartCoroutine(AttackDelay(0.3f));
+            player.doAttack = true;
             return response;
         }
         #endregion
@@ -173,13 +172,5 @@ public class PlayInterpreter : MonoBehaviour
     void ListEntry(string a, string b)
     {
         response.Add(ColorString(a, colors["light blue"]) + ": " + ColorString(b, colors["red"]));
-    }
-
-    private IEnumerator AttackDelay (float t)
-    {
-        yield return new WaitForSeconds(t);
-        attackSphere.SetActive(true);
-        yield return new WaitForSeconds(0.05f);
-        attackSphere.SetActive(false);
     }
 }

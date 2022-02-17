@@ -20,8 +20,10 @@ public class PlayerManager : NetworkBehaviour
     [SyncVar] public int health = 3;
     [SyncVar] public Vector3 knockBackVector;
     public bool isAttacked;
+    public bool doAttack;
     public Vector3 attackerPos;
     public Vector3 knockBackFriction;
+    private SphereCollider attackSphere;
 
     [Header("Normal Movement-Related Vars")]
     public string directLR, directUD;
@@ -37,18 +39,24 @@ public class PlayerManager : NetworkBehaviour
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
+        attackSphere = GetComponent<SphereCollider>();
         lastPos = transform.position;
 
-        if (!isLocalPlayer) { playerCamera.SetActive(false); }
+        if (!isLocalPlayer)
+        {
+            playerCamera.GetComponent<Camera>().enabled = false;
+            playerCamera.GetComponent<AudioListener>().enabled = false;
+            terminal.SetActive(false);
+        }
     }
 
     private void Update()
     {
         DirectionRotation();                                                 //Player rotates based on which direction they are going.
-        if (!isLocalPlayer)                                                  //If this script doesn't belong to the main client, don't run it.
+        if (isLocalPlayer && doAttack == true)
         {
-            terminal.SetActive(false);                                       //Prevents the terminal UI of other players to overlap with the local players.
-            
+            doAttack = false;
+            StartCoroutine(AttackDelay(0.3f));
             return;
         }
 
@@ -190,7 +198,7 @@ public class PlayerManager : NetworkBehaviour
         //characterController.Move(knockBackVector * Time.deltaTime);             //FIX IT ASAP!!!
     }
 
-    /*[Server] IEnumerator Respawn()
+    [Server] IEnumerator Respawn()
     {
         NetworkServer.UnSpawn(gameObject);
         //Transform newPos = NetworkManager.singleton.GetStartPosition();
@@ -199,7 +207,7 @@ public class PlayerManager : NetworkBehaviour
         health = 3;
         yield return new WaitForSeconds(3f);
         NetworkServer.Spawn(gameObject);
-    }*/
+    }
 
     public void StopMovement()
     {
@@ -210,15 +218,15 @@ public class PlayerManager : NetworkBehaviour
         move = Vector3.zero;
     }
 
-    [Command(requiresAuthority = false)] public void Damage(int dmg)              //Temporary solution. Find a better one.
+    [ClientRpc] public void RpcTakeDamage(int dmg)
     {
         health -= dmg;
         //isAttacked = true;
 
-        if(health <= 0)
+        /*if(health <= 0)
         {
-            //StartCoroutine(Respawn());
-        }
+            StartCoroutine(Respawn());
+        }*/
     }
 
     public void DirectionRotation()
@@ -275,5 +283,28 @@ public class PlayerManager : NetworkBehaviour
     {
         Vector3 test = Vector3.zero;
         return test;
+    }
+
+    private IEnumerator AttackDelay(float t)
+    {
+        yield return new WaitForSeconds(t);
+        attackSphere.enabled = true;
+        yield return new WaitForSeconds(0.05f);
+        attackSphere.enabled = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false)
+        {
+            var enemy = other.GetComponent<NetworkIdentity>().gameObject;
+            CmdDoDamage(enemy);
+            //other.gameObject.GetComponent<PlayerManager>().attackerPos = other.transform.position;    //Vector3 variable required for calculating knockback.
+        }
+    }
+
+    [Command] public void CmdDoDamage(GameObject enemyGameObject)
+    {
+        enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1);
     }
 }

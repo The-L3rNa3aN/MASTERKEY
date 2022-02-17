@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: -0, y: 0.14}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -20.999992}
+  m_AnchoredPosition: {x: 0, y: -21.000008}
   m_SizeDelta: {x: 0.0001, y: -2.4718}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2189176160001406606
@@ -256,6 +256,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 724321029828341659}
+  - component: {fileID: 9178421972619200254}
   - component: {fileID: 724321029828341656}
   - component: {fileID: 724321029828341660}
   - component: {fileID: 724321029828341661}
@@ -283,10 +284,22 @@ Transform:
   - {fileID: 724321030141257388}
   - {fileID: 6079435568138576923}
   - {fileID: 6389873500529471682}
-  - {fileID: 7225641846405480749}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &9178421972619200254
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 724321029828341351}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 3
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &724321029828341656
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -342,8 +355,10 @@ MonoBehaviour:
   health: 3
   knockBackVector: {x: 0, y: 0, z: 0}
   isAttacked: 0
+  doAttack: 0
   attackerPos: {x: 0, y: 0, z: 0}
   knockBackFriction: {x: 0, y: 0, z: 0}
+  attackSphere: {fileID: 0}
   directLR: 
   directUD: 
   unitsLR: 0
@@ -879,75 +894,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 724321029828341661}
-  attackSphere: {fileID: 3533717836332402095}
   dashTimer: 0
---- !u!1 &3533717836332402095
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7225641846405480749}
-  - component: {fileID: 762905850256178516}
-  - component: {fileID: 4210685948591847947}
-  - component: {fileID: 8014282964786872654}
-  m_Layer: 0
-  m_Name: AttackSphere
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &7225641846405480749
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3533717836332402095}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
-  m_Children: []
-  m_Father: {fileID: 724321029828341659}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &762905850256178516
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3533717836332402095}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!135 &4210685948591847947
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3533717836332402095}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8014282964786872654
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3533717836332402095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9cc4009024c8724697903e8d08937e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 724321029828341351}
 --- !u!1 &6123181783281166630
 GameObject:
   m_ObjectHideFlags: 0
