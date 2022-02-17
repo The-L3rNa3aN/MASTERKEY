@@ -41,13 +41,6 @@ public class PlayerManager : NetworkBehaviour
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
         lastPos = transform.position;
-
-        if (!isLocalPlayer)
-        {
-            playerCamera.GetComponent<Camera>().enabled = false;
-            playerCamera.GetComponent<AudioListener>().enabled = false;
-            terminal.SetActive(false);
-        }
     }
 
     private void Update()
@@ -58,6 +51,13 @@ public class PlayerManager : NetworkBehaviour
             doAttack = false;
             StartCoroutine(AttackDelay(0.3f));
             return;
+        }
+
+        if (!isLocalPlayer)
+        {
+            playerCamera.GetComponent<Camera>().enabled = false;
+            playerCamera.GetComponent<AudioListener>().enabled = false;
+            terminal.SetActive(false);
         }
 
         /*if(health <= 0)                                                      //Zooms in the place where the player died.
@@ -198,16 +198,18 @@ public class PlayerManager : NetworkBehaviour
         //characterController.Move(knockBackVector * Time.deltaTime);             //FIX IT ASAP!!!
     }
 
-    [Server] IEnumerator Respawn()
+    /*[Server] IEnumerator Respawn()
     {
-        NetworkServer.UnSpawn(gameObject);
-        //Transform newPos = NetworkManager.singleton.GetStartPosition();
-        transform.position = new Vector3(0f, 3f, 0f);
-        transform.rotation = Quaternion.Euler(Vector3.zero);
+        /*NetworkServer.UnSpawn(go);
+        Transform newPos = NetworkManager.singleton.GetStartPosition();
+        transform.position = newPos.position; //new Vector3(0f, 10f, 0f);
+        transform.rotation = newPos.rotation; //Quaternion.Euler(Vector3.zero);
         health = 3;
+        GFX.gameObject.SetActive(false);
         yield return new WaitForSeconds(3f);
-        NetworkServer.Spawn(gameObject);
-    }
+        //NetworkServer.Spawn(go, go);
+        GFX.gameObject.SetActive(true);
+    }*/
 
     public void StopMovement()
     {
@@ -223,10 +225,10 @@ public class PlayerManager : NetworkBehaviour
         health -= dmg;
         //isAttacked = true;
 
-        /*if(health <= 0)
+        if(health <= 0)
         {
-            StartCoroutine(Respawn());
-        }*/
+            GFX.gameObject.SetActive(false);
+        }
     }
 
     public void DirectionRotation()
