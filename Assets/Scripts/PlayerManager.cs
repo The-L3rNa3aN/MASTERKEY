@@ -8,6 +8,7 @@ public class PlayerManager : NetworkBehaviour
     CharacterController characterController;
     Vector3 velocity, move;
     public float gravity = -20f;
+    public float mass = 3f;
     public GameObject playerCamera;
     public GameObject terminal;
     public Transform GFX;
@@ -18,12 +19,11 @@ public class PlayerManager : NetworkBehaviour
 
     [Header("Health and Attack related Vars")]
         [SyncVar] public int health = 3;
-        [SyncVar] public Vector3 knockBackVector;
         [HideInInspector] public bool isAttacked;
         [HideInInspector] public bool doAttack;
         [HideInInspector] public bool toRespawn;
+        public Vector3 impact = Vector3.zero;
         public Vector3 attackerPos;
-        public Vector3 knockBackFriction;
         private SphereCollider attackSphere;
 
     [Header("Normal Movement-Related Vars")]
@@ -67,6 +67,19 @@ public class PlayerManager : NetworkBehaviour
             toRespawn = false;
         }
 
+        if(isAttacked == true)
+        {
+            Debug.Log("Test");
+            KnockBack(attackerPos + transform.position, 50f);   //FIX IT ASAP!
+        }
+        isAttacked = false;
+
+        if (impact.magnitude > 0.2f)
+        {
+            characterController.Move(impact * Time.deltaTime);
+        }
+        impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
+
         #region Death Camera Close-Up
         if (health <= 0)                                                      //Zooms in the place where the player died.
         {
@@ -74,12 +87,6 @@ public class PlayerManager : NetworkBehaviour
         }
         else { playerCamera.GetComponent<Camera>().fieldOfView = 60f; }      //Zooms back to its original value.
         #endregion
-
-        if (isAttacked == true)                                               //Knockback.
-        {
-            knockBackVector = (attackerPos - transform.position);
-            isAttacked = false;
-        }
 
         if (characterController.isGrounded == true && velocity.y < 0f)       //Gravity.
         {
@@ -201,10 +208,16 @@ public class PlayerManager : NetworkBehaviour
                 }
                 break;
         }
-
+        
         characterController.Move(move * 3f * Time.deltaTime);
         characterController.Move(velocity * Time.deltaTime);
-        //characterController.Move(knockBackVector * Time.deltaTime);             //FIX IT ASAP!!!
+    }
+
+    public void KnockBack(Vector3 dir, float force)
+    {
+        dir.Normalize();
+        if (dir.y < 0f) dir.y = -dir.y;
+        impact += dir.normalized * force / mass;
     }
 
     public void StopMovement()
@@ -231,7 +244,8 @@ public class PlayerManager : NetworkBehaviour
         {
             var enemy = other.GetComponent<NetworkIdentity>().gameObject;
             CmdDoDamage(enemy);
-            attackerPos = other.transform.position;    //Vector3 variable required for calculating knockback.
+            attackerPos = other.transform.position;                         //Vector3 variable required for calculating knockback.
+            isAttacked = true;
         }
     }
 
@@ -243,7 +257,6 @@ public class PlayerManager : NetworkBehaviour
     [ClientRpc] public void RpcTakeDamage(int dmg)                          //This RPC method handles taking damage and death.
     {
         health -= dmg;
-        //isAttacked = true;
 
         if (health <= 0)                             //DIE!
         {
@@ -301,23 +314,5 @@ public class PlayerManager : NetworkBehaviour
                 GFX.localRotation = Quaternion.Lerp(GFX.rotation, Quaternion.Euler(0f, 315f, 0f), (interp + interpSpeed) * Time.deltaTime);
                 break;
         }
-    }
-
-    public float CosAngle()
-    {
-        float look = transform.eulerAngles.y;
-        float move = Mathf.Atan2(velocity.x, velocity.z) * Mathf.Deg2Rad;
-
-        float u = Mathf.DeltaAngle(look, move) * Mathf.Deg2Rad;
-        float v = (90 - u) * Mathf.Deg2Rad;
-
-        float angle = 2f * Mathf.Cos((u + v) / 2f) * Mathf.Cos((u - v) / 2f);
-        return angle;
-    }
-
-    public Vector3 knockBackForce()
-    {
-        Vector3 test = transform.position + attackerPos;
-        return test;
     }
 }
