@@ -13,28 +13,29 @@ public class PlayerManager : NetworkBehaviour
     public Transform GFX;
 
     [Header("Visualizers")]
-    [Range(0f, 1f)] public float interp;
-    public float interpSpeed;
+        [Range(0f, 1f)] public float interp;
+        public float interpSpeed;
 
     [Header("Health and Attack related Vars")]
-    [SyncVar] public int health = 3;
-    [SyncVar] public Vector3 knockBackVector;
-    public bool isAttacked;
-    public bool doAttack;
-    public Vector3 attackerPos;
-    public Vector3 knockBackFriction;
-    private SphereCollider attackSphere;
+        [SyncVar] public int health = 3;
+        [SyncVar] public Vector3 knockBackVector;
+        [HideInInspector] public bool isAttacked;
+        [HideInInspector] public bool doAttack;
+        [HideInInspector] public bool toRespawn;
+        public Vector3 attackerPos;
+        public Vector3 knockBackFriction;
+        private SphereCollider attackSphere;
 
     [Header("Normal Movement-Related Vars")]
-    public string directLR, directUD;
-    public float unitsLR, unitsUD;
-    Vector3 lastPos;
-    [SerializeField] float horDist, verDist;
+        public string directLR, directUD;
+        public float unitsLR, unitsUD;
+        Vector3 lastPos;
+        [SerializeField] float horDist, verDist;
 
     [Header("Dash Related Vars")]
-    public Vector3 dest;
-    public string dashDir;
-    public Vector3 dashOldPos;
+        public Vector3 dest;
+        public string dashDir;
+        public Vector3 dashOldPos;
 
     private void Start()
     {
@@ -49,7 +50,7 @@ public class PlayerManager : NetworkBehaviour
         if (isLocalPlayer && doAttack == true)
         {
             doAttack = false;
-            StartCoroutine(AttackDelay(0.3f));
+            StartCoroutine(AttackDelay(0.3f));                              //The player character takes 0.3s to attack after typing "attack".
             return;
         }
 
@@ -60,11 +61,19 @@ public class PlayerManager : NetworkBehaviour
             terminal.SetActive(false);
         }
 
-        /*if(health <= 0)                                                      //Zooms in the place where the player died.
+        if(health <= 0 && toRespawn == true)
+        {
+            CmdRespawn();                                                   //Adding the "Command" attribute to Update() wasn't a good idea.
+            toRespawn = false;
+        }
+
+        #region Death Camera Close-Up
+        if (health <= 0)                                                      //Zooms in the place where the player died.
         {
             playerCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(playerCamera.GetComponent<Camera>().fieldOfView, 60f - 30f, 0.5f * Time.deltaTime);
         }
-        else { playerCamera.GetComponent<Camera>().fieldOfView = 60f; }      //Zooms back to its original value.*/
+        else { playerCamera.GetComponent<Camera>().fieldOfView = 60f; }      //Zooms back to its original value.
+        #endregion
 
         if (isAttacked == true)                                               //Knockback.
         {
@@ -198,19 +207,6 @@ public class PlayerManager : NetworkBehaviour
         //characterController.Move(knockBackVector * Time.deltaTime);             //FIX IT ASAP!!!
     }
 
-    /*[Server] IEnumerator Respawn()
-    {
-        /*NetworkServer.UnSpawn(go);
-        Transform newPos = NetworkManager.singleton.GetStartPosition();
-        transform.position = newPos.position; //new Vector3(0f, 10f, 0f);
-        transform.rotation = newPos.rotation; //Quaternion.Euler(Vector3.zero);
-        health = 3;
-        GFX.gameObject.SetActive(false);
-        yield return new WaitForSeconds(3f);
-        //NetworkServer.Spawn(go, go);
-        GFX.gameObject.SetActive(true);
-    }*/
-
     public void StopMovement()
     {
         directLR = null;
@@ -220,16 +216,54 @@ public class PlayerManager : NetworkBehaviour
         move = Vector3.zero;
     }
 
-    [ClientRpc] public void RpcTakeDamage(int dmg)
+    #region Attacking and Damage
+    private IEnumerator AttackDelay(float t)
+    {
+        yield return new WaitForSeconds(t);
+        attackSphere.enabled = true;
+        yield return new WaitForSeconds(0.05f);
+        attackSphere.enabled = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false)
+        {
+            var enemy = other.GetComponent<NetworkIdentity>().gameObject;
+            CmdDoDamage(enemy);
+            attackerPos = other.transform.position;    //Vector3 variable required for calculating knockback.
+        }
+    }
+
+    [Command] public void CmdDoDamage(GameObject enemyGameObject)
+    {
+        enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1);
+    }
+
+    [ClientRpc] public void RpcTakeDamage(int dmg)                          //This RPC method handles taking damage and death.
     {
         health -= dmg;
         //isAttacked = true;
 
-        if(health <= 0)
+        if (health <= 0)                             //DIE!
         {
             GFX.gameObject.SetActive(false);
+            characterController.enabled = false;
         }
     }
+    #endregion
+
+    #region Respawning the player
+    [Command] public void CmdRespawn() => RpcRespawn();
+
+    [ClientRpc] public void RpcRespawn()            //And you're ALIVE!
+    {
+        Debug.Log("test");
+        health = 3;
+        GFX.gameObject.SetActive(true);
+        characterController.enabled = true;
+    }
+    #endregion
 
     public void DirectionRotation()
     {
@@ -283,30 +317,7 @@ public class PlayerManager : NetworkBehaviour
 
     public Vector3 knockBackForce()
     {
-        Vector3 test = Vector3.zero;
+        Vector3 test = transform.position + attackerPos;
         return test;
-    }
-
-    private IEnumerator AttackDelay(float t)
-    {
-        yield return new WaitForSeconds(t);
-        attackSphere.enabled = true;
-        yield return new WaitForSeconds(0.05f);
-        attackSphere.enabled = false;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false)
-        {
-            var enemy = other.GetComponent<NetworkIdentity>().gameObject;
-            CmdDoDamage(enemy);
-            //other.gameObject.GetComponent<PlayerManager>().attackerPos = other.transform.position;    //Vector3 variable required for calculating knockback.
-        }
-    }
-
-    [Command] public void CmdDoDamage(GameObject enemyGameObject)
-    {
-        enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1);
     }
 }

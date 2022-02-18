@@ -113,6 +113,12 @@ public class PlayInterpreter : MonoBehaviour
             player.doAttack = true;
             return response;
         }
+
+        if(args[0] == "respawn")
+        {
+            player.toRespawn = true;
+            return response;
+        }
         #endregion
 
         #region Easter Eggs and Jokes
