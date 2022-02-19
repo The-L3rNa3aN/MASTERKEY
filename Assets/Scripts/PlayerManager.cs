@@ -69,8 +69,9 @@ public class PlayerManager : NetworkBehaviour
 
         if(isAttacked == true)
         {
-            Debug.Log("Test");
-            KnockBack(attackerPos + transform.position, 50f);   //FIX IT ASAP!
+            KnockBack(transform.position - attackerPos, 50f);   //FIX IT ASAP!
+            Debug.DrawLine(transform.position, attackerPos, Color.green);
+            Debug.Break();
         }
         isAttacked = false;
 
@@ -216,7 +217,11 @@ public class PlayerManager : NetworkBehaviour
     public void KnockBack(Vector3 dir, float force)
     {
         dir.Normalize();
-        if (dir.y < 0f) dir.y = -dir.y;
+        if (dir.x < 0f && dir.z < 0f)
+        {
+            dir.x = -dir.x;
+            dir.z = -dir.z;
+        }
         impact += dir.normalized * force / mass;
     }
 
@@ -238,14 +243,13 @@ public class PlayerManager : NetworkBehaviour
         attackSphere.enabled = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)                             //This is used by the attackSphere collider by default.
     {
         if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false)
         {
             var enemy = other.GetComponent<NetworkIdentity>().gameObject;
             CmdDoDamage(enemy);
             attackerPos = other.transform.position;                         //Vector3 variable required for calculating knockback.
-            isAttacked = true;
         }
     }
 
@@ -257,6 +261,7 @@ public class PlayerManager : NetworkBehaviour
     [ClientRpc] public void RpcTakeDamage(int dmg)                          //This RPC method handles taking damage and death.
     {
         health -= dmg;
+        isAttacked = true;
 
         if (health <= 0)                             //DIE!
         {
