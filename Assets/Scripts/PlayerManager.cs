@@ -46,6 +46,7 @@ public class PlayerManager : NetworkBehaviour
 
     private void Update()
     {
+        //Debug.Log(attackerPos);
         DirectionRotation();                                                 //Player rotates based on which direction they are going.
         if (isLocalPlayer && doAttack == true)
         {
@@ -71,7 +72,7 @@ public class PlayerManager : NetworkBehaviour
         {
             KnockBack(transform.position - attackerPos, 50f);   //FIX IT ASAP!
             Debug.DrawLine(transform.position, attackerPos, Color.green);
-            Debug.Break();
+            //Debug.Break();
         }
         isAttacked = false;
 
@@ -247,17 +248,18 @@ public class PlayerManager : NetworkBehaviour
     {
         if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false)
         {
-            var enemy = other.GetComponent<NetworkIdentity>().gameObject;
-            CmdDoDamage(enemy);
-            attackerPos = other.transform.position;                         //Vector3 variable required for calculating knockback.
+            CmdDoDamage(other.GetComponent<NetworkIdentity>().gameObject);
+            //other.GetComponent<PlayerManager>().attackerPos = transform.position;                         //Vector3 variable required for calculating knockback.
+            //Debug.Log(other.GetComponent<PlayerManager>().attackerPos);
         }
     }
 
     [Command] public void CmdDoDamage(GameObject enemyGameObject)
     {
         enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1);
+        enemyGameObject.GetComponent<PlayerManager>().attackerPos = transform.position;                         //Vector3 variable required for calculating knockback.
     }
-
+    
     [ClientRpc] public void RpcTakeDamage(int dmg)                          //This RPC method handles taking damage and death.
     {
         health -= dmg;
