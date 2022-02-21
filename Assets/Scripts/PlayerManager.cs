@@ -19,7 +19,6 @@ public class PlayerManager : NetworkBehaviour
 
     [Header("Health and Attack related Vars")]
         [SyncVar] public int health = 3;
-        [HideInInspector] public bool isAttacked;
         [HideInInspector] public bool doAttack;
         [HideInInspector] public bool toRespawn;
         public Vector3 impact = Vector3.zero;
@@ -47,11 +46,11 @@ public class PlayerManager : NetworkBehaviour
     private void Update()
     {
         //Debug.Log(attackerPos);
-        DirectionRotation();                                                 //Player rotates based on which direction they are going.
+        DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
         if (isLocalPlayer && doAttack == true)
         {
             doAttack = false;
-            StartCoroutine(AttackDelay(0.3f));                              //The player character takes 0.3s to attack after typing "attack".
+            StartCoroutine(AttackDelay(0.3f));                                                                          //The player character takes 0.3s to attack after typing "attack".
             return;
         }
 
@@ -64,17 +63,9 @@ public class PlayerManager : NetworkBehaviour
 
         if(health <= 0 && toRespawn == true)
         {
-            CmdRespawn();                                                   //Adding the "Command" attribute to Update() wasn't a good idea.
+            CmdRespawn();                                                                                                  //Adding the "Command" attribute to Update() wasn't a good idea.
             toRespawn = false;
         }
-
-        if(isAttacked == true)
-        {
-            KnockBack(transform.position - attackerPos, 50f);   //FIX IT ASAP!
-            Debug.DrawLine(transform.position, attackerPos, Color.green);
-            //Debug.Break();
-        }
-        isAttacked = false;
 
         if (impact.magnitude > 0.2f)
         {
@@ -90,7 +81,7 @@ public class PlayerManager : NetworkBehaviour
         else { playerCamera.GetComponent<Camera>().fieldOfView = 60f; }      //Zooms back to its original value.
         #endregion
 
-        if (characterController.isGrounded == true && velocity.y < 0f)       //Gravity.
+        if (characterController.isGrounded == true && velocity.y < 0f)                                                      //Gravity.
         {
             velocity.y = -2f;
         }
@@ -215,14 +206,9 @@ public class PlayerManager : NetworkBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    public void KnockBack(Vector3 dir, float force)
+    [ClientRpc] public void RpcKnockBack(Vector3 dir, float force)
     {
         dir.Normalize();
-        if (dir.x < 0f && dir.z < 0f)
-        {
-            dir.x = -dir.x;
-            dir.z = -dir.z;
-        }
         impact += dir.normalized * force / mass;
     }
 
@@ -244,26 +230,23 @@ public class PlayerManager : NetworkBehaviour
         attackSphere.enabled = false;
     }
 
-    private void OnTriggerEnter(Collider other)                             //This is used by the attackSphere collider by default.
+    private void OnTriggerEnter(Collider other)                                                                             //This is used by the attackSphere collider by default.
     {
         if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false)
         {
             CmdDoDamage(other.GetComponent<NetworkIdentity>().gameObject);
-            //other.GetComponent<PlayerManager>().attackerPos = transform.position;                         //Vector3 variable required for calculating knockback.
-            //Debug.Log(other.GetComponent<PlayerManager>().attackerPos);
         }
     }
 
     [Command] public void CmdDoDamage(GameObject enemyGameObject)
     {
-        enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1);
-        enemyGameObject.GetComponent<PlayerManager>().attackerPos = transform.position;                         //Vector3 variable required for calculating knockback.
+        enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1);                                                     //Victim takes damage.
+        enemyGameObject.GetComponent<PlayerManager>().RpcKnockBack(enemyGameObject.transform.position - transform.position, 50f);
     }
     
-    [ClientRpc] public void RpcTakeDamage(int dmg)                          //This RPC method handles taking damage and death.
+    [ClientRpc] public void RpcTakeDamage(int dmg)                                                                          //This RPC method handles taking damage and death.
     {
         health -= dmg;
-        isAttacked = true;
 
         if (health <= 0)                             //DIE!
         {
