@@ -25,6 +25,10 @@ public class PlayerManager : NetworkBehaviour
         public Vector3 attackerPos;
         private SphereCollider attackSphere;
 
+    [Header("Powerup Effects")]
+        public bool corruptus;
+        public bool escren;
+
     [Header("Normal Movement-Related Vars")]
         public string directLR, directUD;
         public float unitsLR, unitsUD;
@@ -305,4 +309,12 @@ public class PlayerManager : NetworkBehaviour
                 break;
         }
     }
+
+    #region Powerup Effects
+    [ClientRpc] public void RpcTakeHealth(int healthPoints)
+    {
+        health += healthPoints;
+        Debug.Log("Yeah, this works.");
+    }
+    #endregion
 }
