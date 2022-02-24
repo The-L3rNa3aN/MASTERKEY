@@ -21,6 +21,7 @@ public class PlayerManager : NetworkBehaviour
         [SyncVar] public int health = 3;
         [HideInInspector] public bool doAttack;
         [HideInInspector] public bool toRespawn;
+        [SyncVar] public bool doubleTake;
         public Vector3 impact = Vector3.zero;
         public Vector3 attackerPos;
         private SphereCollider attackSphere;
@@ -51,6 +52,7 @@ public class PlayerManager : NetworkBehaviour
     {
         //Debug.Log(attackerPos);
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
+        ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
         if (isLocalPlayer && doAttack == true)
         {
             doAttack = false;
@@ -310,11 +312,28 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
+    public void ClientHealthDecay()
+    {
+        float timer = 10f;
+        Debug.Log(timer);
+        if(health > 3)
+        {
+            if(timer > 0f) { timer -= Time.deltaTime; }
+            if(timer <= 0f && health > 3)
+            {
+                health -= 1;
+                timer = 10f;
+            }
+        }
+    }
+
     #region Powerup Effects
-    [ClientRpc] public void RpcTakeHealth(int healthPoints)
+    [Command] public void CmdGiveHealth(int healthPoints) => RpcTakeHealth(healthPoints);
+
+    [ClientRpc]
+    public void RpcTakeHealth(int healthPoints)
     {
         health += healthPoints;
-        Debug.Log("Yeah, this works.");
     }
     #endregion
 }

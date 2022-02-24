@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,7 +19,8 @@ public class Interpreter : MonoBehaviour
         {"green", "#00ff00" },
         {"orange", "ffab0f" },
         {"yellow", "#ffea00" },
-        {"aqua", "#00f7ff" }
+        {"aqua", "#00f7ff" },
+        {"white", "ffffff" }
     };
 
     List<string> response = new List<string>();
@@ -44,6 +46,7 @@ public class Interpreter : MonoBehaviour
             response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
             ListEntry("help", "Returns a list of commands.");
             ListEntry("about", "Returns a small but brief paragraph about this game.");
+            ListEntry("setnetwork <IPv4 Address>", "Sets the network address of this machine for LAN.");
             ListEntry("clear", "Clears the terminal screen.");
             ListEntry("play", "Lets you play the sample play scene.");
             ListEntry("masterkey", "Prints some nice ASCII art of the title.");
@@ -60,6 +63,19 @@ public class Interpreter : MonoBehaviour
         if (args[0] == "clear")
         {
             terminalManager.ClearScreen();
+            return response;
+        }
+
+        if(args[0] == "setnetwork" && args[1] != null)
+        {
+            networkManager.networkAddress = args[1];
+            response.Add("Set the network address of this machine to " + ColorString(args[1], colors["white"]));
+            return response;
+        }
+
+        if(args[0] == "getnetaddress")
+        {
+            //response.Add("Your network address: " + ColorString(networkManager.networkAddress, colors["white"]));
             return response;
         }
 
@@ -137,7 +153,6 @@ public class Interpreter : MonoBehaviour
 
     void LoadTitle(string path, string color, int spacing)
     {
-        Debug.Log("start");
         StreamReader file = new StreamReader(Path.Combine(Application.streamingAssetsPath, path));
         Debug.Log(path);
         for(int i = 0; i < spacing; i++)
@@ -157,7 +172,5 @@ public class Interpreter : MonoBehaviour
         }
 
         file.Close();
-
-        Debug.Log("end");
     }
 }

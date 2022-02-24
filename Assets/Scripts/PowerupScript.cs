@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class PowerupScript : NetworkBehaviour
+public class PowerupScript : MonoBehaviour
 {
     public Collider col;
     public GameObject GFX;
@@ -29,13 +29,18 @@ public class PowerupScript : NetworkBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var consumer = other.gameObject;
-        if(consumer.GetComponent<PlayerManager>())          //Throws up an error after the collider deactivates.
+        if(consumer.GetComponent<PlayerManager>() && GFX.activeInHierarchy == true)          //Throws up an error after the collider deactivates.
         {
-            /*if(aide)
+            if(aide)
             {
-                consumer.GetComponent<PlayerManager>().health += 1;
-            }*/
-            CmdPlayerEffects(consumer);
+                //consumer.GetComponent<PlayerManager>().health += 1;
+                consumer.GetComponent<PlayerManager>().CmdGiveHealth(1);
+            }
+
+            if(vitalis)
+            {
+                consumer.GetComponent<PlayerManager>().CmdGiveHealth(3);
+            }
             StartCoroutine(Respawn(respawnTime));
         }
     }
@@ -50,14 +55,6 @@ public class PowerupScript : NetworkBehaviour
         {
             col.enabled = true;
             GFX.SetActive(true);
-        }
-    }
-
-    public void CmdPlayerEffects(GameObject playerObject)
-    {
-        if (aide)
-        {
-            playerObject.GetComponent<PlayerManager>().health += 1;
         }
     }
 }

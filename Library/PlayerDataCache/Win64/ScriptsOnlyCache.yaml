@@ -6,6 +6,7 @@ ScriptsOnlyBuild:
     - PlayInterpreter
     - PlayTerminalManager
     - PlayerManager
+    - PowerupScript
     - TerminalManager
     - UIGradient
     Mirror.Components.dll:
@@ -107,7 +108,9 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4102}
     - Class: 114
-      Script: {instanceID: 5750}
+      Script: {instanceID: 5400}
+    - Class: 114
+      Script: {instanceID: 5752}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 157
@@ -220,41 +223,41 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 5332}
     - Class: 114
-      Script: {instanceID: 5446}
+      Script: {instanceID: 5448}
     - Class: 114
-      Script: {instanceID: 5516}
+      Script: {instanceID: 5518}
     - Class: 114
-      Script: {instanceID: 5522}
+      Script: {instanceID: 5524}
     - Class: 114
-      Script: {instanceID: 5612}
+      Script: {instanceID: 5614}
     - Class: 114
-      Script: {instanceID: 5646}
+      Script: {instanceID: 5648}
     - Class: 114
-      Script: {instanceID: 5686}
+      Script: {instanceID: 5688}
     - Class: 114
-      Script: {instanceID: 5750}
+      Script: {instanceID: 5752}
     - Class: 114
-      Script: {instanceID: 5758}
+      Script: {instanceID: 5760}
     - Class: 114
-      Script: {instanceID: 5850}
+      Script: {instanceID: 5852}
     - Class: 114
-      Script: {instanceID: 5980}
+      Script: {instanceID: 5982}
     - Class: 114
-      Script: {instanceID: 6078}
+      Script: {instanceID: 6080}
     - Class: 114
-      Script: {instanceID: 6120}
+      Script: {instanceID: 6122}
     - Class: 114
-      Script: {instanceID: 6432}
+      Script: {instanceID: 6434}
     - Class: 114
-      Script: {instanceID: 6642}
+      Script: {instanceID: 6644}
     - Class: 114
-      Script: {instanceID: 6820}
+      Script: {instanceID: 6822}
     - Class: 114
-      Script: {instanceID: 6924}
+      Script: {instanceID: 6926}
     - Class: 114
-      Script: {instanceID: 6962}
+      Script: {instanceID: 6964}
     - Class: 114
-      Script: {instanceID: 7140}
+      Script: {instanceID: 7142}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1034,7 +1037,7 @@ ScriptsOnlyBuild:
     className: UIFoldout
   - hash:
       serializedVersion: 2
-      Hash: 89924da8d509b77523b633ead7133fdf
+      Hash: 7850e59ba98ad777b9e51fba3eef23b6
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager
@@ -1050,6 +1053,12 @@ ScriptsOnlyBuild:
     assemblyName: SimpleWebTransport.dll
     namespaceName: Mirror.SimpleWeb
     className: SimpleWebTransport
+  - hash:
+      serializedVersion: 2
+      Hash: 07d6cdbe87ede591fda443f268db85c7
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: PowerupScript
   - hash:
       serializedVersion: 2
       Hash: cf9f5cf2c3145a37ac07f00e50e460f9
