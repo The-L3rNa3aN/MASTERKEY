@@ -1078,6 +1078,7 @@ GameObject:
   - component: {fileID: 2104403859}
   - component: {fileID: 2104403858}
   - component: {fileID: 2104403857}
+  - component: {fileID: 2104403860}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: NetworkManager
@@ -1133,7 +1134,7 @@ MonoBehaviour:
   offlineScene: Assets/Scenes/SampleScene.unity
   onlineScene: Assets/Scenes/PlayScene.unity
   transport: {fileID: 2104403857}
-  networkAddress: 192.168.1.21
+  networkAddress: 
   maxConnections: 100
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 724321029828341351, guid: c6f29ce04ff216e4b8237c2a33abc96e, type: 3}
@@ -1155,3 +1156,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2104403860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104403856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a63114dbf88ede498ca55d5e7ea9edb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
