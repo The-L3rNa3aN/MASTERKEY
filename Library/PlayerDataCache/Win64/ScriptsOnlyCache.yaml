@@ -2,6 +2,7 @@ ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
     - CameraFollowScript
+    - GameManager
     - Interpreter
     - PlayInterpreter
     - PlayTerminalManager
@@ -188,6 +189,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 3280}
     - Class: 114
       Script: {instanceID: 3314}
+    - Class: 114
+      Script: {instanceID: 3378}
     - Class: 114
       Script: {instanceID: 3382}
     - Class: 114
@@ -641,7 +644,7 @@ ScriptsOnlyBuild:
     className: AnimationTrack
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: 16baf21c482a64839301c34919c701fc
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameManager
@@ -1411,4 +1414,4 @@ ScriptsOnlyBuild:
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
   - Assets/Scenes/PlayScene.unity
-  playerPath: D:/Games/Masterkey/Masterkey - Alpha v3.exe
+  playerPath: D:/Games/Masterkey/Masterkey - LAN TEST.exe

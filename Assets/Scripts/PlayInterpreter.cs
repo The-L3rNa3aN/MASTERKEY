@@ -7,7 +7,7 @@ using Mirror;
 public class PlayInterpreter : MonoBehaviour
 {
     PlayTerminalManager terminalManager;
-    GameObject networkManager;
+    GameObject networkManager, gameManager;
     public PlayerManager player;
     int units;
 
@@ -30,6 +30,7 @@ public class PlayInterpreter : MonoBehaviour
     {
         terminalManager = GetComponent<PlayTerminalManager>();
         networkManager = GameObject.Find("NetworkManager");
+        gameManager = GameObject.Find("GameManager");
     }
 
     private void Update()
@@ -50,14 +51,25 @@ public class PlayInterpreter : MonoBehaviour
         string[] args = userInput.Split();
 
         #region Multiplayer Related Commands
-        if(args[0].ToLower() == "disconnect" && player.gameObject.GetComponent<NetworkBehaviour>().isServer)
+        if(args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isServer)
         {
             networkManager.GetComponent<NetworkManager>().StopHost();
             return response;
         }
-        else if(args[0].ToLower() == "disconnect" && player.gameObject.GetComponent<NetworkBehaviour>().isClient)
+        else if(args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isClient)
         {
             networkManager.GetComponent<NetworkManager>().StopClient();
+            return response;
+        }
+
+        if(args[0] == "ipaddress" && player.GetComponent<NetworkBehaviour>().isServer)
+        {
+            response.Add("Your IP Address: " + ColorString(gameManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("host", colors["white"]));
+            return response;
+        }
+        else if(args[0] == "ipaddress" && player.GetComponent<NetworkBehaviour>().isClient)
+        {
+            response.Add("Your IP Address: " + ColorString(gameManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("client", colors["white"]));
             return response;
         }
         #endregion
@@ -66,27 +78,22 @@ public class PlayInterpreter : MonoBehaviour
         if (args[0] == "help")
         {
             response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
-            ListEntry("move [direction] [number]", "To move the character around. Directions include: up, down, left and right.");
-            ListEntry("dash [direction]", "Performs a high speed, short ranged dash. Refreshes every 30 seconds.");
+            ListEntry("move [direction]", "To move the character around. Directions include: up, down, left and right.");
+            ListEntry("stop", "Stops all movement in any direction.");
+            ListEntry("dash [direction]", "Performs a high speed, short ranged dash. Refreshes every 10 seconds.");
+            ListEntry("attack", "Perform a radial attack that deals damage to anyone in your vicinity. Stops movement.");
+            ListEntry("kill", "Commit seppuku.");
             ListEntry("clear", "Clears the terminal screen.");
+            ListEntry("ipaddress", "Prints your IP Address and if you're the server or the client here.");
             ListEntry("disconnect", "Disconnects and returns to the main terminal screen.");
             ListEntry("exit", "Exits the game.");
             return response;
         }
 
-        if(args[0] == "move" && args[1] != null && args[2] != null)
+        if(args[0] == "move" && args[1] != null)
         {
-            units = Int32.Parse(args[2]);
-            if (args[1] == "left" || args[1] == "right")
-            {
-                player.directLR = args[1];
-                player.unitsLR = (float)units;
-            }
-            else
-            {
-                player.directUD = args[1];
-                player.unitsUD = (float)units;
-            }
+            if (args[1] == "left" || args[1] == "right"){ player.directLR = args[1]; }
+            else { player.directUD = args[1]; }
             return response;
         }
         
@@ -111,12 +118,19 @@ public class PlayInterpreter : MonoBehaviour
         if(args[0] == "attack")
         {
             player.doAttack = true;
+            player.StopMovement();
             return response;
         }
 
         if(args[0] == "respawn")
         {
             player.toRespawn = true;
+            return response;
+        }
+
+        if(args[0] == "kill")
+        {
+            player.health = 0;
             return response;
         }
         #endregion
@@ -161,7 +175,7 @@ public class PlayInterpreter : MonoBehaviour
         }
         else
         {
-            response.Add(ColorString("Command not recognized. Type help for a list of commands.", colors["red"]));
+            response.Add(ColorString("Command not recognized. Type ", colors["red"]) + ColorString("help", colors["yellow"]) + ColorString(" help for a list of commands", colors["red"]));
             return response;
         }
         #endregion

@@ -152,29 +152,10 @@ public class PlayerManager : NetworkBehaviour
         {
             case "left":
                 move = new Vector3(-1f, 0f, move.z);
-                horDist += Vector3.Distance(lastPos, transform.position);
-                lastPos = transform.position;
-
-                if (horDist >= unitsLR)
-                {
-                    move.x = 0f;
-                    horDist = 0f;
-                    directLR = null;
-                }
                 break;
-
 
             case "right":
                 move = new Vector3(1f, 0f, move.z);
-                horDist += Vector3.Distance(lastPos, transform.position);
-                lastPos = transform.position;
-
-                if (horDist >= unitsLR)
-                {
-                    move.x = 0f;
-                    horDist = 0f;
-                    directLR = null;
-                }
                 break;
         }
 
@@ -183,28 +164,10 @@ public class PlayerManager : NetworkBehaviour
         {
             case "up":
                 move = new Vector3(move.x, 0f, 1f);
-                verDist += Vector3.Distance(lastPos, transform.position);
-                lastPos = transform.position;
-
-                if (verDist >= unitsUD)
-                {
-                    move.z = 0f;
-                    verDist = 0f;
-                    directUD = null;
-                }
                 break;
 
             case "down":
                 move = new Vector3(move.x, 0f, -1f);
-                verDist += Vector3.Distance(lastPos, transform.position);
-                lastPos = transform.position;
-
-                if (verDist >= unitsUD)
-                {
-                    move.z = 0f;
-                    verDist = 0f;
-                    directUD = null;
-                }
                 break;
         }
         

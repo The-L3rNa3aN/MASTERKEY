@@ -46,10 +46,9 @@ public class Interpreter : MonoBehaviour
             response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
             ListEntry("help", "Returns a list of commands.");
             ListEntry("about", "Returns a small but brief paragraph about this game.");
-            ListEntry("setnetwork <IPv4 Address>", "Sets the network address of this machine for LAN.");
             ListEntry("clear", "Clears the terminal screen.");
-            ListEntry("play", "Lets you play the sample play scene.");
-            ListEntry("masterkey", "Prints some nice ASCII art of the title.");
+            ListEntry("start host", "Starts a LAN server on your computer.");
+            ListEntry("connect <IP Address>", "Manually connect to a LAN host in the network.");
             ListEntry("exit", "Exits the game.");
             return response;
         }
@@ -66,20 +65,13 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0] == "setnetwork" && args[1] != null)
-        {
-            networkManager.networkAddress = args[1];
-            response.Add("Set the network address of this machine to " + ColorString(args[1], colors["white"]));
-            return response;
-        }
-
         if(args[0] == "getnetaddress")
         {
-            //response.Add("Your network address: " + ColorString(networkManager.networkAddress, colors["white"]));
+            response.Add("Your network address: " + ColorString(networkManager.networkAddress, colors["white"]));
             return response;
         }
 
-        if (args[0] == "play" && args[1] == "host")
+        if (args[0] == "start" && args[1] == "host")
         {
             //SceneManager.LoadScene("PlayScene");
 
@@ -87,8 +79,10 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0] == "play" && args[1] == "client")
+        if(args[0] == "connect" && args[1] != null)
         {
+            networkManager.networkAddress = args[1];
+            response.Add("Connecting to " + ColorString(args[1], colors["white"]) + "...");
             networkManager.StartClient();
             return response;
         }

@@ -6,16 +6,17 @@ using Mirror;
 
 public class GameManager : MonoBehaviour
 {
-    NetworkManager networkManager;
+    public NetworkManager networkManager;
 
     private void Start()
     {
-        networkManager = GetComponent<NetworkManager>();
+        
     }
 
     private void Awake()
     {
         networkManager.networkAddress = GetIP();                    //Local machine IP is initialized at the start.
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Update()
@@ -23,10 +24,10 @@ public class GameManager : MonoBehaviour
         
     }
 
-    private string GetIP()                                           //Returns the IP of the local machine.
+    public string GetIP()                                            //Returns the IP of the local machine.
     {
-        string strHostName = "";
-        strHostName = Dns.GetHostName();
+        //string strHostName = "";
+        string strHostName = Dns.GetHostName();
         IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
         IPAddress[] addr = ipEntry.AddressList;
         return addr[addr.Length - 1].ToString();
