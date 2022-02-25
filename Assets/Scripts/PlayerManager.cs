@@ -11,6 +11,7 @@ public class PlayerManager : NetworkBehaviour
     public float mass = 3f;
     public GameObject playerCamera;
     public GameObject terminal;
+    public GameManager gameManager;
     public Transform GFX;
 
     [Header("Visualizers")]
@@ -33,7 +34,6 @@ public class PlayerManager : NetworkBehaviour
     [Header("Normal Movement-Related Vars")]
         public string directLR, directUD;
         public float unitsLR, unitsUD;
-        Vector3 lastPos;
         [SerializeField] float horDist, verDist;
 
     [Header("Dash Related Vars")]
@@ -45,12 +45,10 @@ public class PlayerManager : NetworkBehaviour
     {
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
-        lastPos = transform.position;
     }
 
     private void Update()
     {
-        //Debug.Log(attackerPos);
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
         if (isLocalPlayer && doAttack == true)
@@ -87,10 +85,7 @@ public class PlayerManager : NetworkBehaviour
         else { playerCamera.GetComponent<Camera>().fieldOfView = 60f; }      //Zooms back to its original value.
         #endregion
 
-        if (characterController.isGrounded == true && velocity.y < 0f)                                                      //Gravity.
-        {
-            velocity.y = -2f;
-        }
+        if (characterController.isGrounded == true && velocity.y < 0f) { velocity.y = -2f; }                                //Gravity.
         velocity.y += gravity * Time.deltaTime;
 
         if(dashDir == null) { dashOldPos = transform.position; }
@@ -212,6 +207,8 @@ public class PlayerManager : NetworkBehaviour
         enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1);                                                     //Victim takes damage.
         enemyGameObject.GetComponent<PlayerManager>().RpcKnockBack(enemyGameObject.transform.position - transform.position, 50f);
     }
+
+    [Command] public void CmdSeppuku() => RpcTakeDamage(3);                                                                 //Player committing suicide by running the "kill" command.
     
     [ClientRpc] public void RpcTakeDamage(int dmg)                                                                          //This RPC method handles taking damage and death.
     {
@@ -230,7 +227,6 @@ public class PlayerManager : NetworkBehaviour
 
     [ClientRpc] public void RpcRespawn()            //And you're ALIVE!
     {
-        Debug.Log("test");
         health = 3;
         GFX.gameObject.SetActive(true);
         characterController.enabled = true;

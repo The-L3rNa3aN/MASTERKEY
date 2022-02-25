@@ -130,7 +130,8 @@ public class PlayInterpreter : MonoBehaviour
 
         if(args[0] == "kill")
         {
-            player.health = 0;
+            player.CmdSeppuku();
+            response.Add("You acquitted yourself with honor, I guess.");
             return response;
         }
         #endregion
