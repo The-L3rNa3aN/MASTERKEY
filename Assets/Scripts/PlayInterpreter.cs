@@ -7,7 +7,7 @@ using Mirror;
 public class PlayInterpreter : MonoBehaviour
 {
     PlayTerminalManager terminalManager;
-    GameObject networkManager, gameManager;
+    GameObject networkManager;
     public PlayerManager player;
     int units;
 
@@ -30,7 +30,6 @@ public class PlayInterpreter : MonoBehaviour
     {
         terminalManager = GetComponent<PlayTerminalManager>();
         networkManager = GameObject.Find("NetworkManager");
-        gameManager = GameObject.Find("GameManager");
     }
 
     private void Update()
@@ -64,12 +63,12 @@ public class PlayInterpreter : MonoBehaviour
 
         if(args[0] == "ipaddress" && player.GetComponent<NetworkBehaviour>().isServer)
         {
-            response.Add("Your IP Address: " + ColorString(gameManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("host", colors["white"]));
+            response.Add("Your IP Address: " + ColorString(networkManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("host", colors["white"]));
             return response;
         }
         else if(args[0] == "ipaddress" && player.GetComponent<NetworkBehaviour>().isClient)
         {
-            response.Add("Your IP Address: " + ColorString(gameManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("client", colors["white"]));
+            response.Add("Your IP Address: " + ColorString(networkManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("client", colors["white"]));
             return response;
         }
         #endregion

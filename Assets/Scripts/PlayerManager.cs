@@ -7,13 +7,12 @@ public class PlayerManager : NetworkBehaviour
 {
     CharacterController characterController;
     Vector3 velocity, move;
+    GameObject networkManager;
     public float gravity = -20f;
     public float mass = 3f;
     public GameObject playerCamera;
     public GameObject terminal;
-    public GameManager gameManager;
     public Transform GFX;
-    GameObject networkManager;
 
     [Header("Visualizers")]
         [Range(0f, 1f)] public float interp;
@@ -34,7 +33,6 @@ public class PlayerManager : NetworkBehaviour
 
     [Header("Normal Movement-Related Vars")]
         public string directLR, directUD;
-        public float unitsLR, unitsUD;
         [SerializeField] float horDist, verDist;
 
     [Header("Dash Related Vars")]
@@ -46,6 +44,7 @@ public class PlayerManager : NetworkBehaviour
     {
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
+        networkManager = GameObject.Find("NetworkManager");
     }
 
     private void Update()
@@ -181,8 +180,6 @@ public class PlayerManager : NetworkBehaviour
     {
         directLR = null;
         directUD = null;
-        unitsLR = 0f;
-        unitsUD = 0f;
         move = Vector3.zero;
     }
 
@@ -209,7 +206,7 @@ public class PlayerManager : NetworkBehaviour
         enemyGameObject.GetComponent<PlayerManager>().RpcKnockBack(enemyGameObject.transform.position - transform.position, 50f);
     }
 
-    [Command] public void CmdSeppuku() => RpcTakeDamage(3);                                                                 //Player committing suicide by running the "kill" command.
+    [Command] public void CmdSeppuku() => RpcTakeDamage(health);                                                            //Player committing suicide by running the "kill" command.
     
     [ClientRpc] public void RpcTakeDamage(int dmg)                                                                          //This RPC method handles taking damage and death.
     {
@@ -229,6 +226,11 @@ public class PlayerManager : NetworkBehaviour
     [ClientRpc] public void RpcRespawn()            //And you're ALIVE!
     {
         health = 3;
+        var spawn = networkManager.GetComponent<GameManager>().spawns;
+        int randomElement = Random.Range(0, spawn.Count);                           //A random index will be chosen between 0 and the number of spawnpoints in the level.
+        transform.position = spawn[randomElement].transform.position;               //The transform of the player will be equal to that of the random spawn point.
+        GFX.rotation = Quaternion.Euler(0f, 0f, 0f);                                //The player's graphics object rotation will be reset on respawn.
+
         GFX.gameObject.SetActive(true);
         characterController.enabled = true;
     }
