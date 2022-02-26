@@ -13,6 +13,7 @@ public class PlayerManager : NetworkBehaviour
     public GameObject terminal;
     public GameManager gameManager;
     public Transform GFX;
+    GameObject networkManager;
 
     [Header("Visualizers")]
         [Range(0f, 1f)] public float interp;
