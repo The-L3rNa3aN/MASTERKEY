@@ -159,7 +159,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 960, y: -540.00006}
+  m_AnchoredPosition: {x: 960, y: -540}
   m_SizeDelta: {x: 1920, y: 107.593506}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &25473763
@@ -1078,7 +1078,6 @@ GameObject:
   - component: {fileID: 2104403859}
   - component: {fileID: 2104403858}
   - component: {fileID: 2104403857}
-  - component: {fileID: 2104403861}
   - component: {fileID: 2104403860}
   m_Layer: 0
   m_Name: NetworkManager
@@ -1169,26 +1168,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a63114dbf88ede498ca55d5e7ea9edb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
   networkManager: {fileID: 2104403858}
-  spawnIndex: 0
-  spawnPoints: []
   spawns: []
---- !u!114 &2104403861
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2104403856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneId: 1454873297
-  serverOnly: 0
-  visible: 0
-  m_AssetId: 
-  hasSpawned: 0

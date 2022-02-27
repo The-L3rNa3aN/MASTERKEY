@@ -7,7 +7,7 @@ public class PlayerManager : NetworkBehaviour
 {
     CharacterController characterController;
     Vector3 velocity, move;
-    GameObject networkManager;
+    [SerializeField] GameObject networkManager;
     public float gravity = -20f;
     public float mass = 3f;
     public GameObject playerCamera;
@@ -39,13 +39,12 @@ public class PlayerManager : NetworkBehaviour
         public Vector3 dest;
         public string dashDir;
         public Vector3 dashOldPos;
-
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
         networkManager = GameObject.Find("NetworkManager");
-        SpawnOnStart(networkManager);                                   //The player spawns at one of the spawn points on start.
+        //SpawnOnStart(networkManager);                                   //The player spawns at one of the spawn points on start.
     }
 
     private void SpawnOnStart(GameObject manager)                       //Ditto. Uses the same code of respawning on spawnpoints upon death and running the "respawn" command.

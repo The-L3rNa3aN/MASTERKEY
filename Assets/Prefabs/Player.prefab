@@ -277,7 +277,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 724321029828341351}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.49, z: 0}
+  m_LocalPosition: {x: -3, y: 3, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 724321030141257388}
@@ -332,21 +332,22 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   gravity: -20
+  mass: 3
   playerCamera: {fileID: 2073578021652820910}
   terminal: {fileID: 2166470640614679359}
   GFX: {fileID: 724321030141257388}
   interp: 0.72
   interpSpeed: 3
   health: 3
-  knockBackVector: {x: 0, y: 0, z: 0}
-  isAttacked: 0
   doAttack: 0
+  toRespawn: 0
+  doubleTake: 0
+  impact: {x: 0, y: 0, z: 0}
   attackerPos: {x: 0, y: 0, z: 0}
-  knockBackFriction: {x: 0, y: 0, z: 0}
+  corruptus: 0
+  escren: 0
   directLR: 
   directUD: 
-  unitsLR: 0
-  unitsUD: 0
   horDist: 0
   verDist: 0
   dest: {x: 0, y: 0, z: 0}

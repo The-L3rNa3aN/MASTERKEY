@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class GameManager : NetworkBehaviour
+public class GameManager : MonoBehaviour
 {
     public NetworkManager networkManager;
     public List<GameObject> spawns = new List<GameObject>();                                        //Keeps track of the spawnpoints of a level. Needed for respawning.
-
+    public static GameManager instance;
     private void Awake()
     {
         networkManager.networkAddress = GetIP();                                                    //Local machine IP is initialized at the start.

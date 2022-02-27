@@ -5,7 +5,12 @@
       "ProjectGuid": "745ba9d1-901d-6667-fcfd-e3e456dad37f",
       "DisplayName": "Assembly-CSharp",
       "ColorIndex": 0
+    },
+    "d7b4047f-ef68-2079-43c0-e3aa8b2bb16e": {
+      "ProjectGuid": "d7b4047f-ef68-2079-43c0-e3aa8b2bb16e",
+      "DisplayName": "Mirror.Editor",
+      "ColorIndex": 1
     }
   },
-  "NextColorIndex": 1
+  "NextColorIndex": 2
 }
