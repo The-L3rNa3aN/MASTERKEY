@@ -45,8 +45,15 @@ public class PlayerManager : NetworkBehaviour
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
         networkManager = GameObject.Find("NetworkManager");
+        SpawnOnStart(networkManager);                                   //The player spawns at one of the spawn points on start.
     }
 
+    private void SpawnOnStart(GameObject manager)                       //Ditto. Uses the same code of respawning on spawnpoints upon death and running the "respawn" command.
+    {
+        var spawn = manager.GetComponent<GameManager>().spawns;
+        int randomElement = Random.Range(0, spawn.Count);
+        transform.position = spawn[randomElement].transform.position;
+    }
     private void Update()
     {
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
@@ -277,7 +284,7 @@ public class PlayerManager : NetworkBehaviour
     public void ClientHealthDecay()
     {
         float timer = 10f;
-        Debug.Log(timer);
+        //Debug.Log(timer);
         if(health > 3)
         {
             if(timer > 0f) { timer -= Time.deltaTime; }

@@ -7,8 +7,6 @@ using Mirror;
 public class GameManager : NetworkBehaviour
 {
     public NetworkManager networkManager;
-    public int spawnIndex;
-
     public List<GameObject> spawns = new List<GameObject>();                                        //Keeps track of the spawnpoints of a level. Needed for respawning.
 
     private void Awake()
