@@ -24,11 +24,6 @@ public class PlayTerminalManager : MonoBehaviour
         //Cursor.lockState = CursorLockMode.Locked;
     }
 
-    private void Update()
-    {
-        //if(!isLocalPlayer) { return; }
-    }
-
     private void OnGUI()
     {
         if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return))

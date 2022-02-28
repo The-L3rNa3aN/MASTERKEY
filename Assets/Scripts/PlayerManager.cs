@@ -228,6 +228,7 @@ public class PlayerManager : NetworkBehaviour
         {
             GFX.gameObject.SetActive(false);
             characterController.enabled = false;
+            StopMovement();
         }
     }
     #endregion

@@ -11,6 +11,7 @@ public class Interpreter : MonoBehaviour
     public NetworkManager networkManager;
     TerminalManager terminalManager;
     public bool printOnAwake = false;
+    public bool testthing;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
     {
@@ -35,11 +36,24 @@ public class Interpreter : MonoBehaviour
         terminalManager = GetComponent<TerminalManager>();
     }
 
+    /*void Update()
+    {
+        if (networkManager.GetComponent<GameManager>().playerName == null)
+        {
+            testthing = true;
+        }
+    }*/
+
     public List<string> Interpret(string userInput)
     {
         response.Clear();
-
         string[] args = userInput.Split();
+
+        if(testthing == true)
+        {
+            response.Add("Say the secret phrase.");
+            return response;
+        }
 
         if(args[0] == "help")
         {
@@ -127,7 +141,7 @@ public class Interpreter : MonoBehaviour
         }
         else
         {
-            response.Add(ColorString("Command not recognized. Type help for a list of commands.", colors["red"]));
+            response.Add(ColorString("Command not recognized. Type ", colors["red"]) + ColorString("help", colors["yellow"]) + ColorString(" for a list of commands", colors["red"]));
             return response;
         }
     }

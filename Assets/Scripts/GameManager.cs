@@ -7,6 +7,8 @@ using Mirror;
 public class GameManager : MonoBehaviour
 {
     public NetworkManager networkManager;
+    public string playerName;
+
     private void Awake()
     {
         networkManager.networkAddress = GetIP();                                                    //Local machine IP is initialized at the start.

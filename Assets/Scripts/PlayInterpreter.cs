@@ -121,9 +121,14 @@ public class PlayInterpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0] == "respawn")
+        if(args[0] == "respawn" && player.health <= 0)          //Running the command when alive resulted in the player immediately respawning upon death.
         {
             player.toRespawn = true;
+            return response;
+        }
+        else if(args[0] == "respawn" && player.health != 0)
+        {
+            response.Add("You may be dead inside in real life, but you're alive here, in the game that is.");
             return response;
         }
 
@@ -175,7 +180,7 @@ public class PlayInterpreter : MonoBehaviour
         }
         else
         {
-            response.Add(ColorString("Command not recognized. Type ", colors["red"]) + ColorString("help", colors["yellow"]) + ColorString(" help for a list of commands", colors["red"]));
+            response.Add(ColorString("Command not recognized. Type ", colors["red"]) + ColorString("help", colors["yellow"]) + ColorString(" for a list of commands", colors["red"]));
             return response;
         }
         #endregion
