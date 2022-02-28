@@ -4,7 +4,6 @@ ScriptsOnlyBuild:
     - CameraFollowScript
     - GameManager
     - Interpreter
-    - LevelManager
     - PlayInterpreter
     - PlayTerminalManager
     - PlayerManager
@@ -269,8 +268,6 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1752}
-    - Class: 114
       Script: {instanceID: 2536}
     - Class: 114
       Script: {instanceID: 4104}
@@ -351,12 +348,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.RenderPipelines.Universal.Runtime.dll
     namespaceName: UnityEngine.Rendering.Universal
     className: ScreenSpaceAmbientOcclusion
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: LevelManager
   - hash:
       serializedVersion: 2
       Hash: 6bc76e17f0d5e93f3eea7f5a2fe227f3
@@ -653,7 +644,7 @@ ScriptsOnlyBuild:
     className: AnimationTrack
   - hash:
       serializedVersion: 2
-      Hash: 49846a9bb371b6d3b90e76cb139beead
+      Hash: 16baf21c482a64839301c34919c701fc
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameManager
@@ -1049,7 +1040,7 @@ ScriptsOnlyBuild:
     className: UIFoldout
   - hash:
       serializedVersion: 2
-      Hash: fc2fc73128738736358a23986ac2c870
+      Hash: 037eca8ae87b0dc0873a9baec072ef5f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager

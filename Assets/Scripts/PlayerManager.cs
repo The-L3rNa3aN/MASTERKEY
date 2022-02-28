@@ -39,19 +39,25 @@ public class PlayerManager : NetworkBehaviour
         public Vector3 dest;
         public string dashDir;
         public Vector3 dashOldPos;
+
+    public List<GameObject> spawnPoints = new List<GameObject> ();
+
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
         networkManager = GameObject.Find("NetworkManager");
-        //SpawnOnStart(networkManager);                                   //The player spawns at one of the spawn points on start.
+
+        var spObjects = GameObject.FindGameObjectsWithTag("Spawn Point");
+        for(int i = 0; i < spObjects.Length; i++)
+        {
+            spawnPoints.Add(spObjects[i]);
+        }
     }
 
     private void SpawnOnStart(GameObject manager)                       //Ditto. Uses the same code of respawning on spawnpoints upon death and running the "respawn" command.
     {
-        var spawn = manager.GetComponent<GameManager>().spawns;
-        int randomElement = Random.Range(0, spawn.Count);
-        transform.position = spawn[randomElement].transform.position;
+        transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;
     }
     private void Update()
     {
@@ -232,10 +238,8 @@ public class PlayerManager : NetworkBehaviour
     [ClientRpc] public void RpcRespawn()            //And you're ALIVE!
     {
         health = 3;
-        var spawn = networkManager.GetComponent<GameManager>().spawns;
-        int randomElement = Random.Range(0, spawn.Count);                           //A random index will be chosen between 0 and the number of spawnpoints in the level.
-        transform.position = spawn[randomElement].transform.position;               //The transform of the player will be equal to that of the random spawn point.
-        GFX.rotation = Quaternion.Euler(0f, 0f, 0f);                                //The player's graphics object rotation will be reset on respawn.
+        transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;                            //New position on respawning.
+        GFX.rotation = Quaternion.Euler(0f, 0f, 0f);                                                                        //The player's graphics object rotation will be reset on respawn.
 
         GFX.gameObject.SetActive(true);
         characterController.enabled = true;
