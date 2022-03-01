@@ -26,6 +26,7 @@ public class PlayerManager : NetworkBehaviour
         public Vector3 impact = Vector3.zero;
         public Vector3 attackerPos;
         private SphereCollider attackSphere;
+        float healthTimer = 5f;
 
     [Header("Powerup Effects")]
         public bool corruptus;
@@ -33,14 +34,13 @@ public class PlayerManager : NetworkBehaviour
 
     [Header("Normal Movement-Related Vars")]
         public string directLR, directUD;
-        [SerializeField] float horDist, verDist;
 
     [Header("Dash Related Vars")]
         public Vector3 dest;
         public string dashDir;
         public Vector3 dashOldPos;
 
-    public List<GameObject> spawnPoints = new List<GameObject> ();
+    public List<GameObject> spawnPoints = new List<GameObject>();                           //A list of spawnpoints for the player. I hope this doesn't hinder performance.
 
     private void Start()
     {
@@ -48,17 +48,16 @@ public class PlayerManager : NetworkBehaviour
         attackSphere = GetComponent<SphereCollider>();
         networkManager = GameObject.Find("NetworkManager");
 
-        var spObjects = GameObject.FindGameObjectsWithTag("Spawn Point");
+        var spObjects = GameObject.FindGameObjectsWithTag("Spawn Point");                   //All spawnpoints are found at the start and are added to the list.
         for(int i = 0; i < spObjects.Length; i++)
         {
             spawnPoints.Add(spObjects[i]);
         }
+
+        //Randomized spawnpoints on start.
+        networkManager.GetComponent<NetworkManager>().playerPrefab.transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;
     }
 
-    private void SpawnOnStart(GameObject manager)                       //Ditto. Uses the same code of respawning on spawnpoints upon death and running the "respawn" command.
-    {
-        transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;
-    }
     private void Update()
     {
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
@@ -218,12 +217,13 @@ public class PlayerManager : NetworkBehaviour
         enemyGameObject.GetComponent<PlayerManager>().RpcKnockBack(enemyGameObject.transform.position - transform.position, 50f);
     }
 
+    [Command] public void CmdDoSelfDamage(int helth) => RpcTakeDamage(helth);
+
     [Command] public void CmdSeppuku() => RpcTakeDamage(health);                                                            //Player committing suicide by running the "kill" command.
     
     [ClientRpc] public void RpcTakeDamage(int dmg)                                                                          //This RPC method handles taking damage and death.
     {
         health -= dmg;
-
         if (health <= 0)                             //DIE!
         {
             GFX.gameObject.SetActive(false);
@@ -287,15 +287,13 @@ public class PlayerManager : NetworkBehaviour
 
     public void ClientHealthDecay()
     {
-        float timer = 10f;
-        //Debug.Log(timer);
-        if(health > 3)
+        if (health > 3)
         {
-            if(timer > 0f) { timer -= Time.deltaTime; }
-            if(timer <= 0f && health > 3)
+            if (healthTimer > 0f) { healthTimer -= Time.deltaTime; }
+            if (healthTimer <= 0f && health > 3)
             {
-                health -= 1;
-                timer = 10f;
+                healthTimer = 5f;
+                CmdDoSelfDamage(1);
             }
         }
     }

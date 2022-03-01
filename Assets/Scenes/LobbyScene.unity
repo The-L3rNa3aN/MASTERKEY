@@ -502,6 +502,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkManager: {fileID: 2104403858}
   printOnAwake: 0
+  testthing: 0
 --- !u!1 &701916302
 GameObject:
   m_ObjectHideFlags: 0
@@ -1169,4 +1170,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkManager: {fileID: 2104403858}
-  spawns: []
+  playerName: Player

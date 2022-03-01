@@ -49,9 +49,16 @@ public class Interpreter : MonoBehaviour
         response.Clear();
         string[] args = userInput.Split();
 
-        if(testthing == true)
+        if(args[0] == "gettag")
         {
-            response.Add("Say the secret phrase.");
+            response.Add("Your playertag: " + ColorString(networkManager.GetComponent<GameManager>().playerName, colors["yellow"]));
+            return response;
+        }
+
+        if(args[0] == "settag" && args[1] != null)
+        {
+            response.Add("Your player tag is now set to " + ColorString(args[1], colors["yellow"]));
+            networkManager.GetComponent<GameManager>().playerName = args[1];
             return response;
         }
 
