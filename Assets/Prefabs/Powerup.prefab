@@ -170,12 +170,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cd989e7c0fb4254fa654d31b4bba3ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
   col: {fileID: 6360462733047061745}
   GFX: {fileID: 3299125166273942214}
   respawnTime: 10
-  aide: 1
+  aide: 0
   vitalis: 0
   corruptus: 0
   vaengr: 0

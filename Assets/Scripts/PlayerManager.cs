@@ -8,8 +8,8 @@ public class PlayerManager : NetworkBehaviour
     CharacterController characterController;
     Vector3 velocity, move;
     [SerializeField] GameObject networkManager;
-    public float gravity = -20f;
-    public float mass = 3f;
+    [HideInInspector] public float gravity = -20f;
+    [HideInInspector] public float mass = 3f;
     public GameObject playerCamera;
     public GameObject terminal;
     public Transform GFX;
@@ -22,18 +22,19 @@ public class PlayerManager : NetworkBehaviour
         [SyncVar] public int health = 3;
         [HideInInspector] public bool doAttack;
         [HideInInspector] public bool toRespawn;
-        [SyncVar] public bool doubleTake;
         public Vector3 impact = Vector3.zero;
         public Vector3 attackerPos;
         private SphereCollider attackSphere;
         float healthTimer = 5f;
 
     [Header("Powerup Effects")]
-        public bool corruptus;
+        [SyncVar] public bool corruptus;
+        [SerializeField] float corruptusTimer = 20f;
         public bool escren;
 
     [Header("Normal Movement-Related Vars")]
-        public string directLR, directUD;
+        public string directLR;
+        public string directUD;
 
     [Header("Dash Related Vars")]
         public Vector3 dest;
@@ -62,6 +63,7 @@ public class PlayerManager : NetworkBehaviour
     {
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
+        //CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
         if (isLocalPlayer && doAttack == true)
         {
             doAttack = false;
@@ -213,7 +215,9 @@ public class PlayerManager : NetworkBehaviour
 
     [Command] public void CmdDoDamage(GameObject enemyGameObject)
     {
-        enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1);                                                     //Victim takes damage.
+        if (corruptus == true) { enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(2); }                          //Victim takes twice the damage because of the player's Corruptus.
+        else if (corruptus == false) { enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1); }
+
         enemyGameObject.GetComponent<PlayerManager>().RpcKnockBack(enemyGameObject.transform.position - transform.position, 50f);
     }
 
@@ -223,8 +227,9 @@ public class PlayerManager : NetworkBehaviour
     
     [ClientRpc] public void RpcTakeDamage(int dmg)                                                                          //This RPC method handles taking damage and death.
     {
-        health -= dmg;
-        if (health <= 0)                             //DIE!
+        if (corruptus == true) { health -= dmg * 2; }                                                                       //Players under the Corruptus effect take more damage then usual.
+        else if(corruptus == false) { health -= dmg; }
+        if (health <= 0)                                        //DIE!
         {
             GFX.gameObject.SetActive(false);
             characterController.enabled = false;
@@ -233,15 +238,15 @@ public class PlayerManager : NetworkBehaviour
     }
     #endregion
 
-    #region Respawning the player
+    #region Player Respawning
     [Command] public void CmdRespawn() => RpcRespawn();
 
-    [ClientRpc] public void RpcRespawn()            //And you're ALIVE!
+    [ClientRpc] public void RpcRespawn()                        //And you're ALIVE!
     {
         health = 3;
         transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;                            //New position on respawning.
         GFX.rotation = Quaternion.Euler(0f, 0f, 0f);                                                                        //The player's graphics object rotation will be reset on respawn.
-
+        corruptus = false;                                                                                                  //Any powerup effects on the player will disappear on death.
         GFX.gameObject.SetActive(true);
         characterController.enabled = true;
     }
@@ -300,11 +305,19 @@ public class PlayerManager : NetworkBehaviour
 
     #region Powerup Effects
     [Command] public void CmdGiveHealth(int healthPoints) => RpcTakeHealth(healthPoints);
+    [ClientRpc]public void RpcTakeHealth(int healthPoints) => health += healthPoints;
 
-    [ClientRpc]
-    public void RpcTakeHealth(int healthPoints)
+    public void CorruptusTimer()
     {
-        health += healthPoints;
+        if(corruptus == true)
+        {
+            if(corruptusTimer > 0f) { corruptusTimer -= Time.deltaTime; }
+            if(corruptusTimer <= 0f)
+            {
+                corruptusTimer = 20f;
+                corruptus = false;
+            }
+        }
     }
     #endregion
 }

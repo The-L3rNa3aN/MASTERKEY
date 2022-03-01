@@ -29,17 +29,31 @@ public class PowerupScript : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var consumer = other.gameObject;
-        if(consumer.GetComponent<PlayerManager>() && GFX.activeInHierarchy == true)          //Throws up an error after the collider deactivates.
+        if(consumer.GetComponent<PlayerManager>() && GFX.activeInHierarchy == true)
         {
-            if(aide)
+            if (aide)
             {
-                //consumer.GetComponent<PlayerManager>().health += 1;
                 consumer.GetComponent<PlayerManager>().CmdGiveHealth(1);
             }
 
-            if(vitalis)
+            if (vitalis)
             {
                 consumer.GetComponent<PlayerManager>().CmdGiveHealth(3);
+            }
+
+            if (corruptus)
+            {
+                consumer.GetComponent<PlayerManager>().corruptus = true;
+            }
+
+            if (vaengr)
+            {
+                //Refresh the Dash ability.
+            }
+
+            if (escren)
+            {
+                consumer.GetComponent<PlayerManager>().escren = true;
             }
             StartCoroutine(Respawn(respawnTime));
         }
@@ -48,12 +62,12 @@ public class PowerupScript : MonoBehaviour
     IEnumerator Respawn(float time)
     {
         {
-            col.enabled = false;
+            //col.enabled = false;
             GFX.SetActive(false);
         }
         yield return new WaitForSeconds(time);
         {
-            col.enabled = true;
+            //col.enabled = true;
             GFX.SetActive(true);
         }
     }
