@@ -30,7 +30,7 @@ public class PlayerManager : NetworkBehaviour
     [Header("Powerup Effects")]
         [SyncVar] public bool corruptus;
         [SerializeField] float corruptusTimer = 20f;
-        public bool escren;
+        [SyncVar] public bool escren;
 
     [Header("Normal Movement-Related Vars")]
         public string directLR;
@@ -63,7 +63,7 @@ public class PlayerManager : NetworkBehaviour
     {
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
-        //CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
+        CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
         if (isLocalPlayer && doAttack == true)
         {
             doAttack = false;
@@ -207,10 +207,7 @@ public class PlayerManager : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)                                                                             //This is used by the attackSphere collider by default.
     {
-        if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false)
-        {
-            CmdDoDamage(other.GetComponent<NetworkIdentity>().gameObject);
-        }
+        if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false) CmdDoDamage(other.GetComponent<NetworkIdentity>().gameObject);
     }
 
     [Command] public void CmdDoDamage(GameObject enemyGameObject)
@@ -218,17 +215,29 @@ public class PlayerManager : NetworkBehaviour
         if (corruptus == true) { enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(2); }                          //Victim takes twice the damage because of the player's Corruptus.
         else if (corruptus == false) { enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1); }
 
-        enemyGameObject.GetComponent<PlayerManager>().RpcKnockBack(enemyGameObject.transform.position - transform.position, 50f);
+        if(enemyGameObject.GetComponent<PlayerManager>().escren == false)                                                   //Victims under the Escren effect don't suffer knockback.
+        {
+            enemyGameObject.GetComponent<PlayerManager>().RpcKnockBack(enemyGameObject.transform.position - transform.position, 50f);
+        }
     }
 
     [Command] public void CmdDoSelfDamage(int helth) => RpcTakeDamage(helth);
 
-    [Command] public void CmdSeppuku() => RpcTakeDamage(health);                                                            //Player committing suicide by running the "kill" command.
+    [Command] public void CmdSeppuku() => RpcTakeDamage(health);                                                  //Player committing suicide by running the "kill" command.
     
-    [ClientRpc] public void RpcTakeDamage(int dmg)                                                                          //This RPC method handles taking damage and death.
+    [ClientRpc] public void RpcTakeDamage(int dmg)                                                                //This RPC method handles taking damage and death.
     {
-        if (corruptus == true) { health -= dmg * 2; }                                                                       //Players under the Corruptus effect take more damage then usual.
-        else if(corruptus == false) { health -= dmg; }
+        if (corruptus == true)                          //Players under the Corruptus effect take more damage then usual.
+        {
+            if (escren == true) escren = false;         //Players under the Escren effect don't take damage. The effect disppears after taking any form of damage.
+            else health -= dmg * 2;
+        }
+        else if(corruptus == false)
+        {
+            if (escren == true) escren = false;
+            else health -= dmg;
+        }
+
         if (health <= 0)                                        //DIE!
         {
             GFX.gameObject.SetActive(false);
@@ -247,6 +256,7 @@ public class PlayerManager : NetworkBehaviour
         transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;                            //New position on respawning.
         GFX.rotation = Quaternion.Euler(0f, 0f, 0f);                                                                        //The player's graphics object rotation will be reset on respawn.
         corruptus = false;                                                                                                  //Any powerup effects on the player will disappear on death.
+        escren = false;
         GFX.gameObject.SetActive(true);
         characterController.enabled = true;
     }
