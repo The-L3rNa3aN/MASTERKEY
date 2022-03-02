@@ -9,9 +9,8 @@ public class PlayInterpreter : MonoBehaviour
     PlayTerminalManager terminalManager;
     GameObject networkManager;
     public PlayerManager player;
-    int units;
 
-    [SerializeField] float dashTimer = 0f;
+    public float dashTimer = 0f;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
     {

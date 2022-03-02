@@ -33,27 +33,28 @@ public class PowerupScript : MonoBehaviour
         {
             if (aide)
             {
-                consumer.GetComponent<PlayerManager>().CmdGiveHealth(1);
+                consumer.GetComponent<PlayerManager>().CmdGiveHealth(1);                    //Small health pickup.
             }
 
             if (vitalis)
             {
-                consumer.GetComponent<PlayerManager>().CmdGiveHealth(3);
+                consumer.GetComponent<PlayerManager>().CmdGiveHealth(3);                    //Large health pickup.
             }
 
             if (corruptus)
             {
-                consumer.GetComponent<PlayerManager>().corruptus = true;
+                consumer.GetComponent<PlayerManager>().corruptus = true;                    //Twice the damage but twice the vulnerability.
             }
 
             if (vaengr)
             {
-                //Refresh the Dash ability.
+                var term = consumer.GetComponentsInChildren<PlayInterpreter>();             //Refreshes abilities.
+                foreach(PlayInterpreter interp in term) interp.dashTimer = 0f;
             }
 
             if (escren)
             {
-                consumer.GetComponent<PlayerManager>().escren = true;
+                consumer.GetComponent<PlayerManager>().escren = true;                       //Temporary protection that protects the host from any form of damage and knockback.
             }
             StartCoroutine(Respawn(respawnTime));
         }

@@ -40,6 +40,7 @@ public class PlayerManager : NetworkBehaviour
         public Vector3 dest;
         public string dashDir;
         public Vector3 dashOldPos;
+        [SerializeField] private float dashTimer = 1f;
 
     public List<GameObject> spawnPoints = new List<GameObject>();                           //A list of spawnpoints for the player. I hope this doesn't hinder performance.
 
@@ -103,54 +104,49 @@ public class PlayerManager : NetworkBehaviour
 
         if(dashDir == null) { dashOldPos = transform.position; }
 
-        //Dashing.
-        switch(dashDir)
+        switch(dashDir)                                                                                                     //Dashing.
         {
             case "left":
                 move = Vector3.left * 7.5f;
-                dest = dashOldPos + new Vector3(-7.5f, 0f, 0f);
-
-                if (transform.position.x <= dest.x)
+                dashTimer -= Time.deltaTime;
+                if(dashTimer <= 0f)
                 {
-                    transform.position = new Vector3(dest.x, transform.position.y, transform.position.z);
                     dashDir = null;
-                    move.x = 0f;
+                    move = Vector3.zero;
+                    dashTimer = 1f;
                 }
                 break;
 
             case "right":
                 move = Vector3.right * 7.5f;
-                dest = dashOldPos + new Vector3(7.5f, 0f, 0f);
-
-                if (transform.position.x >= dest.x)
+                dashTimer -= Time.deltaTime;
+                if (dashTimer <= 0f)
                 {
-                    transform.position = new Vector3(dest.x, transform.position.y, transform.position.z);
                     dashDir = null;
-                    move.x = 0f;
+                    move = Vector3.zero;
+                    dashTimer = 1f;
                 }
                 break;
 
             case "up":
                 move = Vector3.forward * 7.5f;
-                dest = dashOldPos + new Vector3(0f, 0f, 7.5f);
-
-                if (transform.position.z >= dest.z)
+                dashTimer -= Time.deltaTime;
+                if (dashTimer <= 0f)
                 {
-                    transform.position = new Vector3(transform.position.x, transform.position.y, dest.z);
                     dashDir = null;
-                    move.z = 0f;
+                    move = Vector3.zero;
+                    dashTimer = 1f;
                 }
                 break;
 
             case "down":
                 move = Vector3.back * 7.5f;
-                dest = dashOldPos + new Vector3(0f, 0f, -7.5f);
-
-                if (transform.position.z <= dest.z)
+                dashTimer -= Time.deltaTime;
+                if (dashTimer <= 0f)
                 {
-                    transform.position = new Vector3(transform.position.x, transform.position.y, dest.z);
                     dashDir = null;
-                    move.z = 0f;
+                    move = Vector3.zero;
+                    dashTimer = 1f;
                 }
                 break;
         }
