@@ -1,16 +1,13 @@
 using System;
 using System.IO;
-using System.Net;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Mirror;
 
 public class Interpreter : MonoBehaviour
 {
     public NetworkManager networkManager;
     TerminalManager terminalManager;
-    public bool printOnAwake = false;
     public bool testthing;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
@@ -26,28 +23,29 @@ public class Interpreter : MonoBehaviour
 
     List<string> response = new List<string>();
 
-    private void Awake()
-    {
-        //printOnAwake = true;
-    }
-
     private void Start()
     {
         terminalManager = GetComponent<TerminalManager>();
     }
 
-    /*void Update()
-    {
-        if (networkManager.GetComponent<GameManager>().playerName == null)
-        {
-            testthing = true;
-        }
-    }*/
-
     public List<string> Interpret(string userInput)
     {
         response.Clear();
         string[] args = userInput.Split();
+
+        var playerName = networkManager.GetComponent<GameManager>().playerName;
+
+        if(userInput == "welcome")
+        {
+            response.Add(ColorString("Hello, ", colors["yellow"]) + ColorString(playerName, colors["green"]) + ColorString(" and welcome to ", colors["yellow"]) + ColorString("MASTERKEY!", colors["aqua"]));
+            return response;
+        }
+
+        if(userInput == "welcomehelp")
+        {
+            response.Add("To get started, type " + ColorString("help ", colors["yellow"]) + "to get a list of commands or use the" + ColorString(" ? ", colors["yellow"]) + "before the command you want to learn about.");
+            return response;
+        }
 
         if(args[0] == "gettag")
         {
@@ -94,8 +92,6 @@ public class Interpreter : MonoBehaviour
 
         if (args[0] == "start" && args[1] == "host")
         {
-            //SceneManager.LoadScene("PlayScene");
-
             networkManager.StartHost();
             return response;
         }
@@ -108,11 +104,10 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if (args[0] == "masterkey" || printOnAwake == true)
+        if (args[0] == "masterkey")
         {
             LoadTitle("ascii.txt", "aqua", 2);
             response.Add("At your service!");
-            printOnAwake = false;
             return response;
         }
 
@@ -173,7 +168,6 @@ public class Interpreter : MonoBehaviour
         for(int i = 0; i < spacing; i++)
         {
             response.Add("");
-            //Debug.Log(response);
         }
 
         while(!file.EndOfStream)
