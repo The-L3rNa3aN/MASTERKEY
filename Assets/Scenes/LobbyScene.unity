@@ -159,7 +159,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 960, y: -540}
+  m_AnchoredPosition: {x: 960, y: -540.00006}
   m_SizeDelta: {x: 1920, y: 107.593506}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &25473763
@@ -482,7 +482,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8b4b18899044fb4086d944dd82d687e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkManager: {fileID: 2104403856}
   directoryLine: {fileID: 8556763295515665974, guid: 219621855ed57044ea12925857cfd56f, type: 3}
   responseLine: {fileID: 6324127580015974574, guid: c28faf4576a8e014685ee533eec2731d, type: 3}
   terminalInput: {fileID: 330153195}
@@ -1171,3 +1170,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkManager: {fileID: 2104403858}
   playerName: Player
+  playerList: []

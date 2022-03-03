@@ -35,7 +35,8 @@ public class Interpreter : MonoBehaviour
 
         var playerName = networkManager.GetComponent<GameManager>().playerName;
 
-        if(userInput == "welcome")
+        #region Welcome Responses
+        if (userInput == "welcome")
         {
             response.Add(ColorString("Hello, ", colors["yellow"]) + ColorString(playerName, colors["green"]) + ColorString(" and welcome to ", colors["yellow"]) + ColorString("MASTERKEY!", colors["aqua"]));
             return response;
@@ -46,17 +47,18 @@ public class Interpreter : MonoBehaviour
             response.Add("To get started, type " + ColorString("help ", colors["yellow"]) + "to get a list of commands or use the" + ColorString(" ? ", colors["yellow"]) + "before the command you want to learn about.");
             return response;
         }
+        #endregion
 
         if(args[0] == "gettag")
         {
-            response.Add("Your playertag: " + ColorString(networkManager.GetComponent<GameManager>().playerName, colors["yellow"]));
+            response.Add("Your playertag: " + ColorString(playerName, colors["yellow"]));
             return response;
         }
 
         if(args[0] == "settag" && args[1] != null)
         {
             response.Add("Your player tag is now set to " + ColorString(args[1], colors["yellow"]));
-            networkManager.GetComponent<GameManager>().playerName = args[1];
+            PlayerPrefs.SetString("PlayerName", args[1]);
             return response;
         }
 
@@ -68,6 +70,8 @@ public class Interpreter : MonoBehaviour
             ListEntry("clear", "Clears the terminal screen.");
             ListEntry("start host", "Starts a LAN server on your computer.");
             ListEntry("connect <IP Address>", "Manually connect to a LAN host in the network.");
+            ListEntry("settag", "Set your name.");
+            ListEntry("gettag", "Get your name.");
             ListEntry("exit", "Exits the game.");
             return response;
         }

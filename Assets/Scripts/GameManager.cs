@@ -2,6 +2,7 @@ using System.Net;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Mirror;
 
 public class GameManager : MonoBehaviour
@@ -12,11 +13,16 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         networkManager.networkAddress = GetIP();                                                    //Local machine IP is initialized at the start.
+        playerName = PlayerPrefs.GetString("PlayerName");
+    }
+
+    private void Start()
+    {
+        
     }
 
     public string GetIP()                                                                           //Returns the IP of the local machine.
     {
-        //string strHostName = "";
         string strHostName = Dns.GetHostName();
         IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
         IPAddress[] addr = ipEntry.AddressList;

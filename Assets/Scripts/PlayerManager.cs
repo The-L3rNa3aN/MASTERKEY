@@ -6,7 +6,7 @@ using Mirror;
 public class PlayerManager : NetworkBehaviour
 {
     CharacterController characterController;
-    Vector3 velocity, move;
+    public Vector3 velocity, move;
     [SerializeField] GameObject networkManager;
     [HideInInspector] public float gravity = -20f;
     [HideInInspector] public float mass = 3f;
@@ -54,6 +54,12 @@ public class PlayerManager : NetworkBehaviour
         for(int i = 0; i < spObjects.Length; i++)
         {
             spawnPoints.Add(spObjects[i]);
+        }
+
+        var plyrs = GameObject.FindGameObjectsWithTag("Player");                            //Finds players in the server and broadcasts a message on joining.
+        for (int i = 0; i < plyrs.Length; i++)
+        {
+            plyrs[i].GetComponentInChildren<PlayTerminalManager>().PlayerJoined(PlayerPrefs.GetString("PlayerName"));
         }
 
         //Randomized spawnpoints on start.
@@ -177,6 +183,11 @@ public class PlayerManager : NetworkBehaviour
         
         characterController.Move(move * 3f * Time.deltaTime);
         characterController.Move(velocity * Time.deltaTime);
+    }
+
+    public struct PlayerData : NetworkMessage
+    {
+        public string playerName;
     }
 
     [ClientRpc] public void RpcKnockBack(Vector3 dir, float force)
@@ -326,4 +337,19 @@ public class PlayerManager : NetworkBehaviour
         }
     }
     #endregion
+
+    /*private void OnConnectedToServer()
+    {
+        PlayerData joinMsg = new PlayerData()
+        {
+            playerName = networkManager.GetComponent<GameManager>().playerName
+        };
+        NetworkServer.SendToAll(joinMsg);
+        NetworkClient.RegisterHandler<PlayerData>(Function3);
+    }
+
+    void Function3(PlayerData msg)
+    {
+        Debug.Log(msg.playerName);
+    }*/
 }

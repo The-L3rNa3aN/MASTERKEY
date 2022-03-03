@@ -48,6 +48,13 @@ public class PlayInterpreter : MonoBehaviour
 
         string[] args = userInput.Split();
 
+        if(userInput == "Shakira")
+        {
+            Debug.Log("Command received.");
+            response.Add("This works.");
+            return response;
+        }
+
         #region Multiplayer Related Commands
         if(args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isServer)
         {
@@ -77,7 +84,7 @@ public class PlayInterpreter : MonoBehaviour
         {
             response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
             ListEntry("move [direction]", "To move the character around. Directions include: up, down, left and right.");
-            ListEntry("stop", "Stops all movement in any direction.");
+            ListEntry("stop [param]", "Stops all movement in any direction. Parameters include: lateral, medial and all.");
             ListEntry("dash [direction]", "Performs a high speed, short ranged dash. Refreshes every 10 seconds.");
             ListEntry("attack", "Perform a radial attack that deals damage to anyone in your vicinity. Stops movement.");
             ListEntry("kill", "Commit seppuku.");
@@ -95,10 +102,21 @@ public class PlayInterpreter : MonoBehaviour
             return response;
         }
         
-        if(args[0] == "stop")
+        switch(args[0], args[1])                                    //Stopping the player's movement.
         {
-            player.StopMovement();
-            return response;
+            case ("stop", "all"):
+                player.StopMovement();
+                return response;
+
+            case ("stop", "lateral"):
+                player.directLR = null;
+                player.move = new Vector3(0f, 0f, player.move.z);
+                return response;
+
+            case ("stop", "medial"):
+                player.directUD = null;
+                player.move = new Vector3(player.move.x, 0f, 0f);
+                return response;
         }
 
         if (args[0] == "dash" && args[1] != null && dashTimer == 0f)
@@ -196,5 +214,17 @@ public class PlayInterpreter : MonoBehaviour
     void ListEntry(string a, string b)
     {
         response.Add(ColorString(a, colors["light blue"]) + ": " + ColorString(b, colors["red"]));
+    }
+
+    public List<string> PlayerHasArrived(string playerName)
+    {
+        response.Clear();
+
+        if(playerName != null)
+        {
+            Debug.Log(playerName + " has arrived.");
+            response.Add(playerName + "has arrived.");
+        }
+        return response;
     }
 }

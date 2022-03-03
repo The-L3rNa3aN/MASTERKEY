@@ -14,8 +14,7 @@ public class PlayTerminalManager : MonoBehaviour
     public ScrollRect sr;
     public GameObject msgList;
 
-    PlayInterpreter interpreter;
-
+    [SerializeField] PlayInterpreter interpreter;
 
     private void Start()
     {
@@ -51,6 +50,13 @@ public class PlayTerminalManager : MonoBehaviour
     void ClearInputField()
     {
         terminalInput.text = "";
+    }
+
+    public void PlayerJoined(string playername)
+    {
+        Debug.Log("PlayerJoined");
+        ScrollToBottom(AddInterpreterLines(interpreter.PlayerHasArrived(playername)));
+        userInputLine.transform.SetAsLastSibling();
     }
 
     void AddDirectoryLine(string userInput)
