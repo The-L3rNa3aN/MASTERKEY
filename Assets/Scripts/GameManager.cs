@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         networkManager.networkAddress = GetIP();                                                    //Local machine IP is initialized at the start.
-        playerName = PlayerPrefs.GetString("PlayerName");
+        //playerName = PlayerPrefs.GetString("PlayerName");
     }
 
     private void Start()

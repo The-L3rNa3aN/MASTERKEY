@@ -54,8 +54,8 @@ public class PlayTerminalManager : MonoBehaviour
 
     public void PlayerJoined(string playername)
     {
-        Debug.Log("PlayerJoined");
-        ScrollToBottom(AddInterpreterLines(interpreter.PlayerHasArrived(playername)));
+        var uiObj = gameObject.GetComponent<PlayInterpreter>();
+        ScrollToBottom(AddInterpreterLines(uiObj.PlayerHasArrived(playername)));
         userInputLine.transform.SetAsLastSibling();
     }
 

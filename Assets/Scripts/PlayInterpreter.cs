@@ -101,22 +101,23 @@ public class PlayInterpreter : MonoBehaviour
             else { player.directUD = args[1]; }
             return response;
         }
-        
-        switch(args[0], args[1])                                    //Stopping the player's movement.
+
+        if(args[0] == "stop" && args[1] == "all")
         {
-            case ("stop", "all"):
-                player.StopMovement();
-                return response;
-
-            case ("stop", "lateral"):
-                player.directLR = null;
-                player.move = new Vector3(0f, 0f, player.move.z);
-                return response;
-
-            case ("stop", "medial"):
-                player.directUD = null;
-                player.move = new Vector3(player.move.x, 0f, 0f);
-                return response;
+            player.StopMovement();
+            return response;
+        }
+        else if(args[0] == "stop" && args[1] == "lateral")
+        {
+            player.directLR = null;
+            player.move = new Vector3(0f, 0f, player.move.z);
+            return response;
+        }
+        else if(args[0] == "stop" && args[1] == "medial")
+        {
+            player.directUD = null;
+            player.move = new Vector3(player.move.x, 0f, 0f);
+            return response;
         }
 
         if (args[0] == "dash" && args[1] != null && dashTimer == 0f)
@@ -222,8 +223,8 @@ public class PlayInterpreter : MonoBehaviour
 
         if(playerName != null)
         {
-            Debug.Log(playerName + " has arrived.");
-            response.Add(playerName + "has arrived.");
+            //response.Add(ColorString(playerName, colors["yellow"]) + " has joined the server.");
+            response.Add(playerName);
         }
         return response;
     }

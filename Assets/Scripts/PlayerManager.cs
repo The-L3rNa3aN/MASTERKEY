@@ -8,6 +8,7 @@ public class PlayerManager : NetworkBehaviour
     CharacterController characterController;
     public Vector3 velocity, move;
     [SerializeField] GameObject networkManager;
+    [SyncVar] public string playerTag;
     [HideInInspector] public float gravity = -20f;
     [HideInInspector] public float mass = 3f;
     public GameObject playerCamera;
@@ -49,6 +50,9 @@ public class PlayerManager : NetworkBehaviour
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
         networkManager = GameObject.Find("NetworkManager");
+        //playerTag = networkManager.GetComponent<GameManager>().playerName;
+
+        //if(isLocalPlayer) { CmdName(networkManager.GetComponent<GameManager>().playerName); }
 
         var spObjects = GameObject.FindGameObjectsWithTag("Spawn Point");                   //All spawnpoints are found at the start and are added to the list.
         for(int i = 0; i < spObjects.Length; i++)
@@ -56,11 +60,12 @@ public class PlayerManager : NetworkBehaviour
             spawnPoints.Add(spObjects[i]);
         }
 
-        var plyrs = GameObject.FindGameObjectsWithTag("Player");                            //Finds players in the server and broadcasts a message on joining.
+        /*var plyrs = GameObject.FindGameObjectsWithTag("Player");                            //Finds players in the server and broadcasts a message on joining.
         for (int i = 0; i < plyrs.Length; i++)
         {
-            plyrs[i].GetComponentInChildren<PlayTerminalManager>().PlayerJoined(PlayerPrefs.GetString("PlayerName"));
-        }
+            if(!isLocalPlayer) plyrs[i].GetComponentInChildren<PlayTerminalManager>().PlayerJoined(plyrs[i].GetComponent<PlayerManager>().playerTag);
+            /*Using "!isLocalPlayer" doesn't throw any errors for some reason. The host gets player names but the same thing doesn't happen with the client joining the server. WHY?
+        }*/
 
         //Randomized spawnpoints on start.
         networkManager.GetComponent<NetworkManager>().playerPrefab.transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;
@@ -185,10 +190,15 @@ public class PlayerManager : NetworkBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    public struct PlayerData : NetworkMessage
+    /*public struct PlayerData : NetworkMessage
     {
         public string playerName;
-    }
+    }*/
+
+    /*[Command] public void CmdName(string playerName)
+    {
+        playerTag = playerName;
+    }*/
 
     [ClientRpc] public void RpcKnockBack(Vector3 dir, float force)
     {

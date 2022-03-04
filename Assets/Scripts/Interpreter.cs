@@ -8,7 +8,6 @@ public class Interpreter : MonoBehaviour
 {
     public NetworkManager networkManager;
     TerminalManager terminalManager;
-    public bool testthing;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
     {
@@ -38,7 +37,7 @@ public class Interpreter : MonoBehaviour
         #region Welcome Responses
         if (userInput == "welcome")
         {
-            response.Add(ColorString("Hello, ", colors["yellow"]) + ColorString(playerName, colors["green"]) + ColorString(" and welcome to ", colors["yellow"]) + ColorString("MASTERKEY!", colors["aqua"]));
+            response.Add(ColorString("Hello, and welcome to ", colors["yellow"]) + ColorString("MASTERKEY!", colors["aqua"]));
             return response;
         }
 
@@ -58,7 +57,8 @@ public class Interpreter : MonoBehaviour
         if(args[0] == "settag" && args[1] != null)
         {
             response.Add("Your player tag is now set to " + ColorString(args[1], colors["yellow"]));
-            PlayerPrefs.SetString("PlayerName", args[1]);
+            //PlayerPrefs.SetString("PlayerName", args[1]);
+            playerName = args[1];
             return response;
         }
 

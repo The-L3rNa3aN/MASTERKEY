@@ -277,7 +277,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 724321029828341351}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.1, y: 3, z: 45.8}
+  m_LocalPosition: {x: 19.5, y: 3, z: 27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 724321030141257388}
@@ -334,6 +334,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   move: {x: 0, y: 0, z: 0}
   networkManager: {fileID: 0}
+  playerTag: 
   gravity: -20
   mass: 3
   playerCamera: {fileID: 2073578021652820910}
@@ -762,6 +763,7 @@ GameObject:
   - component: {fileID: 7643729335702702659}
   - component: {fileID: 3100696012847089614}
   - component: {fileID: 541579362046007790}
+  - component: {fileID: 3335315394128139510}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -869,6 +871,7 @@ MonoBehaviour:
   userInputLine: {fileID: 6545632903928191200}
   sr: {fileID: 3445534186711885417}
   msgList: {fileID: 570306637889120966}
+  interpreter: {fileID: 0}
 --- !u!114 &541579362046007790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -883,6 +886,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 724321029828341661}
   dashTimer: 0
+--- !u!114 &3335315394128139510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2166470640614679359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14d10eaa7a870f04fbe4eac7f527939f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terminal: {fileID: 3100696012847089614}
 --- !u!1 &6123181783281166630
 GameObject:
   m_ObjectHideFlags: 0
