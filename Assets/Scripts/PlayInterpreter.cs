@@ -48,15 +48,15 @@ public class PlayInterpreter : MonoBehaviour
 
         string[] args = userInput.Split();
 
-        if(userInput == "Shakira")
+        if (args[0] == "settag" && args[1] != null)
         {
-            Debug.Log("Command received.");
-            response.Add("This works.");
+            response.Add("Your player tag is now set to " + ColorString(args[1], colors["yellow"]));
+            player.CmdSetName(args[1]);
             return response;
         }
 
         #region Multiplayer Related Commands
-        if(args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isServer)
+        if (args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isServer)
         {
             networkManager.GetComponent<NetworkManager>().StopHost();
             return response;

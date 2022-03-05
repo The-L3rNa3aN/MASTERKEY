@@ -6,7 +6,8 @@ using Mirror;
 public class CustomNetworkManager : NetworkManager
 {
     [SerializeField] private string notificationMessage = string.Empty;
-    [ContextMenu("Send Notification")] private void SendNotification()
+
+    [ContextMenu("Send Notification")]private void SendNotification()
     {
         NetworkServer.SendToAll(new Notification { content = notificationMessage });
     }

@@ -58,7 +58,6 @@ public class Interpreter : MonoBehaviour
         {
             response.Add("Your player tag is now set to " + ColorString(args[1], colors["yellow"]));
             //PlayerPrefs.SetString("PlayerName", args[1]);
-            playerName = args[1];
             return response;
         }
 

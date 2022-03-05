@@ -5,10 +5,10 @@ using Mirror;
 
 public class PlayerManager : NetworkBehaviour
 {
+    [SyncVar] public string playerTag;
     CharacterController characterController;
     public Vector3 velocity, move;
     [SerializeField] GameObject networkManager;
-    [SyncVar] public string playerTag;
     [HideInInspector] public float gravity = -20f;
     [HideInInspector] public float mass = 3f;
     public GameObject playerCamera;
@@ -50,22 +50,14 @@ public class PlayerManager : NetworkBehaviour
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
         networkManager = GameObject.Find("NetworkManager");
-        //playerTag = networkManager.GetComponent<GameManager>().playerName;
-
-        //if(isLocalPlayer) { CmdName(networkManager.GetComponent<GameManager>().playerName); }
+        //SetName();
+        //StartCoroutine(BroadcastJoiningMessage());
 
         var spObjects = GameObject.FindGameObjectsWithTag("Spawn Point");                   //All spawnpoints are found at the start and are added to the list.
         for(int i = 0; i < spObjects.Length; i++)
         {
             spawnPoints.Add(spObjects[i]);
         }
-
-        /*var plyrs = GameObject.FindGameObjectsWithTag("Player");                            //Finds players in the server and broadcasts a message on joining.
-        for (int i = 0; i < plyrs.Length; i++)
-        {
-            if(!isLocalPlayer) plyrs[i].GetComponentInChildren<PlayTerminalManager>().PlayerJoined(plyrs[i].GetComponent<PlayerManager>().playerTag);
-            /*Using "!isLocalPlayer" doesn't throw any errors for some reason. The host gets player names but the same thing doesn't happen with the client joining the server. WHY?
-        }*/
 
         //Randomized spawnpoints on start.
         networkManager.GetComponent<NetworkManager>().playerPrefab.transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;
@@ -190,15 +182,11 @@ public class PlayerManager : NetworkBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    /*public struct PlayerData : NetworkMessage
-    {
-        public string playerName;
-    }*/
+    #region Name Set Up
+    [Command] public void CmdSetName(string name) => RpcSetName(name);
 
-    /*[Command] public void CmdName(string playerName)
-    {
-        playerTag = playerName;
-    }*/
+    [ClientRpc] public void RpcSetName(string name) => playerTag = name;
+    #endregion
 
     [ClientRpc] public void RpcKnockBack(Vector3 dir, float force)
     {
@@ -229,8 +217,9 @@ public class PlayerManager : NetworkBehaviour
 
     [Command] public void CmdDoDamage(GameObject enemyGameObject)
     {
-        if (corruptus == true) { enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(2); }                          //Victim takes twice the damage because of the player's Corruptus.
-        else if (corruptus == false) { enemyGameObject.GetComponent<PlayerManager>().RpcTakeDamage(1); }
+        var enemy = enemyGameObject.GetComponent<PlayerManager>();
+        if (corruptus == true) { enemy.RpcTakeDamage(2, playerTag); }                                                       //Victim takes twice the damage because of the player's Corruptus.
+        else if (corruptus == false) { enemy.RpcTakeDamage(1, playerTag); }
 
         if(enemyGameObject.GetComponent<PlayerManager>().escren == false)                                                   //Victims under the Escren effect don't suffer knockback.
         {
@@ -238,11 +227,16 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
-    [Command] public void CmdDoSelfDamage(int helth) => RpcTakeDamage(helth);
+    [Command] public void CmdDoSelfDamage(int helth) => RpcTakeDamage(helth, string.Empty);
 
-    [Command] public void CmdSeppuku() => RpcTakeDamage(health);                                                  //Player committing suicide by running the "kill" command.
+    [Command]
+    public void CmdSeppuku()
+    {
+        RpcTakeDamage(health, string.Empty);                                                  //Player committing suicide by running the "kill" command.
+        NetworkServer.SendToAll(new Notification { content = "Someone committed suicide." } );
+    }
     
-    [ClientRpc] public void RpcTakeDamage(int dmg)                                                                //This RPC method handles taking damage and death.
+    [ClientRpc] public void RpcTakeDamage(int dmg, string enemyTag)                                                          //This RPC method handles taking damage and death.
     {
         if (corruptus == true)                          //Players under the Corruptus effect take more damage then usual.
         {
@@ -257,6 +251,7 @@ public class PlayerManager : NetworkBehaviour
 
         if (health <= 0)                                        //DIE!
         {
+            NetworkServer.SendToAll(new Notification { content = enemyTag + " has slain " + playerTag });
             GFX.gameObject.SetActive(false);
             characterController.enabled = false;
             StopMovement();
@@ -348,18 +343,9 @@ public class PlayerManager : NetworkBehaviour
     }
     #endregion
 
-    /*private void OnConnectedToServer()
+    IEnumerator BroadcastJoiningMessage()
     {
-        PlayerData joinMsg = new PlayerData()
-        {
-            playerName = networkManager.GetComponent<GameManager>().playerName
-        };
-        NetworkServer.SendToAll(joinMsg);
-        NetworkClient.RegisterHandler<PlayerData>(Function3);
+        yield return new WaitForSeconds(1f);
+        NetworkServer.SendToAll(new Notification { content = "Someone is here." } );
     }
-
-    void Function3(PlayerData msg)
-    {
-        Debug.Log(msg.playerName);
-    }*/
 }

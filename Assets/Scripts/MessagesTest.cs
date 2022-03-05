@@ -16,11 +16,11 @@ public class MessagesTest : MonoBehaviour
     {
         if(!NetworkClient.active) { return; }
 
-        NetworkClient.RegisterHandler<Notification>(OnNotification);
+        NetworkClient.ReplaceHandler<Notification>(OnNotification);         //Using "RegisterHandler" caused warnings and won't broadcast some messages.
     }
 
     private void OnNotification(Notification msg)
     {
-        terminal.PlayerJoined(msg.content);
+        terminal.Notifs(msg.content);
     }
 }

@@ -52,7 +52,7 @@ public class PlayTerminalManager : MonoBehaviour
         terminalInput.text = "";
     }
 
-    public void PlayerJoined(string playername)
+    public void Notifs(string playername)
     {
         var uiObj = gameObject.GetComponent<PlayInterpreter>();
         ScrollToBottom(AddInterpreterLines(uiObj.PlayerHasArrived(playername)));
