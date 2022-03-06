@@ -6,14 +6,15 @@ using Mirror;
 public class PlayerManager : NetworkBehaviour
 {
     [SyncVar] public string playerTag;
-    CharacterController characterController;
+    
     public Vector3 velocity, move;
-    [SerializeField] GameObject networkManager;
-    [HideInInspector] public float gravity = -20f;
-    [HideInInspector] public float mass = 3f;
     public GameObject playerCamera;
     public GameObject terminal;
     public Transform GFX;
+    private CharacterController characterController;
+    private GameObject networkManager;
+    [HideInInspector] public float gravity = -20f;
+    [HideInInspector] public float mass = 3f;
 
     [Header("Visualizers")]
         [Range(0f, 1f)] public float interp;
@@ -21,17 +22,17 @@ public class PlayerManager : NetworkBehaviour
 
     [Header("Health and Attack related Vars")]
         [SyncVar] public int health = 3;
-        [HideInInspector] public bool doAttack;
-        [HideInInspector] public bool toRespawn;
         public Vector3 impact = Vector3.zero;
         public Vector3 attackerPos;
         private SphereCollider attackSphere;
-        float healthTimer = 5f;
+        private float healthTimer = 5f;
+        [HideInInspector] public bool doAttack;
+        [HideInInspector] public bool toRespawn;
 
     [Header("Powerup Effects")]
         [SyncVar] public bool corruptus;
-        [SerializeField] float corruptusTimer = 20f;
         [SyncVar] public bool escren;
+        private float corruptusTimer = 20f;
 
     [Header("Normal Movement-Related Vars")]
         public string directLR;
@@ -53,10 +54,7 @@ public class PlayerManager : NetworkBehaviour
         CmdSetName(PlayerPrefs.GetString("PlayerName"));                                    //Sets the name of the player. It is trying to send a command to an object of no authority. WHY?
 
         var spObjects = GameObject.FindGameObjectsWithTag("Spawn Point");                   //All spawnpoints are found at the start and are added to the list.
-        for (int i = 0; i < spObjects.Length; i++)
-        {
-            spawnPoints.Add(spObjects[i]);
-        }
+        for (int i = 0; i < spObjects.Length; i++) { spawnPoints.Add(spObjects[i]); }
 
         //Randomized spawnpoints on start.
         networkManager.GetComponent<NetworkManager>().playerPrefab.transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;
@@ -87,10 +85,7 @@ public class PlayerManager : NetworkBehaviour
             toRespawn = false;
         }
 
-        if (impact.magnitude > 0.2f)
-        {
-            characterController.Move(impact * Time.deltaTime);
-        }
+        if (impact.magnitude > 0.2f) { characterController.Move(impact * Time.deltaTime); }
         impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
 
         #region Death Camera Close-Up
@@ -182,7 +177,12 @@ public class PlayerManager : NetworkBehaviour
     }
 
     #region Name Set Up
-    [Command] public void CmdSetName(string name) => RpcSetName(name);
+    [Command]
+    public void CmdSetName(string name)
+    {
+        RpcSetName(name);
+        NetworkServer.SendToAll(new Notification { content = name + " has joined." });                                      //Running this in Start() prevents the client from joining the server.
+    }
 
     [ClientRpc] public void RpcSetName(string name) => playerTag = name;
     #endregion
@@ -228,13 +228,9 @@ public class PlayerManager : NetworkBehaviour
 
     [Command] public void CmdDoSelfDamage(int helth) => RpcTakeDamage(helth, string.Empty);
 
-    [Command] public void CmdSeppuku()
-    {
-        RpcTakeDamage(health, string.Empty);                                                  //Player committing suicide by running the "kill" command.
-        NetworkServer.SendToAll(new Notification { content = "Someone committed suicide." } );
-    }
-    
-    [ClientRpc] public void RpcTakeDamage(int dmg, string enemyTag)                                                          //This RPC method handles taking damage and death.
+    [Command] public void CmdSeppuku() => RpcTakeDamage(health, string.Empty);                                               //Player committing suicide by running the "kill" command.
+
+    [ClientRpc] public void RpcTakeDamage(int dmg, string attackerTag)                                                       //This RPC method handles taking damage and death.
     {
         if (corruptus == true)                          //Players under the Corruptus effect take more damage then usual.
         {
@@ -249,7 +245,10 @@ public class PlayerManager : NetworkBehaviour
 
         if (health <= 0)                                        //DIE!
         {
-            if (enemyTag != string.Empty) { NetworkServer.SendToAll(new Notification { content = enemyTag + " has slain " + playerTag }); }
+            //Prevents the notification from being sent if the player commits suicide.
+            if (attackerTag != string.Empty) { NetworkServer.SendToAll(new Notification { content = attackerTag + " has slain " + playerTag }); }
+            else { NetworkServer.SendToAll(new Notification { content = playerTag + " committed suicide." }); }
+
             GFX.gameObject.SetActive(false);
             characterController.enabled = false;
             StopMovement();

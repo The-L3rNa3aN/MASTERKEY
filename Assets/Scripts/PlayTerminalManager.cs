@@ -52,10 +52,10 @@ public class PlayTerminalManager : MonoBehaviour
         terminalInput.text = "";
     }
 
-    public void Notifs(string playername)
+    public void Notifs(string notif)                                //Used for killfeeds and other notifications...
     {
         var uiObj = gameObject.GetComponent<PlayInterpreter>();
-        ScrollToBottom(AddInterpreterLines(uiObj.PlayerHasArrived(playername)));
+        ScrollToBottom(AddInterpreterLines(uiObj.ReceiveNetworkNotifs(notif)));
         userInputLine.transform.SetAsLastSibling();
     }
 

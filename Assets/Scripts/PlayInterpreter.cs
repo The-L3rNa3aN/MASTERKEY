@@ -35,11 +35,6 @@ public class PlayInterpreter : MonoBehaviour
     {
         if (dashTimer > 0f) { dashTimer -= Time.deltaTime; }
         if (dashTimer <= 0f) { dashTimer = 0f; }
-
-        /*if(player.attackSphere.activeInHierarchy == true)
-        {
-            player.attackSphere.SetActive(false);
-        }*/
     }
 
     public List<string> Interpret(string userInput)
@@ -47,19 +42,6 @@ public class PlayInterpreter : MonoBehaviour
         response.Clear();
 
         string[] args = userInput.Split();
-
-        /*if (args[0] == "settag" && args[1] != null)
-        {
-            response.Add("Your player tag is now set to " + ColorString(args[1], colors["yellow"]));
-            player.CmdSetName(args[1]);
-            return response;
-        }*/
-
-        if(args[0] == "gettag")
-        {
-            response.Add("Your gamertag: " + ColorString(player.playerTag, colors["yellow"]));
-            return response;
-        }
 
         #region Multiplayer Related Commands
         if (args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isServer)
@@ -81,6 +63,12 @@ public class PlayInterpreter : MonoBehaviour
         else if(args[0] == "ipaddress" && player.GetComponent<NetworkBehaviour>().isClient)
         {
             response.Add("Your IP Address: " + ColorString(networkManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("client", colors["white"]));
+            return response;
+        }
+
+        if (args[0] == "gettag")
+        {
+            response.Add("Your gamertag: " + ColorString(player.playerTag, colors["yellow"]));
             return response;
         }
         #endregion
@@ -223,15 +211,11 @@ public class PlayInterpreter : MonoBehaviour
         response.Add(ColorString(a, colors["light blue"]) + ": " + ColorString(b, colors["red"]));
     }
 
-    public List<string> PlayerHasArrived(string playerName)
+    public List<string> ReceiveNetworkNotifs(string notif)              //Used in PlayTerminalManager. DO NOT DELETE.
     {
         response.Clear();
 
-        if(playerName != null)
-        {
-            //response.Add(ColorString(playerName, colors["yellow"]) + " has joined the server.");
-            response.Add(playerName);
-        }
+        if(notif != null)  { response.Add(notif); }
         return response;
     }
 }

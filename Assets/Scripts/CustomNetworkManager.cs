@@ -11,4 +11,9 @@ public class CustomNetworkManager : NetworkManager
     {
         NetworkServer.SendToAll(new Notification { content = notificationMessage });
     }
+
+    public override void OnStopClient()
+    {
+        NetworkServer.SendToAll(new Notification { content = "Disconnected." });
+    }
 }
