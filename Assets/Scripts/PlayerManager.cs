@@ -50,9 +50,7 @@ public class PlayerManager : NetworkBehaviour
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
         networkManager = GameObject.Find("NetworkManager");
-
-        //if (isLocalPlayer) { playerTag = PlayerPrefs.GetString("PlayerName"); }
-        CmdSetName(PlayerPrefs.GetString("PlayerName"));
+        CmdSetName(PlayerPrefs.GetString("PlayerName"));                                    //Sets the name of the player. It is trying to send a command to an object of no authority. WHY?
 
         var spObjects = GameObject.FindGameObjectsWithTag("Spawn Point");                   //All spawnpoints are found at the start and are added to the list.
         for (int i = 0; i < spObjects.Length; i++)
