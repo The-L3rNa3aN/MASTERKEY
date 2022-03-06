@@ -176,6 +176,11 @@ public class PlayerManager : NetworkBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
+    [Command] public void DisconnectAsClient()
+    {
+        NetworkServer.SendToAll(new Notification { content = playerTag + " has left." });
+    }
+
     #region Name Set Up
     [Command]
     public void CmdSetName(string name)

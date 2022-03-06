@@ -334,21 +334,19 @@ MonoBehaviour:
   playerTag: 
   velocity: {x: 0, y: 0, z: 0}
   move: {x: 0, y: 0, z: 0}
-  networkManager: {fileID: 0}
-  gravity: -20
-  mass: 3
   playerCamera: {fileID: 2073578021652820910}
   terminal: {fileID: 2166470640614679359}
   GFX: {fileID: 724321030141257388}
+  gravity: -20
+  mass: 3
   interp: 0.72
   interpSpeed: 3
   health: 3
-  doAttack: 0
-  toRespawn: 0
   impact: {x: 0, y: 0, z: 0}
   attackerPos: {x: 0, y: 0, z: 0}
+  doAttack: 0
+  toRespawn: 0
   corruptus: 0
-  corruptusTimer: 20
   escren: 0
   directLR: 
   directUD: 

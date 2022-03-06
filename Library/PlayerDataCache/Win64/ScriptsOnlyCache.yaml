@@ -1041,7 +1041,7 @@ ScriptsOnlyBuild:
     className: UIFoldout
   - hash:
       serializedVersion: 2
-      Hash: 725fd9e1bc4de46dd6766a9e4e56b481
+      Hash: 2780c472d8f18870339173ab4e7805ab
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager

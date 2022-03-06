@@ -51,7 +51,9 @@ public class PlayInterpreter : MonoBehaviour
         }
         else if(args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isClient)
         {
-            networkManager.GetComponent<NetworkManager>().StopClient();
+            player.DisconnectAsClient();
+            //networkManager.GetComponent<NetworkManager>().StopClient();
+            StartCoroutine(GetOut());
             return response;
         }
 
@@ -217,5 +219,11 @@ public class PlayInterpreter : MonoBehaviour
 
         if(notif != null)  { response.Add(notif); }
         return response;
+    }
+
+    IEnumerator GetOut()
+    {
+        yield return new WaitForSeconds(1f);
+        networkManager.GetComponent<NetworkManager>().StopClient();
     }
 }
