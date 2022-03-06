@@ -52,7 +52,7 @@ public class PlayerManager : NetworkBehaviour
         networkManager = GameObject.Find("NetworkManager");
 
         //if (isLocalPlayer) { playerTag = PlayerPrefs.GetString("PlayerName"); }
-        playerTag = PlayerPrefs.GetString("PlayerName");
+        CmdSetName(PlayerPrefs.GetString("PlayerName"));
 
         var spObjects = GameObject.FindGameObjectsWithTag("Spawn Point");                   //All spawnpoints are found at the start and are added to the list.
         for (int i = 0; i < spObjects.Length; i++)
@@ -230,8 +230,7 @@ public class PlayerManager : NetworkBehaviour
 
     [Command] public void CmdDoSelfDamage(int helth) => RpcTakeDamage(helth, string.Empty);
 
-    [Command]
-    public void CmdSeppuku()
+    [Command] public void CmdSeppuku()
     {
         RpcTakeDamage(health, string.Empty);                                                  //Player committing suicide by running the "kill" command.
         NetworkServer.SendToAll(new Notification { content = "Someone committed suicide." } );
@@ -252,7 +251,7 @@ public class PlayerManager : NetworkBehaviour
 
         if (health <= 0)                                        //DIE!
         {
-            NetworkServer.SendToAll(new Notification { content = enemyTag + " has slain " + playerTag });
+            if (enemyTag != string.Empty) { NetworkServer.SendToAll(new Notification { content = enemyTag + " has slain " + playerTag }); }
             GFX.gameObject.SetActive(false);
             characterController.enabled = false;
             StopMovement();
