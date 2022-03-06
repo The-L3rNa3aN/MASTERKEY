@@ -50,11 +50,12 @@ public class PlayerManager : NetworkBehaviour
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
         networkManager = GameObject.Find("NetworkManager");
-        //SetName();
-        //StartCoroutine(BroadcastJoiningMessage());
+
+        //if (isLocalPlayer) { playerTag = PlayerPrefs.GetString("PlayerName"); }
+        playerTag = PlayerPrefs.GetString("PlayerName");
 
         var spObjects = GameObject.FindGameObjectsWithTag("Spawn Point");                   //All spawnpoints are found at the start and are added to the list.
-        for(int i = 0; i < spObjects.Length; i++)
+        for (int i = 0; i < spObjects.Length; i++)
         {
             spawnPoints.Add(spObjects[i]);
         }
@@ -342,10 +343,4 @@ public class PlayerManager : NetworkBehaviour
         }
     }
     #endregion
-
-    IEnumerator BroadcastJoiningMessage()
-    {
-        yield return new WaitForSeconds(1f);
-        NetworkServer.SendToAll(new Notification { content = "Someone is here." } );
-    }
 }

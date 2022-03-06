@@ -48,10 +48,16 @@ public class PlayInterpreter : MonoBehaviour
 
         string[] args = userInput.Split();
 
-        if (args[0] == "settag" && args[1] != null)
+        /*if (args[0] == "settag" && args[1] != null)
         {
             response.Add("Your player tag is now set to " + ColorString(args[1], colors["yellow"]));
             player.CmdSetName(args[1]);
+            return response;
+        }*/
+
+        if(args[0] == "gettag")
+        {
+            response.Add("Your gamertag: " + ColorString(player.playerTag, colors["yellow"]));
             return response;
         }
 

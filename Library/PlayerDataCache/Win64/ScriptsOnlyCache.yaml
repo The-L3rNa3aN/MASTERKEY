@@ -2,8 +2,10 @@ ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
     - CameraFollowScript
+    - CustomNetworkManager
     - GameManager
     - Interpreter
+    - MessagesTest
     - PlayInterpreter
     - PlayTerminalManager
     - PlayerManager
@@ -15,7 +17,6 @@ ScriptsOnlyBuild:
     - Mirror.NetworkTransformChild
     Mirror.dll:
     - Mirror.NetworkIdentity
-    - Mirror.NetworkManager
     - kcp2k.KcpTransport
     ParrelSync.dll:
     - ParrelSync.ClonesManagerWindow
@@ -139,8 +140,6 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3036}
     - Class: 114
-      Script: {instanceID: 3040}
-    - Class: 114
       Script: {instanceID: 3098}
     - Class: 114
       Script: {instanceID: 3118}
@@ -189,39 +188,43 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 5448}
     - Class: 114
-      Script: {instanceID: 5518}
+      Script: {instanceID: 5466}
     - Class: 114
-      Script: {instanceID: 5524}
+      Script: {instanceID: 5520}
     - Class: 114
-      Script: {instanceID: 5614}
+      Script: {instanceID: 5526}
     - Class: 114
-      Script: {instanceID: 5648}
+      Script: {instanceID: 5616}
     - Class: 114
-      Script: {instanceID: 5688}
+      Script: {instanceID: 5650}
     - Class: 114
-      Script: {instanceID: 5752}
+      Script: {instanceID: 5690}
     - Class: 114
-      Script: {instanceID: 5760}
+      Script: {instanceID: 5754}
     - Class: 114
-      Script: {instanceID: 5852}
+      Script: {instanceID: 5762}
     - Class: 114
-      Script: {instanceID: 5982}
+      Script: {instanceID: 5854}
     - Class: 114
-      Script: {instanceID: 6080}
+      Script: {instanceID: 5886}
     - Class: 114
-      Script: {instanceID: 6122}
+      Script: {instanceID: 5986}
     - Class: 114
-      Script: {instanceID: 6434}
+      Script: {instanceID: 6084}
     - Class: 114
-      Script: {instanceID: 6644}
+      Script: {instanceID: 6126}
     - Class: 114
-      Script: {instanceID: 6822}
+      Script: {instanceID: 6438}
     - Class: 114
-      Script: {instanceID: 6926}
+      Script: {instanceID: 6648}
     - Class: 114
-      Script: {instanceID: 6964}
+      Script: {instanceID: 6826}
     - Class: 114
-      Script: {instanceID: 7142}
+      Script: {instanceID: 6930}
+    - Class: 114
+      Script: {instanceID: 6968}
+    - Class: 114
+      Script: {instanceID: 7146}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -272,7 +275,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 5400}
     - Class: 114
-      Script: {instanceID: 5752}
+      Script: {instanceID: 5754}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 157
@@ -618,7 +621,7 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerVBox
   - hash:
       serializedVersion: 2
-      Hash: 65727a0ad92f3cf2f909071dfc4a2b97
+      Hash: 16baf21c482a64839301c34919c701fc
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Interpreter
@@ -1038,7 +1041,7 @@ ScriptsOnlyBuild:
     className: UIFoldout
   - hash:
       serializedVersion: 2
-      Hash: 43fc8ada44625da8256113be145be6fc
+      Hash: 725fd9e1bc4de46dd6766a9e4e56b481
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager
@@ -1084,6 +1087,12 @@ ScriptsOnlyBuild:
     assemblyName: Mirror.Components.dll
     namespaceName: Mirror
     className: NetworkMatch
+  - hash:
+      serializedVersion: 2
+      Hash: b6c6e9ec2ab777787a58d7f150c85849
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: CustomNetworkManager
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -1198,6 +1207,12 @@ ScriptsOnlyBuild:
     assemblyName: Mirror.Components.dll
     namespaceName: Mirror
     className: DistanceInterestManagementCustomRange
+  - hash:
+      serializedVersion: 2
+      Hash: 8df0f902dd78ea99b2001f2d1b6d1662
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: MessagesTest
   - hash:
       serializedVersion: 2
       Hash: 4fd8bf02e3089425d3502e26c44ba31a

@@ -50,14 +50,14 @@ public class Interpreter : MonoBehaviour
 
         if(args[0] == "gettag")
         {
-            response.Add("Your playertag: " + ColorString(playerName, colors["yellow"]));
+            response.Add("Your playertag: " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]));
             return response;
         }
 
         if(args[0] == "settag" && args[1] != null)
         {
             response.Add("Your player tag is now set to " + ColorString(args[1], colors["yellow"]));
-            //PlayerPrefs.SetString("PlayerName", args[1]);
+            PlayerPrefs.SetString("PlayerName", args[1]);
             return response;
         }
 
