@@ -21,6 +21,20 @@ public class PlayTerminalManager : MonoBehaviour
         interpreter = GetComponent<PlayInterpreter>();
         terminalInput.ActivateInputField();                         //Activates the input field on start.
         //Cursor.lockState = CursorLockMode.Locked;
+        OnConnectResponses();
+    }
+
+    public void OnConnectResponses()
+    {
+
+        if(interpreter.player.isClient)
+        {
+            ScrollToBottom(AddInterpreterLines(interpreter.Interpret("isClient"))); userInputLine.transform.SetAsLastSibling();
+        }
+        else if(interpreter.player.isServer)
+        {
+            ScrollToBottom(AddInterpreterLines(interpreter.Interpret("isHost"))); userInputLine.transform.SetAsLastSibling();
+        }
     }
 
     private void OnGUI()

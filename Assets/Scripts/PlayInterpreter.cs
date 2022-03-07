@@ -7,7 +7,7 @@ using Mirror;
 public class PlayInterpreter : MonoBehaviour
 {
     PlayTerminalManager terminalManager;
-    GameObject networkManager;
+    [SerializeField] GameObject networkManager;
     public PlayerManager player;
 
     public float dashTimer = 0f;
@@ -35,13 +35,28 @@ public class PlayInterpreter : MonoBehaviour
     {
         if (dashTimer > 0f) { dashTimer -= Time.deltaTime; }
         if (dashTimer <= 0f) { dashTimer = 0f; }
+
+        Debug.Log(networkManager);
     }
 
     public List<string> Interpret(string userInput)
     {
         response.Clear();
-
         string[] args = userInput.Split();
+
+        #region On Connect Responses
+        if(userInput == "isClient" && networkManager != null)
+        {
+            response.Add("Successfully connected to " + ColorString(networkManager.GetComponent<NetworkManager>().networkAddress, colors["yellow"]) + " as a client.");
+            return response;
+        }
+        
+        if(userInput == "isHost" && networkManager != null)             //This doesn't work for some reason, and I dunno why.
+        {
+            response.Add("Successfully started a server at " + ColorString(networkManager.GetComponent<NetworkManager>().networkAddress, colors["yellow"]));
+            return response;
+        }
+        #endregion
 
         #region Multiplayer Related Commands
         if (args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isServer)
@@ -52,7 +67,6 @@ public class PlayInterpreter : MonoBehaviour
         else if(args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isClient)
         {
             player.DisconnectAsClient();
-            //networkManager.GetComponent<NetworkManager>().StopClient();
             StartCoroutine(GetOut());
             return response;
         }
@@ -223,7 +237,7 @@ public class PlayInterpreter : MonoBehaviour
 
     IEnumerator GetOut()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.125f);
         networkManager.GetComponent<NetworkManager>().StopClient();
     }
 }
