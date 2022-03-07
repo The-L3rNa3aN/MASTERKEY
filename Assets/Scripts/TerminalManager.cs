@@ -39,6 +39,11 @@ public class TerminalManager : MonoBehaviour
         ScrollToBottom(AddInterpreterLines(interpreter.Interpret(welcomeHelp))); userInputLine.transform.SetAsLastSibling();
     }
 
+    public void DisconnectedToLobby()
+    {
+        ScrollToBottom(AddInterpreterLines(interpreter.Interpret("disconnected"))); userInputLine.transform.SetAsLastSibling();
+    }
+
     public void ClearScreen()                                              //Method for clearing the screen.
     {
         foreach (Transform child in msgList.transform)

@@ -34,6 +34,11 @@ public class Interpreter : MonoBehaviour
 
         var playerName = networkManager.GetComponent<GameManager>().playerName;
 
+        if(userInput == "disconnected")
+        {
+            response.Add("You disconnected from the server.");
+            return response;
+        }
         #region Welcome Responses
         if (userInput == "welcome")
         {

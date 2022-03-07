@@ -6,6 +6,7 @@ TagManager:
   tags:
   - NetworkManager
   - Spawn Point
+  - UI
   layers:
   - Default
   - TransparentFX
