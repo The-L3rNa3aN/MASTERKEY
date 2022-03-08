@@ -70,11 +70,13 @@
     <Compile Include="Assets\Scripts\Scripts (UI Gradient)\SetDirty.cs" />
     <Compile Include="Assets\Scripts\PlayerManager.cs" />
     <Compile Include="Assets\Scripts\PowerupScript.cs" />
+    <Compile Include="Assets\Scripts\CustomNetworkManager.cs" />
+    <Compile Include="Assets\Scripts\MessagesTest.cs" />
     <Compile Include="Assets\Scripts\PlayInterpreter.cs" />
     <Compile Include="Assets\Scripts\Offline\PlayTerminalManager1.cs" />
     <Compile Include="Assets\Scripts\PlayTerminalManager.cs" />
-    <Compile Include="Assets\Scripts\CustomNetworkManager.cs" />
-    <Compile Include="Assets\Scripts\MessagesTest.cs" />
+    <Compile Include="Assets\Scripts\ScoreboardItemManager.cs" />
+    <Compile Include="Assets\Scripts\ScoreBoard.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />

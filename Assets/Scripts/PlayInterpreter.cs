@@ -9,6 +9,7 @@ public class PlayInterpreter : MonoBehaviour
     PlayTerminalManager terminalManager;
     [SerializeField] GameObject networkManager;
     public PlayerManager player;
+    public GameObject scoreboard;
 
     public float dashTimer = 0f;
 
@@ -35,14 +36,23 @@ public class PlayInterpreter : MonoBehaviour
     {
         if (dashTimer > 0f) { dashTimer -= Time.deltaTime; }
         if (dashTimer <= 0f) { dashTimer = 0f; }
-
-        Debug.Log(networkManager);
     }
 
     public List<string> Interpret(string userInput)
     {
         response.Clear();
         string[] args = userInput.Split();
+
+        if(args[0] == "scoreboard" && scoreboard.activeSelf == false)
+        {
+            scoreboard.SetActive(true);
+            return response;
+        }
+        else if(args[0] == "scoreboard" && scoreboard.activeSelf == true)
+        {
+            scoreboard.SetActive(false);
+            return response;
+        }
 
         #region On Connect Responses
         if(userInput == "isClient" && networkManager != null)

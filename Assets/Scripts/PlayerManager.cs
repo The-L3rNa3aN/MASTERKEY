@@ -15,9 +15,9 @@ public class PlayerManager : NetworkBehaviour
     private float mass = 3f;
 
     [Header("Player Stats and Scores")]
-    [SyncVar] public string playerTag;
-    [SyncVar] public int kills;
-    [SyncVar] public int deaths;
+        [SyncVar] public string playerTag;
+        [SyncVar] public int kills;
+        [SyncVar] public int deaths;
 
     [Header("Visualizers")]
         [Range(0f, 1f)] public float interp;
@@ -243,7 +243,7 @@ public class PlayerManager : NetworkBehaviour
     [Command] public void CmdSeppuku()                                                                                      //Player committing suicide by running the "kill" command.
     {
         RpcTakeDamage(health, string.Empty);
-        kills--;                                    //Because suicide sucks and the easy way out isn't always the best way.
+        kills--;                                        //Because suicide sucks and the easy way out isn't always the best way.
     }
 
     [ClientRpc] public void RpcTakeDamage(int dmg, string attackerTag)                                                       //This RPC method handles taking damage and death.

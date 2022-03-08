@@ -6,15 +6,14 @@ using Mirror;
 public class CustomNetworkManager : NetworkManager
 {
     [SerializeField] private string notificationMessage = string.Empty;
-    //public GameObject terminalManager;
 
     [ContextMenu("Send Notification")]private void SendNotification()
     {
         NetworkServer.SendToAll(new Notification { content = notificationMessage });
     }
 
-    private new void Start()
+    private void Update()
     {
-        //terminalManager = GameObject.Find("YOUandAYE");
+        Debug.Log(numPlayers);
     }
 }
