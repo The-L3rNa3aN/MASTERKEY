@@ -4,17 +4,20 @@ using UnityEngine;
 using Mirror;
 
 public class PlayerManager : NetworkBehaviour
-{
-    [SyncVar] public string playerTag;
-    
+{ 
     public Vector3 velocity, move;
     public GameObject playerCamera;
     public GameObject terminal;
     public Transform GFX;
     private CharacterController characterController;
     private GameObject networkManager;
-    [HideInInspector] public float gravity = -20f;
-    [HideInInspector] public float mass = 3f;
+    private float gravity = -20f;
+    private float mass = 3f;
+
+    [Header("Player Stats and Scores")]
+    [SyncVar] public string playerTag;
+    [SyncVar] public int kills;
+    [SyncVar] public int deaths;
 
     [Header("Visualizers")]
         [Range(0f, 1f)] public float interp;
@@ -219,6 +222,13 @@ public class PlayerManager : NetworkBehaviour
     [Command] public void CmdDoDamage(GameObject enemyGameObject)
     {
         var enemy = enemyGameObject.GetComponent<PlayerManager>();
+        
+        if(enemy.health <= 1)           //Because the info before striking is different from the final reduced health of the enemy / enemies.
+        {
+            kills++;
+            enemy.deaths++;
+        }
+
         if (corruptus == true) { enemy.RpcTakeDamage(2, playerTag); }                                                       //Victim takes twice the damage because of the player's Corruptus.
         else if (corruptus == false) { enemy.RpcTakeDamage(1, playerTag); }
 
@@ -230,7 +240,11 @@ public class PlayerManager : NetworkBehaviour
 
     [Command] public void CmdDoSelfDamage(int helth) => RpcTakeDamage(helth, string.Empty);
 
-    [Command] public void CmdSeppuku() => RpcTakeDamage(health, string.Empty);                                               //Player committing suicide by running the "kill" command.
+    [Command] public void CmdSeppuku()                                                                                      //Player committing suicide by running the "kill" command.
+    {
+        RpcTakeDamage(health, string.Empty);
+        kills--;                                    //Because suicide sucks and the easy way out isn't always the best way.
+    }
 
     [ClientRpc] public void RpcTakeDamage(int dmg, string attackerTag)                                                       //This RPC method handles taking damage and death.
     {
