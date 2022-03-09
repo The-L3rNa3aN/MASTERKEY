@@ -6,14 +6,17 @@ using Mirror;
 public class CustomNetworkManager : NetworkManager
 {
     [SerializeField] private string notificationMessage = string.Empty;
+    public GameObject scoreBoard;
+
+    public List<NetworkConnection> players = new List<NetworkConnection>();
 
     [ContextMenu("Send Notification")]private void SendNotification()
     {
         NetworkServer.SendToAll(new Notification { content = notificationMessage });
     }
 
-    private void Update()
+    public override void OnStartClient()
     {
-        Debug.Log(numPlayers);
+        scoreBoard.GetComponent<ScoreBoard>().FindPlayers();
     }
 }

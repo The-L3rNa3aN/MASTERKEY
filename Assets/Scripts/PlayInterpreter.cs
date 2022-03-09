@@ -54,6 +54,13 @@ public class PlayInterpreter : MonoBehaviour
             return response;
         }
 
+        if(args[0] == "conn")
+        {
+            player.PlayerCount();
+            response.Add(player.conn.ToString());
+            return response;
+        }
+
         #region On Connect Responses
         if(userInput == "isClient" && networkManager != null)
         {

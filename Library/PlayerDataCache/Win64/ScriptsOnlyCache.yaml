@@ -10,6 +10,8 @@ ScriptsOnlyBuild:
     - PlayTerminalManager
     - PlayerManager
     - PowerupScript
+    - ScoreBoard
+    - ScoreboardItemManager
     - TerminalManager
     - UIGradient
     Mirror.Components.dll:
@@ -18,8 +20,6 @@ ScriptsOnlyBuild:
     Mirror.dll:
     - Mirror.NetworkIdentity
     - kcp2k.KcpTransport
-    ParrelSync.dll:
-    - ParrelSync.ClonesManagerWindow
     Unity.RenderPipelines.Core.Runtime.dll:
     - UnityEngine.Rendering.UI.DebugUIHandlerBitField
     - UnityEngine.Rendering.UI.DebugUIHandlerButton
@@ -118,23 +118,23 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1586}
     - Class: 114
-      Script: {instanceID: 1588}
+      Script: {instanceID: 1592}
     - Class: 114
-      Script: {instanceID: 1594}
+      Script: {instanceID: 1730}
     - Class: 114
-      Script: {instanceID: 1732}
+      Script: {instanceID: 1814}
     - Class: 114
-      Script: {instanceID: 1816}
+      Script: {instanceID: 2242}
     - Class: 114
-      Script: {instanceID: 2244}
+      Script: {instanceID: 2250}
     - Class: 114
-      Script: {instanceID: 2252}
+      Script: {instanceID: 2330}
     - Class: 114
-      Script: {instanceID: 2332}
+      Script: {instanceID: 2532}
     - Class: 114
-      Script: {instanceID: 2534}
+      Script: {instanceID: 2678}
     - Class: 114
-      Script: {instanceID: 2680}
+      Script: {instanceID: 2756}
     - Class: 114
       Script: {instanceID: 2970}
     - Class: 114
@@ -164,67 +164,71 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4102}
     - Class: 114
-      Script: {instanceID: 4542}
+      Script: {instanceID: 4304}
     - Class: 114
-      Script: {instanceID: 4598}
+      Script: {instanceID: 4544}
     - Class: 114
-      Script: {instanceID: 4726}
+      Script: {instanceID: 4600}
     - Class: 114
-      Script: {instanceID: 4740}
+      Script: {instanceID: 4728}
     - Class: 114
-      Script: {instanceID: 4802}
+      Script: {instanceID: 4742}
     - Class: 114
-      Script: {instanceID: 4978}
+      Script: {instanceID: 4804}
     - Class: 114
       Script: {instanceID: 4980}
     - Class: 114
-      Script: {instanceID: 4998}
+      Script: {instanceID: 4982}
     - Class: 114
-      Script: {instanceID: 5230}
+      Script: {instanceID: 5000}
     - Class: 114
-      Script: {instanceID: 5296}
+      Script: {instanceID: 5192}
     - Class: 114
-      Script: {instanceID: 5332}
+      Script: {instanceID: 5234}
     - Class: 114
-      Script: {instanceID: 5448}
+      Script: {instanceID: 5300}
     - Class: 114
-      Script: {instanceID: 5466}
+      Script: {instanceID: 5336}
     - Class: 114
-      Script: {instanceID: 5520}
+      Script: {instanceID: 5452}
     - Class: 114
-      Script: {instanceID: 5526}
+      Script: {instanceID: 5470}
     - Class: 114
-      Script: {instanceID: 5616}
+      Script: {instanceID: 5524}
     - Class: 114
-      Script: {instanceID: 5650}
+      Script: {instanceID: 5530}
     - Class: 114
-      Script: {instanceID: 5690}
+      Script: {instanceID: 5620}
     - Class: 114
-      Script: {instanceID: 5754}
+      Script: {instanceID: 5654}
     - Class: 114
-      Script: {instanceID: 5762}
+      Script: {instanceID: 5694}
     - Class: 114
-      Script: {instanceID: 5854}
+      Script: {instanceID: 5758}
     - Class: 114
-      Script: {instanceID: 5886}
+      Script: {instanceID: 5766}
     - Class: 114
-      Script: {instanceID: 5986}
+      Script: {instanceID: 5858}
     - Class: 114
-      Script: {instanceID: 6084}
+      Script: {instanceID: 5890}
     - Class: 114
-      Script: {instanceID: 6126}
+      Script: {instanceID: 5990}
     - Class: 114
-      Script: {instanceID: 6438}
+      Script: {instanceID: 6088}
     - Class: 114
-      Script: {instanceID: 6648}
+      Script: {instanceID: 6130}
     - Class: 114
-      Script: {instanceID: 6826}
+      Script: {instanceID: 6442}
     - Class: 114
-      Script: {instanceID: 6930}
+      Script: {instanceID: 6652}
     - Class: 114
-      Script: {instanceID: 6968}
+      Script: {instanceID: 6830}
     - Class: 114
-      Script: {instanceID: 7146}
+      Script: {instanceID: 6934}
+    - Class: 114
+      Script: {instanceID: 6972}
+    - Class: 114
+      Script: {instanceID: 7150}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -271,11 +275,11 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 2534}
+      Script: {instanceID: 2532}
     - Class: 114
-      Script: {instanceID: 5400}
+      Script: {instanceID: 5404}
     - Class: 114
-      Script: {instanceID: 5754}
+      Script: {instanceID: 5758}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 157
@@ -301,12 +305,6 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Text
-  - hash:
-      serializedVersion: 2
-      Hash: a306e12d896ddcca949923c805691027
-    assemblyName: UnityEngine.UI.dll
-    namespaceName: UnityEngine.UI
-    className: InputField
   - hash:
       serializedVersion: 2
       Hash: ae83e830e7a90c0aff918c4c2e520825
@@ -517,6 +515,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_SelectionCaret
+  - hash:
+      serializedVersion: 2
+      Hash: a306e12d896ddcca949923c805691027
+    assemblyName: UnityEngine.UI.dll
+    namespaceName: UnityEngine.UI
+    className: InputField
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -867,6 +871,12 @@ ScriptsOnlyBuild:
     className: UniversalRenderPipelineEditorResources
   - hash:
       serializedVersion: 2
+      Hash: ff38b1ed0535edd1b3adc4fa14fc3420
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ScoreBoard
+  - hash:
+      serializedVersion: 2
       Hash: cea76a9cbe8908be837cd602cf56693c
     assemblyName: Mirror.Authenticators.dll
     namespaceName: Mirror.Authenticators
@@ -1035,13 +1045,19 @@ ScriptsOnlyBuild:
     className: VolumeComponent
   - hash:
       serializedVersion: 2
+      Hash: 791ddd6b6a643b34e280f3ad2fbc2977
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ScoreboardItemManager
+  - hash:
+      serializedVersion: 2
       Hash: 6b3057497eb6f0e52612476af702bf8c
     assemblyName: Unity.RenderPipelines.Core.Runtime.dll
     namespaceName: UnityEngine.Rendering.UI
     className: UIFoldout
   - hash:
       serializedVersion: 2
-      Hash: 2780c472d8f18870339173ab4e7805ab
+      Hash: debc2c6c688dbb0b89ef453335ada11d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager
@@ -1305,7 +1321,7 @@ ScriptsOnlyBuild:
     className: DistanceInterestManagement
   - hash:
       serializedVersion: 2
-      Hash: faef75101436dac9bd4833aba820a20a
+      Hash: b1853ab79ec68c548a13a97bb8bc325f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayInterpreter

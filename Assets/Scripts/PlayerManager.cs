@@ -4,7 +4,8 @@ using UnityEngine;
 using Mirror;
 
 public class PlayerManager : NetworkBehaviour
-{ 
+{
+    public float conn;
     public Vector3 velocity, move;
     public GameObject playerCamera;
     public GameObject terminal;
@@ -177,6 +178,11 @@ public class PlayerManager : NetworkBehaviour
         
         characterController.Move(move * 3f * Time.deltaTime);
         characterController.Move(velocity * Time.deltaTime);
+    }
+
+    public void PlayerCount()
+    {
+        
     }
 
     [Command] public void DisconnectAsClient() => NetworkServer.SendToAll(new Notification { content = playerTag + " has left." });
