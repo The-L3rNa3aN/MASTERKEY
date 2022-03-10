@@ -43,20 +43,6 @@ public class PlayInterpreter : MonoBehaviour
         response.Clear();
         string[] args = userInput.Split();
 
-        if(args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == false)
-        {
-            scoreboard.gameObject.SetActive(true);
-            scoreboard.FindPlayers();                   //Scoreboard updates only when its toggled on.
-            return response;
-        }
-        else if(args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == true)
-        {
-            scoreboard.playerList.Clear();
-            scoreboard.RemoveScoreboardItems();         //I'm still skeptical if this won't have any impact. I anyways need to find a better way of updating and toggling scoreboards.
-            scoreboard.gameObject.SetActive(false);
-            return response;
-        }
-
         #region On Connect Responses
         if(userInput == "isClient" && networkManager != null)
         {
@@ -74,6 +60,7 @@ public class PlayInterpreter : MonoBehaviour
         #region Multiplayer Related Commands
         if (args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isServer)
         {
+            player.DisconnectAsClient();
             networkManager.GetComponent<NetworkManager>().StopHost();
             return response;
         }
@@ -98,6 +85,20 @@ public class PlayInterpreter : MonoBehaviour
         if (args[0] == "gettag")
         {
             response.Add("Your gamertag: " + ColorString(player.playerTag, colors["yellow"]));
+            return response;
+        }
+
+        if (args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == false)
+        {
+            scoreboard.gameObject.SetActive(true);
+            scoreboard.FindPlayers();                   //Scoreboard updates only when its toggled on.
+            return response;
+        }
+        else if (args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == true)
+        {
+            scoreboard.playerList.Clear();
+            scoreboard.RemoveScoreboardItems();         //I'm still skeptical if this won't have any impact. I anyways need to find a better way of updating and toggling scoreboards.
+            scoreboard.gameObject.SetActive(false);
             return response;
         }
         #endregion

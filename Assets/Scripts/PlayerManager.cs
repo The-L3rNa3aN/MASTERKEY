@@ -19,6 +19,8 @@ public class PlayerManager : NetworkBehaviour
         [SyncVar] public string playerTag;
         [SyncVar] public int kills;
         [SyncVar] public int deaths;
+        private int oldKills;
+        private int oldDeaths;
 
     [Header("Visualizers")]
         [Range(0f, 1f)] public float interp;
@@ -52,6 +54,8 @@ public class PlayerManager : NetworkBehaviour
 
     private void Start()
     {
+        oldKills = PlayerPrefs.GetInt("PlayerKills");
+        oldDeaths = PlayerPrefs.GetInt("PlayerDeaths");
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
         networkManager = GameObject.Find("NetworkManager");
@@ -180,7 +184,13 @@ public class PlayerManager : NetworkBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    [Command] public void DisconnectAsClient() => NetworkServer.SendToAll(new Notification { content = playerTag + " has left." });
+    [Command] public void DisconnectAsClient()                                                                              //Called when disconnecting either as host or as client.
+    {
+        PlayerPrefs.SetInt("PlayerKills", oldKills + kills);
+        PlayerPrefs.SetInt("PlayerDeaths", oldDeaths + deaths);
+        PlayerPrefs.Save();
+        NetworkServer.SendToAll(new Notification { content = playerTag + " has left." });
+    }
 
     #region Name Set Up
     [Command]

@@ -20,6 +20,8 @@ ScriptsOnlyBuild:
     Mirror.dll:
     - Mirror.NetworkIdentity
     - kcp2k.KcpTransport
+    ParrelSync.dll:
+    - ParrelSync.ClonesManagerWindow
     Unity.RenderPipelines.Core.Runtime.dll:
     - UnityEngine.Rendering.UI.DebugUIHandlerBitField
     - UnityEngine.Rendering.UI.DebugUIHandlerButton
@@ -871,7 +873,7 @@ ScriptsOnlyBuild:
     className: UniversalRenderPipelineEditorResources
   - hash:
       serializedVersion: 2
-      Hash: ff38b1ed0535edd1b3adc4fa14fc3420
+      Hash: b74ce45222d442e83d4dc4ac8b0a4e27
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ScoreBoard
@@ -1057,7 +1059,7 @@ ScriptsOnlyBuild:
     className: UIFoldout
   - hash:
       serializedVersion: 2
-      Hash: debc2c6c688dbb0b89ef453335ada11d
+      Hash: 84b2f0751091ff19a9e29dae75560020
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager
@@ -1321,7 +1323,7 @@ ScriptsOnlyBuild:
     className: DistanceInterestManagement
   - hash:
       serializedVersion: 2
-      Hash: b1853ab79ec68c548a13a97bb8bc325f
+      Hash: 83c0265d641b6a21e5120f3183894a5b
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayInterpreter

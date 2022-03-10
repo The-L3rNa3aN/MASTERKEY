@@ -32,13 +32,6 @@ public class Interpreter : MonoBehaviour
         response.Clear();
         string[] args = userInput.Split();
 
-        var playerName = networkManager.GetComponent<GameManager>().playerName;
-
-        if(userInput == "disconnected")
-        {
-            response.Add("You disconnected from the server.");
-            return response;
-        }
         #region Welcome Responses
         if (userInput == "welcome")
         {
@@ -53,7 +46,23 @@ public class Interpreter : MonoBehaviour
         }
         #endregion
 
-        if(args[0] == "gettag")
+        if(args[0] == "stats" && args[1] == "display")
+        {
+            response.Add("Thy p'rsonal r'cord, " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]) + ": -");
+            ListEntry("Times thee has't slay'd", PlayerPrefs.GetInt("PlayerKills").ToString());
+            ListEntry("Times thee has't fallen", PlayerPrefs.GetInt("PlayerDeaths").ToString());
+            return response;
+        }
+
+        if (args[0] == "stats" && args[1] == "reset")
+        {
+            PlayerPrefs.SetInt("PlayerKills", 0);
+            PlayerPrefs.SetInt("PlayerDeaths", 0);
+            response.Add("Your stats have been reset, " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]));
+            return response;
+        }
+
+        if (args[0] == "gettag")
         {
             response.Add("Your playertag: " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]));
             return response;
