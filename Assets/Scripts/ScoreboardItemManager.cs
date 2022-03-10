@@ -13,5 +13,7 @@ public class ScoreboardItemManager : MonoBehaviour
     public void Initialize(PlayerManager player)
     {
         usernameText.text = player.playerTag;
+        killsText.text = player.kills.ToString();
+        deathsText.text = player.deaths.ToString();
     }
 }

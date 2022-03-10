@@ -7,16 +7,11 @@ public class ScoreBoard : MonoBehaviour
 {
     [SerializeField] Transform container;
     [SerializeField] GameObject scoreBoardItem;
-    [SerializeField] GameObject gameManager;
 
     public List<PlayerManager> playerList = new List<PlayerManager>();
-    Dictionary<PlayerManager, ScoreboardItemManager> items = new Dictionary<PlayerManager,ScoreboardItemManager>();
+    public Dictionary<PlayerManager, ScoreboardItemManager> items = new Dictionary<PlayerManager,ScoreboardItemManager>();
 
-    private void Start()
-    {
-        gameManager = GameObject.Find("NetworkManager");
-        gameManager.GetComponent<CustomNetworkManager>().scoreBoard = gameObject;
-    }
+    private void Start() => FindPlayers();
 
     public void FindPlayers()
     {
@@ -33,10 +28,12 @@ public class ScoreBoard : MonoBehaviour
     {
         ScoreboardItemManager item = Instantiate(scoreBoardItem, container).GetComponent<ScoreboardItemManager>();
         item.Initialize(player);
+        if(!items.ContainsKey(player)) { items.Add(player, item); }
     }
 
     public void RemoveScoreboardItem(PlayerManager player)
     {
+        playerList.Clear();
         Destroy(items[player].gameObject);
         items.Remove(player);
     }

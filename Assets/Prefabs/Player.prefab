@@ -886,7 +886,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkManager: {fileID: 0}
   player: {fileID: 724321029828341661}
-  scoreboard: {fileID: 6349914783354084168}
+  scoreboard: {fileID: 3082330292534401964}
   dashTimer: 0
 --- !u!114 &3335315394128139510
 MonoBehaviour:

@@ -9,7 +9,7 @@ public class PlayInterpreter : MonoBehaviour
     PlayTerminalManager terminalManager;
     [SerializeField] GameObject networkManager;
     public PlayerManager player;
-    public GameObject scoreboard;
+    public ScoreBoard scoreboard;
 
     public float dashTimer = 0f;
 
@@ -43,21 +43,16 @@ public class PlayInterpreter : MonoBehaviour
         response.Clear();
         string[] args = userInput.Split();
 
-        if(args[0] == "scoreboard" && scoreboard.activeSelf == false)
+        if(args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == false)
         {
-            scoreboard.SetActive(true);
+            scoreboard.gameObject.SetActive(true);
+            scoreboard.FindPlayers();
             return response;
         }
-        else if(args[0] == "scoreboard" && scoreboard.activeSelf == true)
+        else if(args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == true)
         {
-            scoreboard.SetActive(false);
-            return response;
-        }
-
-        if(args[0] == "conn")
-        {
-            player.PlayerCount();
-            response.Add(player.conn.ToString());
+            scoreboard.RemoveScoreboardItem(player);
+            scoreboard.gameObject.SetActive(false);
             return response;
         }
 
