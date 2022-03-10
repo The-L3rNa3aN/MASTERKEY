@@ -245,6 +245,7 @@ public class PlayerManager : NetworkBehaviour
     {
         RpcTakeDamage(health, string.Empty);
         kills--;                                        //Because suicide sucks and the easy way out isn't always the best way.
+        deaths++;                                       //You committed suicide like a coward, so that counts as dying.
     }
 
     [ClientRpc] public void RpcTakeDamage(int dmg, string attackerTag)                                                       //This RPC method handles taking damage and death.
