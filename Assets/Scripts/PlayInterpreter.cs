@@ -51,7 +51,8 @@ public class PlayInterpreter : MonoBehaviour
         }
         else if(args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == true)
         {
-            scoreboard.RemoveScoreboardItem(player);
+            scoreboard.playerList.Clear();
+            scoreboard.RemoveScoreboardItems();
             scoreboard.gameObject.SetActive(false);
             return response;
         }
