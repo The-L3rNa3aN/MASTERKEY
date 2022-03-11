@@ -93,6 +93,7 @@ public class Interpreter : MonoBehaviour
             PlayerPrefs.SetInt("PlayerKills", 0);
             PlayerPrefs.SetInt("PlayerDeaths", 0);
             PlayerPrefs.SetInt("PlayerLPM", 0);
+            PlayerPrefs.SetInt("PlayerMatches", 0);
             PlayerPrefs.SetInt("PlayerTotalCommands", 0);
             PlayerPrefs.SetInt("PlayerAccuracy", 0);
             PlayerPrefs.SetInt("PlayerTime", 0);

@@ -99,8 +99,13 @@ public class PlayInterpreter : MonoBehaviour
         #region Multiplayer Related Commands
         if (args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isServer)
         {
-            commandsRun++;
-            PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
+            if (commandsRun != 0)                   //Disconnecting without having typed anything will not affect specific stats.
+            {
+                commandsRun++;
+                PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
+                PlayerPrefs.SetInt("PlayerMatches", PlayerPrefs.GetInt("PlayerMatches") + 1);
+                PlayerPrefs.SetInt("PlayerLPM", PlayerPrefs.GetInt("PlayerLPM") + (int)terminalManager.AverageLPM());
+            }
             player.DisconnectAsClient();
             PlayerPrefs.Save();
             networkManager.GetComponent<NetworkManager>().StopHost();
@@ -108,8 +113,13 @@ public class PlayInterpreter : MonoBehaviour
         }
         else if(args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isClient)
         {
-            commandsRun++;
-            PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
+            if (commandsRun != 0)
+            {
+                commandsRun++;
+                PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
+                PlayerPrefs.SetInt("PlayerMatches", PlayerPrefs.GetInt("PlayerMatches") + 1);
+                PlayerPrefs.SetInt("PlayerLPM", PlayerPrefs.GetInt("PlayerLPM") + (int)terminalManager.AverageLPM());
+            }
             player.DisconnectAsClient();
             PlayerPrefs.Save();
             StartCoroutine(GetOut());
@@ -267,8 +277,13 @@ public class PlayInterpreter : MonoBehaviour
 
         if (args[0] == "quit" || args[0] == "exit")
         {
-            commandsRun++;
-            PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
+            if(commandsRun != 0)
+            {
+                commandsRun++;
+                PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
+                PlayerPrefs.SetInt("PlayerMatches", PlayerPrefs.GetInt("PlayerMatches") + 1);
+                PlayerPrefs.SetInt("PlayerLPM", PlayerPrefs.GetInt("PlayerLPM") + (int)terminalManager.AverageLPM());
+            }
             player.DisconnectAsClient();
             PlayerPrefs.Save();
             Application.Quit();
