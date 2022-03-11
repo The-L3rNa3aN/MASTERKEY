@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,12 +17,26 @@ public class PlayTerminalManager : MonoBehaviour
 
     [SerializeField] PlayInterpreter interpreter;
 
+    [Header("LPM Stuff")]
+    public bool enableTimer;
+    public float timer;
+    public float timeTaken;
+    public float lpm;
+    public int letterCount;
+    public int totalLetterCount;
+    List<float> lpmCollection = new List<float>();
+
     private void Start()
     {
         interpreter = GetComponent<PlayInterpreter>();
         terminalInput.ActivateInputField();                         //Activates the input field on start.
         //Cursor.lockState = CursorLockMode.Locked;
         OnConnectResponses();
+    }
+
+    private void Update()
+    {
+        if(enableTimer == true) { timer += Time.deltaTime; }        //Required for the LPM Counter to work.
     }
 
     public void OnConnectResponses()
@@ -37,8 +52,21 @@ public class PlayTerminalManager : MonoBehaviour
         }
     }
 
+    #region Powerup Pick Up Responses
+    public void AidePickup() { ScrollToBottom(AddInterpreterLines(interpreter.Interpret("aide"))); userInputLine.transform.SetAsLastSibling(); }
+
+    public void VitalisPickup() { ScrollToBottom(AddInterpreterLines(interpreter.Interpret("vitalis"))); userInputLine.transform.SetAsLastSibling(); }
+
+    public void CorruptusPickup() { ScrollToBottom(AddInterpreterLines(interpreter.Interpret("corruptus"))); userInputLine.transform.SetAsLastSibling(); }
+
+    public void VaengrPickup() { ScrollToBottom(AddInterpreterLines(interpreter.Interpret("vaengr"))); userInputLine.transform.SetAsLastSibling(); }
+
+    public void EscrenPickup() { ScrollToBottom(AddInterpreterLines(interpreter.Interpret("escren"))); userInputLine.transform.SetAsLastSibling(); }
+    #endregion
+
     private void OnGUI()
     {
+        LPMFunction();
         if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return))
         {
             string userInput = terminalInput.text;                  //Stores what the user typed.
@@ -61,7 +89,7 @@ public class PlayTerminalManager : MonoBehaviour
         }
     }
 
-    void ClearInputField()
+    private void ClearInputField()
     {
         terminalInput.text = "";
     }
@@ -73,7 +101,7 @@ public class PlayTerminalManager : MonoBehaviour
         userInputLine.transform.SetAsLastSibling();
     }
 
-    void AddDirectoryLine(string userInput)
+    private void AddDirectoryLine(string userInput)
     {
         //Resizing the command line container so that ScrollRect doesn't do anything funny.
         Vector2 msgListSize = msgList.GetComponent<RectTransform>().sizeDelta;
@@ -89,7 +117,7 @@ public class PlayTerminalManager : MonoBehaviour
         msg.GetComponentsInChildren<Text>()[1].text = userInput;
     }
 
-    int AddInterpreterLines(List<string> interpretation)
+    private int AddInterpreterLines(List<string> interpretation)
     {
         for (int i = 0; i < interpretation.Count; i++)
         {
@@ -125,7 +153,7 @@ public class PlayTerminalManager : MonoBehaviour
         msgList.GetComponent<RectTransform>().sizeDelta = new Vector2(listSize.x, -19.7641f);
     }
 
-    void ScrollToBottom(int lines)
+    private void ScrollToBottom(int lines)
     {
         if (lines > 4)
         {
@@ -136,4 +164,36 @@ public class PlayTerminalManager : MonoBehaviour
             sr.verticalNormalizedPosition = 0;
         }
     }
+
+    #region Letters-Per-Minute Functions...
+    private void LPMFunction()
+    {
+        if(terminalInput.text != "")
+        {
+            enableTimer = true;
+            LetterCounter(terminalInput.text);
+        }
+        else
+        {
+            enableTimer = false;
+            timer = 0f;
+        }
+
+        if(terminalInput.text != "" && Input.GetKey(KeyCode.Return))
+        {
+            enableTimer = false;
+            timeTaken = timer;
+            timer = 0f;
+            lpm = (letterCount * 60) / timeTaken;
+            lpmCollection.Add(lpm);
+        }
+    }
+
+    private void LetterCounter(string sentence) => letterCount = sentence.Length;
+
+    public float AverageLPM()
+    {
+        return lpmCollection.Average();
+    }
+    #endregion
 }

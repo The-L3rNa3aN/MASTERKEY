@@ -10,8 +10,8 @@ public class PlayInterpreter : MonoBehaviour
     [SerializeField] GameObject networkManager;
     public PlayerManager player;
     public ScoreBoard scoreboard;
-
     public float dashTimer = 0f;
+    public int commandsRun;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
     {
@@ -43,8 +43,46 @@ public class PlayInterpreter : MonoBehaviour
         response.Clear();
         string[] args = userInput.Split();
 
+        if (args[0] == "help")
+        {
+            response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
+            ListEntry("move <direction>", "To move the character around. Directions include: up, down, left and right.");
+            ListEntry("stop <param>", "Stops all movement in any direction. Parameters include: lateral, medial and all.");
+            ListEntry("dash <direction>", "Performs a high speed, short ranged dash. Refreshes every 10 seconds.");
+            ListEntry("attack", "Perform a radial attack that deals damage to anyone in your vicinity. Stops movement.");
+            ListEntry("kill", "Commit seppuku and receive a penalty for bringing honor to your family.");
+            ListEntry("respawn", "Respawn if you died during combat.");
+            ListEntry("scoreboard", "Toggle a scoreboard that displays the scores of all players in the server. IT ONLY UPDATES WHEN TOGGLING IT ON.");
+            ListEntry("clear", "Clears the terminal screen.");
+            ListEntry("ipaddress", "Prints your IP Address and your status as the host or the client.");
+            ListEntry("disconnect", "Disconnects and returns to the main terminal screen. This saves your stats.");
+            ListEntry("quit / exit", "Immediately exits the game. This also saves your stats.");
+            commandsRun++;
+            return response;
+        }
+
+        #region Powerup Pick Up Responses
+        if(userInput == "aide")
+        {
+            response.Add("You've picked up Aide.");
+            return response;
+        }
+
+        if (userInput == "vitalis")
+        {
+            response.Add("You've picked up Vitalis.");
+            return response;
+        }
+
+        if (userInput == "corruptus")
+        {
+            response.Add("You've picked up Corruptus.");
+            return response;
+        }
+        #endregion
+
         #region On Connect Responses
-        if(userInput == "isClient" && networkManager != null)
+        if (userInput == "isClient" && networkManager != null)
         {
             response.Add("Successfully connected to " + ColorString(networkManager.GetComponent<NetworkManager>().networkAddress, colors["yellow"]) + " as a client.");
             return response;
@@ -60,13 +98,19 @@ public class PlayInterpreter : MonoBehaviour
         #region Multiplayer Related Commands
         if (args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isServer)
         {
+            commandsRun++;
+            PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
             player.DisconnectAsClient();
+            PlayerPrefs.Save();
             networkManager.GetComponent<NetworkManager>().StopHost();
             return response;
         }
         else if(args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isClient)
         {
+            commandsRun++;
+            PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
             player.DisconnectAsClient();
+            PlayerPrefs.Save();
             StartCoroutine(GetOut());
             return response;
         }
@@ -74,17 +118,20 @@ public class PlayInterpreter : MonoBehaviour
         if(args[0] == "ipaddress" && player.GetComponent<NetworkBehaviour>().isServer)
         {
             response.Add("Your IP Address: " + ColorString(networkManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("host", colors["white"]));
+            commandsRun++;
             return response;
         }
         else if(args[0] == "ipaddress" && player.GetComponent<NetworkBehaviour>().isClient)
         {
             response.Add("Your IP Address: " + ColorString(networkManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("client", colors["white"]));
+            commandsRun++;
             return response;
         }
 
         if (args[0] == "gettag")
         {
             response.Add("Your gamertag: " + ColorString(player.playerTag, colors["yellow"]));
+            commandsRun++;
             return response;
         }
 
@@ -92,6 +139,7 @@ public class PlayInterpreter : MonoBehaviour
         {
             scoreboard.gameObject.SetActive(true);
             scoreboard.FindPlayers();                   //Scoreboard updates only when its toggled on.
+            commandsRun++;
             return response;
         }
         else if (args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == true)
@@ -99,48 +147,38 @@ public class PlayInterpreter : MonoBehaviour
             scoreboard.playerList.Clear();
             scoreboard.RemoveScoreboardItems();         //I'm still skeptical if this won't have any impact. I anyways need to find a better way of updating and toggling scoreboards.
             scoreboard.gameObject.SetActive(false);
+            commandsRun++;
             return response;
         }
         #endregion
 
         #region Gameplay Commands
-        if (args[0] == "help")
-        {
-            response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
-            ListEntry("move [direction]", "To move the character around. Directions include: up, down, left and right.");
-            ListEntry("stop [param]", "Stops all movement in any direction. Parameters include: lateral, medial and all.");
-            ListEntry("dash [direction]", "Performs a high speed, short ranged dash. Refreshes every 10 seconds.");
-            ListEntry("attack", "Perform a radial attack that deals damage to anyone in your vicinity. Stops movement.");
-            ListEntry("kill", "Commit seppuku.");
-            ListEntry("clear", "Clears the terminal screen.");
-            ListEntry("ipaddress", "Prints your IP Address and if you're the server or the client here.");
-            ListEntry("disconnect", "Disconnects and returns to the main terminal screen.");
-            ListEntry("exit", "Exits the game.");
-            return response;
-        }
-
         if(args[0] == "move" && args[1] != null)
         {
             if (args[1] == "left" || args[1] == "right"){ player.directLR = args[1]; }
             else { player.directUD = args[1]; }
+            commandsRun++;
             return response;
         }
 
         if(args[0] == "stop" && args[1] == "all")
         {
             player.StopMovement();
+            commandsRun++;
             return response;
         }
         else if(args[0] == "stop" && args[1] == "lateral")
         {
             player.directLR = null;
             player.move = new Vector3(0f, 0f, player.move.z);
+            commandsRun++;
             return response;
         }
         else if(args[0] == "stop" && args[1] == "medial")
         {
             player.directUD = null;
             player.move = new Vector3(player.move.x, 0f, 0f);
+            commandsRun++;
             return response;
         }
 
@@ -148,11 +186,13 @@ public class PlayInterpreter : MonoBehaviour
         {
             player.dashDir = args[1];
             dashTimer = 10f;
+            commandsRun++;
             return response;
         }
         else if (args[0] == "dash" && args[1] != null && dashTimer != 0f)
         {
             response.Add("Your Dash ability refreshes in " + ColorString(dashTimer.ToString(), colors["white"]) + " seconds.");
+            commandsRun++;
             return response;
         }
 
@@ -160,17 +200,20 @@ public class PlayInterpreter : MonoBehaviour
         {
             player.doAttack = true;
             player.StopMovement();
+            commandsRun++;
             return response;
         }
 
         if(args[0] == "respawn" && player.health <= 0)          //Running the command when alive resulted in the player immediately respawning upon death.
         {
             player.toRespawn = true;
+            commandsRun++;
             return response;
         }
         else if(args[0] == "respawn" && player.health != 0)
         {
             response.Add("You may be dead inside in real life, but you're alive here, in the game that is.");
+            commandsRun++;
             return response;
         }
 
@@ -178,6 +221,7 @@ public class PlayInterpreter : MonoBehaviour
         {
             player.CmdSeppuku();
             response.Add("You acquitted yourself with honor, I guess.");
+            commandsRun++;
             return response;
         }
         #endregion
@@ -186,24 +230,28 @@ public class PlayInterpreter : MonoBehaviour
         if (args[0] == "masterkey")
         {
             response.Add("At your service!");
+            commandsRun++;
             return response;
         }
 
         if (args[0] == "Lernaean" || args[0] == "lernaean" || args[0] == "L3rNa3aN")
         {
             response.Add(ColorString("The L3rNa3aN>", colors["green"]) + " Aren't you supposed to be fighting?");
+            commandsRun++;
             return response;
         }
 
         if (args[0] == "Hi" || args[0] == "hi" || args[0] == "Hey" || args[0] == "hey")
         {
             response.Add("This ain't the right time to greet someone.");
+            commandsRun++;
             return response;
         }
 
         if (args[0] == "Shakira" || args[0] == "shakira")
         {
             response.Add("I understand hips don't lie, but this isn't the time.");
+            commandsRun++;
             return response;
         }
         #endregion
@@ -212,17 +260,23 @@ public class PlayInterpreter : MonoBehaviour
         if (args[0] == "clear")
         {
             terminalManager.ClearScreen();
+            commandsRun++;
             return response;
         }
 
         if (args[0] == "quit" || args[0] == "exit")
         {
+            commandsRun++;
+            PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
+            player.DisconnectAsClient();
+            PlayerPrefs.Save();
             Application.Quit();
             return response;
         }
         else
         {
             response.Add(ColorString("Command not recognized. Type ", colors["red"]) + ColorString("help", colors["yellow"]) + ColorString(" for a list of commands", colors["red"]));
+            commandsRun++;
             return response;
         }
         #endregion

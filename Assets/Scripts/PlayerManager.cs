@@ -352,13 +352,19 @@ public class PlayerManager : NetworkBehaviour
 
     #region Powerup Effects
     [Command] public void CmdGiveHealth(int healthPoints) => RpcTakeHealth(healthPoints);
-    [ClientRpc]public void RpcTakeHealth(int healthPoints) => health += healthPoints;
+    [ClientRpc]public void RpcTakeHealth(int healthPoints)
+    {
+        health += healthPoints;
+        if (healthPoints == 1) terminal.GetComponent<PlayTerminalManager>().AidePickup();
+        else terminal.GetComponent<PlayTerminalManager>().VitalisPickup();
+    }
 
     public void CorruptusTimer()
     {
         if(corruptus == true)
         {
-            if(corruptusTimer > 0f) { corruptusTimer -= Time.deltaTime; }
+            terminal.GetComponent<PlayTerminalManager>().CorruptusPickup();
+            if (corruptusTimer > 0f) { corruptusTimer -= Time.deltaTime; }
             if(corruptusTimer <= 0f)
             {
                 corruptusTimer = 20f;

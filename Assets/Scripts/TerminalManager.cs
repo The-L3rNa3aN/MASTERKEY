@@ -22,6 +22,7 @@ public class TerminalManager : MonoBehaviour
 
     private void Start()
     {
+        //DontDestroyOnLoad(this);
         interpreter = GetComponent<Interpreter>();
         terminalInput.ActivateInputField();
         //Cursor.lockState = CursorLockMode.Locked;

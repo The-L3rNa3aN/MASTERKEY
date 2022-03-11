@@ -6,7 +6,7 @@ using Mirror;
 
 public class Interpreter : MonoBehaviour
 {
-    public NetworkManager networkManager;
+    public CustomNetworkManager networkManager;
     TerminalManager terminalManager;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
@@ -46,11 +46,45 @@ public class Interpreter : MonoBehaviour
         }
         #endregion
 
-        if(args[0] == "stats" && args[1] == "display")
+        if (args[0] == "help")
+        {
+            response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
+            ListEntry("help", "Returns a list of commands.");
+            ListEntry("about", "Returns a small but brief paragraph about this game.");
+            ListEntry("clear", "Clears the terminal screen.");
+            ListEntry("start host", "Starts a LAN server on your computer.");
+            ListEntry("connect <IP Address>", "Manually connect to a LAN host in the network.");
+            ListEntry("ipaddress", "Reveal your machine's IP Address. Useful when someone needs to connect to a server you're hosting.");
+            ListEntry("settag", "Set your name.");
+            ListEntry("gettag", "Get your name.");
+            ListEntry("stats <display / reset>", "View and manage your personal stats.");
+            ListEntry("quit / exit", "Exits the game.");
+            response.Add("");
+            response.Add(ColorString("[ONLINE COMMANDS]", colors["aqua"]));
+            ListEntry("move <direction>", "Moves your character around. Directions include: up, down, left and right.");
+            ListEntry("stop <param>", "Stops all movement in any direction. Parameters include: lateral, medial and all.");
+            ListEntry("dash <direction>", "Performs a high speed, short ranged dash. Refreshes every 10 seconds.");
+            ListEntry("attack", "Perform a radial attack that deals damage to anyone in your vicinity. Stops movement.");
+            ListEntry("kill", "Commit seppuku and receive a penalty for bringing honor to your family.");
+            ListEntry("respawn", "Respawn if you died during combat.");
+            ListEntry("scoreboard", "Toggle a scoreboard that displays the scores of all players in the server. IT ONLY UPDATES WHEN TOGGLING IT ON.");
+            ListEntry("clear", "Clears the terminal screen.");
+            ListEntry("ipaddress", "Prints your IP Address and your status as the host or the client.");
+            ListEntry("disconnect", "Disconnects and returns to the main terminal screen. This saves your stats.");
+            ListEntry("quit / exit", "Immediately exits the game. This also saves your stats.");
+            return response;
+        }
+
+        if (args[0] == "stats" && args[1] == "display")
         {
             response.Add("Thy p'rsonal r'cord, " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]) + ": -");
             ListEntry("Times thee has't slay'd", PlayerPrefs.GetInt("PlayerKills").ToString());
             ListEntry("Times thee has't fallen", PlayerPrefs.GetInt("PlayerDeaths").ToString());
+            ListEntry("Thy swiftness", PlayerPrefs.GetInt("PlayerLPM").ToString());
+            ListEntry("Times thee've did join combat", PlayerPrefs.GetInt("PlayerMatches").ToString());
+            ListEntry("The total hests thee've runneth", PlayerPrefs.GetInt("PlayerTotalCommands").ToString());
+            ListEntry("Thy exactness", PlayerPrefs.GetInt("PlayerAccuracy").ToString());
+            ListEntry("Thy timeth hath spent h're", PlayerTimeFormat());
             return response;
         }
 
@@ -58,6 +92,10 @@ public class Interpreter : MonoBehaviour
         {
             PlayerPrefs.SetInt("PlayerKills", 0);
             PlayerPrefs.SetInt("PlayerDeaths", 0);
+            PlayerPrefs.SetInt("PlayerLPM", 0);
+            PlayerPrefs.SetInt("PlayerTotalCommands", 0);
+            PlayerPrefs.SetInt("PlayerAccuracy", 0);
+            PlayerPrefs.SetInt("PlayerTime", 0);
             response.Add("Your stats have been reset, " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]));
             return response;
         }
@@ -75,20 +113,6 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0] == "help")
-        {
-            response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
-            ListEntry("help", "Returns a list of commands.");
-            ListEntry("about", "Returns a small but brief paragraph about this game.");
-            ListEntry("clear", "Clears the terminal screen.");
-            ListEntry("start host", "Starts a LAN server on your computer.");
-            ListEntry("connect <IP Address>", "Manually connect to a LAN host in the network.");
-            ListEntry("settag", "Set your name.");
-            ListEntry("gettag", "Get your name.");
-            ListEntry("exit", "Exits the game.");
-            return response;
-        }
-
         if(args[0] == "about")
         {
             response.Add(ColorString("MASTERKEY", colors["green"]) + " is a game where you need to type in order to play, a little like other typing games but this time with a little action involved.");
@@ -101,7 +125,7 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0] == "getnetaddress")
+        if(args[0] == "ipaddress")
         {
             response.Add("Your network address: " + ColorString(networkManager.networkAddress, colors["white"]));
             return response;
@@ -153,8 +177,9 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0] == "exit")
+        if(args[0] == "quit" || args[0] == "exit")
         {
+            PlayerPrefs.SetInt("PlayerTime", PlayerPrefs.GetInt("PlayerTime") + (int)networkManager.timeSession);
             Application.Quit();
             return response;
         }
@@ -173,12 +198,12 @@ public class Interpreter : MonoBehaviour
         return leftTag + s + rightTag;
     }
 
-    void ListEntry(string a, string b)
+    private void ListEntry(string a, string b)
     {
         response.Add(ColorString(a, colors["light blue"]) + ": " + ColorString(b, colors["red"]));
     }
 
-    void LoadTitle(string path, string color, int spacing)
+    private void LoadTitle(string path, string color, int spacing)
     {
         StreamReader file = new StreamReader(Path.Combine(Application.streamingAssetsPath, path));
         Debug.Log(path);
@@ -198,5 +223,13 @@ public class Interpreter : MonoBehaviour
         }
 
         file.Close();
+    }
+
+    private string PlayerTimeFormat()                               //Formats the PlayerTime preference to hours, minutes and seconds.
+    {
+        var time = PlayerPrefs.GetInt("PlayerTime");
+        var timeSpan = TimeSpan.FromSeconds(time);
+        string timeFormatted = timeSpan.Hours.ToString() + "h " + timeSpan.Minutes.ToString() + "m " + timeSpan.Seconds.ToString() + "s";
+        return timeFormatted;
     }
 }
