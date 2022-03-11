@@ -90,6 +90,7 @@ public class PlayInterpreter : MonoBehaviour
         
         if(userInput == "isHost" && networkManager != null)             //This doesn't work for some reason, and I dunno why.
         {
+            Debug.Log("test");
             response.Add("Successfully started a server at " + ColorString(networkManager.GetComponent<NetworkManager>().networkAddress, colors["yellow"]));
             return response;
         }

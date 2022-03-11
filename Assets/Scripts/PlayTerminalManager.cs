@@ -7,6 +7,8 @@ using Mirror;
 
 public class PlayTerminalManager : MonoBehaviour
 {
+    public GameObject player;
+
     public GameObject directoryLine;
     public GameObject responseLine;
 
@@ -31,7 +33,7 @@ public class PlayTerminalManager : MonoBehaviour
         interpreter = GetComponent<PlayInterpreter>();
         terminalInput.ActivateInputField();                         //Activates the input field on start.
         //Cursor.lockState = CursorLockMode.Locked;
-        OnConnectResponses();
+        //OnConnectResponses();
     }
 
     private void Update()
@@ -41,14 +43,14 @@ public class PlayTerminalManager : MonoBehaviour
 
     public void OnConnectResponses()
     {
-
-        if(interpreter.player.isClient)
-        {
-            ScrollToBottom(AddInterpreterLines(interpreter.Interpret("isClient"))); userInputLine.transform.SetAsLastSibling();
-        }
-        else if(interpreter.player.isServer)
+        if (player.GetComponent<NetworkBehaviour>().isServer)
         {
             ScrollToBottom(AddInterpreterLines(interpreter.Interpret("isHost"))); userInputLine.transform.SetAsLastSibling();
+        }
+
+        if (player.GetComponent<NetworkBehaviour>().isClientOnly)
+        {
+            ScrollToBottom(AddInterpreterLines(interpreter.Interpret("isClient"))); userInputLine.transform.SetAsLastSibling();
         }
     }
 
