@@ -243,6 +243,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 196
       Script: {instanceID: 0}
+    - Class: 212
+      Script: {instanceID: 0}
     - Class: 213
       Script: {instanceID: 0}
     - Class: 222
@@ -627,7 +629,7 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerVBox
   - hash:
       serializedVersion: 2
-      Hash: 16baf21c482a64839301c34919c701fc
+      Hash: 8f835818416edc529614c8c5faf37aed
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Interpreter
@@ -1047,7 +1049,7 @@ ScriptsOnlyBuild:
     className: VolumeComponent
   - hash:
       serializedVersion: 2
-      Hash: 791ddd6b6a643b34e280f3ad2fbc2977
+      Hash: 164464cfcd0f9d25931847b90398c78c
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ScoreboardItemManager
@@ -1059,7 +1061,7 @@ ScriptsOnlyBuild:
     className: UIFoldout
   - hash:
       serializedVersion: 2
-      Hash: 84b2f0751091ff19a9e29dae75560020
+      Hash: 8c04c60eb51ccb3f8b31795916efaca5
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager
@@ -1107,7 +1109,7 @@ ScriptsOnlyBuild:
     className: NetworkMatch
   - hash:
       serializedVersion: 2
-      Hash: b6c6e9ec2ab777787a58d7f150c85849
+      Hash: 812b4534da41a9203bd8384e7389d18d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CustomNetworkManager
@@ -1323,7 +1325,7 @@ ScriptsOnlyBuild:
     className: DistanceInterestManagement
   - hash:
       serializedVersion: 2
-      Hash: 83c0265d641b6a21e5120f3183894a5b
+      Hash: 593f449de63911a577e483d21a04a6ae
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayInterpreter
@@ -1395,7 +1397,7 @@ ScriptsOnlyBuild:
     className: CinemachineUniversalPixelPerfect
   - hash:
       serializedVersion: 2
-      Hash: 4b2dfea5f70844f3f734d90ae9601fa5
+      Hash: 310fc5cc69009170306c4a10aaaf34ce
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayTerminalManager

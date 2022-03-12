@@ -25,6 +25,8 @@ public class PlayerManager : NetworkBehaviour
     [Header("Visualizers")]
         [Range(0f, 1f)] public float interp;
         public float interpSpeed;
+        public SpriteRenderer attackCircle;
+        public bool enableCircle;
 
     [Header("Health and Attack related Vars")]
         [SyncVar] public int health = 3;
@@ -70,6 +72,29 @@ public class PlayerManager : NetworkBehaviour
 
     private void Update()
     {
+        #region Attack Circle Visualizer
+        if (isLocalPlayer && enableCircle == true)
+        {
+            attackCircle.color = Color.Lerp(attackCircle.color, new Color(1, 1, 1, 1f), 3f * Time.deltaTime);
+        }
+        
+        if (isLocalPlayer && enableCircle == false)
+        {
+            attackCircle.color = Color.Lerp(attackCircle.color, new Color(1, 1, 1, 0f), 6f * Time.deltaTime);
+        }
+        #endregion
+
+        #region Death Camera Close-Up
+        if (health <= 0)                                                                    //Zooms in the place where the player died and zooms back when respawned.
+        {
+            playerCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(playerCamera.GetComponent<Camera>().fieldOfView, 30f, 0.5f * Time.deltaTime);
+        }
+        else
+        {
+            playerCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(playerCamera.GetComponent<Camera>().fieldOfView, 60f, 3f * Time.deltaTime);
+        }
+        #endregion
+
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
         CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
@@ -93,23 +118,16 @@ public class PlayerManager : NetworkBehaviour
             toRespawn = false;
         }
 
-        if (impact.magnitude > 0.2f) { characterController.Move(impact * Time.deltaTime); }
+        if (impact.magnitude > 0.2f) { characterController.Move(impact * Time.deltaTime); }                                 //Knockback running in Update (duh) and decays with time thanks to Lerp.
         impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
-
-        #region Death Camera Close-Up
-        if (health <= 0)                                                      //Zooms in the place where the player died.
-        {
-            playerCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(playerCamera.GetComponent<Camera>().fieldOfView, 60f - 30f, 0.5f * Time.deltaTime);
-        }
-        else { playerCamera.GetComponent<Camera>().fieldOfView = 60f; }      //Zooms back to its original value.
-        #endregion
 
         if (characterController.isGrounded == true && velocity.y < 0f) { velocity.y = -2f; }                                //Gravity.
         velocity.y += gravity * Time.deltaTime;
 
         if(dashDir == null) { dashOldPos = transform.position; }
 
-        switch(dashDir)                                                                                                     //Dashing.
+        //Dashing.
+        switch (dashDir)
         {
             case "left":
                 move = Vector3.left * 7.5f;
@@ -184,14 +202,6 @@ public class PlayerManager : NetworkBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    [Command] public void DisconnectAsClient()                                                                              //Called when disconnecting either as host or as client.
-    {
-        PlayerPrefs.SetInt("PlayerKills", oldKills + kills);
-        PlayerPrefs.SetInt("PlayerDeaths", oldDeaths + deaths);
-        PlayerPrefs.Save();
-        NetworkServer.SendToAll(new Notification { content = playerTag + " has left." });
-    }
-
     #region Name Set Up
     [Command]
     public void CmdSetName(string name)
@@ -202,6 +212,14 @@ public class PlayerManager : NetworkBehaviour
 
     [ClientRpc] public void RpcSetName(string name) => playerTag = name;
     #endregion
+
+    [Command] public void DisconnectAsClient()                                                                              //Called when disconnecting either as host or as client.
+    {
+        PlayerPrefs.SetInt("PlayerKills", oldKills + kills);
+        PlayerPrefs.SetInt("PlayerDeaths", oldDeaths + deaths);
+        PlayerPrefs.Save();
+        NetworkServer.SendToAll(new Notification { content = playerTag + " has left." });
+    }
 
     [ClientRpc] public void RpcKnockBack(Vector3 dir, float force)
     {
@@ -221,6 +239,7 @@ public class PlayerManager : NetworkBehaviour
     {
         yield return new WaitForSeconds(t);
         attackSphere.enabled = true;
+        enableCircle = false;
         yield return new WaitForSeconds(0.05f);
         attackSphere.enabled = false;
     }
