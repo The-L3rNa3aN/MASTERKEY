@@ -12,6 +12,7 @@ public class PlayInterpreter : MonoBehaviour
     public ScoreBoard scoreboard;
     public float dashTimer = 0f;
     public int commandsRun;
+    public int errors;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
     {
@@ -105,6 +106,7 @@ public class PlayInterpreter : MonoBehaviour
                 PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
                 PlayerPrefs.SetInt("PlayerMatches", PlayerPrefs.GetInt("PlayerMatches") + 1);
                 PlayerPrefs.SetInt("PlayerLPM", PlayerPrefs.GetInt("PlayerLPM") + (int)terminalManager.AverageLPM());
+                PlayerPrefs.SetInt("PlayerErrors", PlayerPrefs.GetInt("PlayerErrors") + errors);
             }
             player.DisconnectAsClient();
             PlayerPrefs.Save();
@@ -119,6 +121,7 @@ public class PlayInterpreter : MonoBehaviour
                 PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
                 PlayerPrefs.SetInt("PlayerMatches", PlayerPrefs.GetInt("PlayerMatches") + 1);
                 PlayerPrefs.SetInt("PlayerLPM", PlayerPrefs.GetInt("PlayerLPM") + (int)terminalManager.AverageLPM());
+                PlayerPrefs.SetInt("PlayerErrors", PlayerPrefs.GetInt("PlayerErrors") + errors);
             }
             player.DisconnectAsClient();
             PlayerPrefs.Save();
@@ -283,6 +286,7 @@ public class PlayInterpreter : MonoBehaviour
                 PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
                 PlayerPrefs.SetInt("PlayerMatches", PlayerPrefs.GetInt("PlayerMatches") + 1);
                 PlayerPrefs.SetInt("PlayerLPM", PlayerPrefs.GetInt("PlayerLPM") + (int)terminalManager.AverageLPM());
+                PlayerPrefs.SetInt("PlayerErrors", PlayerPrefs.GetInt("PlayerErrors") + errors);
             }
             player.DisconnectAsClient();
             PlayerPrefs.Save();
@@ -293,6 +297,7 @@ public class PlayInterpreter : MonoBehaviour
         {
             response.Add(ColorString("Command not recognized. Type ", colors["red"]) + ColorString("help", colors["yellow"]) + ColorString(" for a list of commands", colors["red"]));
             commandsRun++;
+            errors++;
             return response;
         }
         #endregion

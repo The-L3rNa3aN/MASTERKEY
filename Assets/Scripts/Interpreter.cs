@@ -80,10 +80,11 @@ public class Interpreter : MonoBehaviour
             response.Add("Thy p'rsonal r'cord, " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]) + ": -");
             ListEntry("Times thee has't slay'd", PlayerPrefs.GetInt("PlayerKills").ToString());
             ListEntry("Times thee has't fallen", PlayerPrefs.GetInt("PlayerDeaths").ToString());
-            ListEntry("Thy swiftness", PlayerPrefs.GetInt("PlayerLPM").ToString());
+            ListEntry("Thy swiftness", PlayerAverageSpeed().ToString());
             ListEntry("Times thee've did join combat", PlayerPrefs.GetInt("PlayerMatches").ToString());
             ListEntry("The total hests thee've runneth", PlayerPrefs.GetInt("PlayerTotalCommands").ToString());
-            ListEntry("Thy exactness", PlayerPrefs.GetInt("PlayerAccuracy").ToString());
+            ListEntry("The total mishaps thee've madeth", PlayerPrefs.GetInt("PlayerErrors").ToString());
+            ListEntry("Thy exactness", PlayerAccuracy().ToString() + "%");
             ListEntry("Thy timeth hath spent h're", PlayerTimeFormat());
             return response;
         }
@@ -95,7 +96,7 @@ public class Interpreter : MonoBehaviour
             PlayerPrefs.SetInt("PlayerLPM", 0);
             PlayerPrefs.SetInt("PlayerMatches", 0);
             PlayerPrefs.SetInt("PlayerTotalCommands", 0);
-            PlayerPrefs.SetInt("PlayerAccuracy", 0);
+            PlayerPrefs.SetInt("PlayerErrors", 0);
             PlayerPrefs.SetInt("PlayerTime", 0);
             response.Add("Your stats have been reset, " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]));
             return response;
@@ -232,5 +233,26 @@ public class Interpreter : MonoBehaviour
         var timeSpan = TimeSpan.FromSeconds(time);
         string timeFormatted = timeSpan.Hours.ToString() + "h " + timeSpan.Minutes.ToString() + "m " + timeSpan.Seconds.ToString() + "s";
         return timeFormatted;
+    }
+
+    private int PlayerAccuracy()                                    //Calculates accuracy by subtracting 100 by the percentage of errors.
+    {
+        float accuracy = 0f;
+        float errors = PlayerPrefs.GetInt("PlayerErrors");
+        float commands = PlayerPrefs.GetInt("PlayerTotalCommands");
+        if(errors != 0f && commands != 0f) { accuracy = 100 - ((errors / commands) * 100); }
+        else { accuracy = 0; }
+        
+        return (int)accuracy;
+    }
+
+    private int PlayerAverageSpeed()
+    {
+        float speed = 0f;
+        float lpm = PlayerPrefs.GetInt("PlayerLPM");
+        float matches = PlayerPrefs.GetInt("PlayerMatches");
+        if (lpm != 0f && matches != 0f) { speed = lpm / matches; }
+        else speed = 0f;
+        return (int)speed;
     }
 }
