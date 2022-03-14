@@ -9,6 +9,7 @@ ScriptsOnlyBuild:
     - PlayInterpreter
     - PlayTerminalManager
     - PlayerManager
+    - PlayertagToWorld
     - PowerupScript
     - ScoreBoard
     - ScoreboardItemManager
@@ -20,8 +21,6 @@ ScriptsOnlyBuild:
     Mirror.dll:
     - Mirror.NetworkIdentity
     - kcp2k.KcpTransport
-    ParrelSync.dll:
-    - ParrelSync.ClonesManagerWindow
     Unity.RenderPipelines.Core.Runtime.dll:
     - UnityEngine.Rendering.UI.DebugUIHandlerBitField
     - UnityEngine.Rendering.UI.DebugUIHandlerButton
@@ -216,21 +215,23 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 5990}
     - Class: 114
-      Script: {instanceID: 6088}
+      Script: {instanceID: 6012}
     - Class: 114
-      Script: {instanceID: 6130}
+      Script: {instanceID: 6090}
     - Class: 114
-      Script: {instanceID: 6442}
+      Script: {instanceID: 6132}
     - Class: 114
-      Script: {instanceID: 6652}
+      Script: {instanceID: 6444}
     - Class: 114
-      Script: {instanceID: 6830}
+      Script: {instanceID: 6654}
     - Class: 114
-      Script: {instanceID: 6934}
+      Script: {instanceID: 6832}
     - Class: 114
-      Script: {instanceID: 6972}
+      Script: {instanceID: 6936}
     - Class: 114
-      Script: {instanceID: 7150}
+      Script: {instanceID: 6974}
+    - Class: 114
+      Script: {instanceID: 7152}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1245,6 +1246,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.RenderPipelines.Core.Runtime.dll
     namespaceName: UnityEngine.Rendering.UI
     className: DebugUIHandlerColor
+  - hash:
+      serializedVersion: 2
+      Hash: 589568ec0d876dbbc57bc90fc18942b7
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: PlayertagToWorld
   - hash:
       serializedVersion: 2
       Hash: dbeab19c836bd50c0a0e371615445b64
