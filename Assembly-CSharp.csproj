@@ -77,8 +77,6 @@
     <Compile Include="Assets\Scripts\PlayInterpreter.cs" />
     <Compile Include="Assets\Scripts\Offline\PlayTerminalManager1.cs" />
     <Compile Include="Assets\Scripts\PlayTerminalManager.cs" />
-    <Compile Include="Assets\Scripts\PlayertagBillboard.cs" />
-    <Compile Include="Assets\Scripts\PlayerTag.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />
