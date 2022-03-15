@@ -262,7 +262,7 @@ GameObject:
   - component: {fileID: -8492554936346388101}
   - component: {fileID: -4695902974290098071}
   - component: {fileID: 5062147388131439719}
-  - component: {fileID: 6616810684885713320}
+  - component: {fileID: 3106698324159840784}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -278,7 +278,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 724321029828341351}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10, y: 3, z: 10}
+  m_LocalPosition: {x: 10, y: 3, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 724321030141257388}
@@ -446,7 +446,7 @@ MonoBehaviour:
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   target: {fileID: 724321030141257388}
---- !u!114 &6616810684885713320
+--- !u!114 &3106698324159840784
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -455,12 +455,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 724321029828341351}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27e5fef464c8c8c40a974ab35777f9ad, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c37e5a058322894893f3c7f96178a06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  playerName: {fileID: 0}
+  nameTagObject: {fileID: 5069045593727410743, guid: e11f005bee124c843a196439b8bb04c5, type: 3}
+  canvas: {fileID: 7420000163139504750}
+  cam: {fileID: 5407436697739409610}
+  playerList: []
+  nametagPool: []
 --- !u!1 &724321030141257387
 GameObject:
   m_ObjectHideFlags: 0
