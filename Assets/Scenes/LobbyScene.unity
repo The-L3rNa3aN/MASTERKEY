@@ -159,7 +159,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 960, y: -540}
+  m_AnchoredPosition: {x: 960, y: -539.99994}
   m_SizeDelta: {x: 1920, y: 107.593506}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &25473763
@@ -571,7 +571,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: G:/SYSTEM32>
+  m_Text: _/MASTERKEY>
 --- !u!222 &701916305
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1140,6 +1140,7 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
+  timeSession: 0
   notificationMessage: 
 --- !u!4 &2104403859
 Transform:
