@@ -25,6 +25,7 @@ public class PlayerTags : NetworkBehaviour
     private void ApplyNameTags(PlayerManager[] playerManagers)
     {
         var canvasRect = canvas.GetComponent<RectTransform>();
+        Image img = default;
 
         foreach (PlayerManager player in playerManagers)
         {
@@ -46,12 +47,14 @@ public class PlayerTags : NetworkBehaviour
             }
             else
             {
-                ///ERROR: InvalidOperationException: Collection was modified; enumeration operation may not execute.
-                ///The code below shoots this error. It doesn't break the game, but I'm skeptical of a problem that
-                ///may arise in the future. NEEDS FIXING!
-                Destroy(item.Key.gameObject);
-                playerDict.Remove(item.Key);
+                img = item.Key;
             }
+        }
+
+        if(img != null)
+        {
+            playerDict.Remove(img);
+            Destroy(img.gameObject);
         }
     }
 }

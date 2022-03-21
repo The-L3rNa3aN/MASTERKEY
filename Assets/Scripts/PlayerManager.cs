@@ -23,9 +23,10 @@ public class PlayerManager : NetworkBehaviour
         private int oldDeaths;
 
     [Header("Visualizers")]
+        [SyncVar] public Vector4 circleVis;
+        [SyncVar] public bool enableCircle;
         [Range(0f, 1f)] public float interp;
         public float interpSpeed;
-        public bool enableCircle;
         public SpriteRenderer attackCircle;
         public RawImage hurtImage;
         public RawImage deathImage;
@@ -74,19 +75,6 @@ public class PlayerManager : NetworkBehaviour
 
     private void Update()
     {
-        #region Attack Circle Visualizer
-        ///WHY IS THIS NOT SYNCING ACROSS THE SERVER?!
-        if (isLocalPlayer && enableCircle == true)
-        {
-            attackCircle.color = Color.Lerp(attackCircle.color, new Color(1, 1, 1, 1f), 3f * Time.deltaTime);
-        }
-
-        if (isLocalPlayer && enableCircle == false)
-        {
-            attackCircle.color = Color.Lerp(attackCircle.color, new Color(1, 1, 1, 0f), 6f * Time.deltaTime);
-        }
-        #endregion
-
         #region Death Camera Close-Up
         if (health <= 0)                                                                    //Zooms in the place where the player died and zooms back when respawned.
         {
@@ -104,15 +92,17 @@ public class PlayerManager : NetworkBehaviour
         if (hurtImage.color.a > 0f) { hurtImage.color = Color.Lerp(hurtImage.color, new Color(1, 1, 1, 0), 2f * Time.deltaTime); }
         #endregion
 
+        CmdCircleVisualizer();
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
         CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
-        if (isLocalPlayer && doAttack == true)
+
+        /*if (isLocalPlayer && doAttack == true)
         {
             doAttack = false;
             StartCoroutine(AttackDelay(0.3f));                                                                          //The player character takes 0.3s to attack after typing "attack".
             return;
-        }
+        }*/
 
         if (!isLocalPlayer)
         {
@@ -222,30 +212,10 @@ public class PlayerManager : NetworkBehaviour
     [ClientRpc] public void RpcSetName(string name) => playerTag = name;
     #endregion
 
-    [Command] public void DisconnectAsClient()                                                                              //Called when disconnecting either as host or as client.
-    {
-        PlayerPrefs.SetInt("PlayerKills", oldKills + kills);
-        PlayerPrefs.SetInt("PlayerDeaths", oldDeaths + deaths);
-        PlayerPrefs.Save();
-        NetworkServer.SendToAll(new Notification { content = playerTag + " has left." });
-    }
-
-    [ClientRpc] public void RpcKnockBack(Vector3 dir, float force)
-    {
-        dir.Normalize();
-        impact += dir.normalized * force / mass;
-    }
-
-    public void StopMovement()
-    {
-        directLR = null;
-        directUD = null;
-        move = Vector3.zero;
-    }
-
     #region Attacking and Damage
     private IEnumerator AttackDelay(float t)
     {
+        enableCircle = true;
         yield return new WaitForSeconds(t);
         attackSphere.enabled = true;
         enableCircle = false;
@@ -261,8 +231,8 @@ public class PlayerManager : NetworkBehaviour
     [Command] public void CmdDoDamage(GameObject enemyGameObject)
     {
         var enemy = enemyGameObject.GetComponent<PlayerManager>();
-        
-        if(enemy.health <= 1)           //Because the info before striking is different from the final reduced health of the enemy / enemies.
+
+        if (enemy.health <= 1)           //Because the info before striking is different from the final reduced health of the enemy / enemies.
         {
             kills++;
             enemy.deaths++;
@@ -272,7 +242,7 @@ public class PlayerManager : NetworkBehaviour
         if (corruptus == true) { enemy.RpcTakeDamage(2, playerTag); }                                                       //Victim takes twice the damage because of the player's Corruptus.
         else if (corruptus == false) { enemy.RpcTakeDamage(1, playerTag); }
 
-        if(enemyGameObject.GetComponent<PlayerManager>().escren == false)                                                   //Victims under the Escren effect don't suffer knockback.
+        if (enemyGameObject.GetComponent<PlayerManager>().escren == false)                                                   //Victims under the Escren effect don't suffer knockback.
         {
             enemyGameObject.GetComponent<PlayerManager>().RpcKnockBack(enemyGameObject.transform.position - transform.position, 50f);
         }
@@ -295,7 +265,7 @@ public class PlayerManager : NetworkBehaviour
             if (escren == true) escren = false;         //Players under the Escren effect don't take damage. The effect disppears after taking any form of damage.
             else health -= dmg * 2;
         }
-        else if(corruptus == false)
+        else if (corruptus == false)
         {
             if (escren == true) escren = false;
             else health -= dmg;
@@ -328,7 +298,8 @@ public class PlayerManager : NetworkBehaviour
     #region Player Respawning
     [Command] public void CmdRespawn() => RpcRespawn();
 
-    [ClientRpc] public void RpcRespawn()                        //And you're ALIVE!
+    [ClientRpc]
+    public void RpcRespawn()                        //And you're ALIVE!
     {
         health = 3;
         transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;                            //New position on respawning.
@@ -339,6 +310,79 @@ public class PlayerManager : NetworkBehaviour
         characterController.enabled = true;
     }
     #endregion
+
+    #region Powerup Effects
+    [Command] public void CmdGiveHealth(int healthPoints) => RpcTakeHealth(healthPoints);
+    [ClientRpc]
+    public void RpcTakeHealth(int healthPoints)
+    {
+        health += healthPoints;
+        if (healthPoints == 1) terminal.GetComponent<PlayTerminalManager>().AidePickup();
+        else terminal.GetComponent<PlayTerminalManager>().VitalisPickup();
+    }
+
+    public void CorruptusTimer()
+    {
+        if (corruptus == true)
+        {
+            terminal.GetComponent<PlayTerminalManager>().CorruptusPickup();
+            if (corruptusTimer > 0f) { corruptusTimer -= Time.deltaTime; }
+            if (corruptusTimer <= 0f)
+            {
+                corruptusTimer = 20f;
+                corruptus = false;
+            }
+        }
+    }
+    #endregion
+
+    [Command] public void CmdCircleVisualizer()
+    {
+        if (isLocalPlayer && doAttack == true)
+        {
+            doAttack = false;
+            //enableCircle bool doesn't activate for clients...
+            StartCoroutine(AttackDelay(0.3f));
+            //return;
+        }
+        RpcCircleVisualizer();
+    }
+
+    [ClientRpc] public void RpcCircleVisualizer()
+    {
+        if (enableCircle == true)
+        {
+            circleVis = Vector4.Lerp(circleVis, new Vector4(1, 1, 1, 1), 3f * Time.deltaTime);
+            attackCircle.color = circleVis;
+        }
+
+        if (enableCircle == false)
+        {
+            circleVis = Vector4.Lerp(circleVis, new Vector4(1, 1, 1, 0), 6f * Time.deltaTime);
+            attackCircle.color = circleVis;
+        }
+    }
+
+    [Command] public void DisconnectAsClient()                                                                              //Called when disconnecting either as host or as client.
+    {
+        PlayerPrefs.SetInt("PlayerKills", oldKills + kills);
+        PlayerPrefs.SetInt("PlayerDeaths", oldDeaths + deaths);
+        PlayerPrefs.Save();
+        NetworkServer.SendToAll(new Notification { content = playerTag + " has left." });
+    }
+
+    [ClientRpc] public void RpcKnockBack(Vector3 dir, float force)
+    {
+        dir.Normalize();
+        impact += dir.normalized * force / mass;
+    }
+
+    public void StopMovement()
+    {
+        directLR = null;
+        directUD = null;
+        move = Vector3.zero;
+    }
 
     public void DirectionRotation()
     {
@@ -390,28 +434,4 @@ public class PlayerManager : NetworkBehaviour
             }
         }
     }
-
-    #region Powerup Effects
-    [Command] public void CmdGiveHealth(int healthPoints) => RpcTakeHealth(healthPoints);
-    [ClientRpc]public void RpcTakeHealth(int healthPoints)
-    {
-        health += healthPoints;
-        if (healthPoints == 1) terminal.GetComponent<PlayTerminalManager>().AidePickup();
-        else terminal.GetComponent<PlayTerminalManager>().VitalisPickup();
-    }
-
-    public void CorruptusTimer()
-    {
-        if(corruptus == true)
-        {
-            terminal.GetComponent<PlayTerminalManager>().CorruptusPickup();
-            if (corruptusTimer > 0f) { corruptusTimer -= Time.deltaTime; }
-            if(corruptusTimer <= 0f)
-            {
-                corruptusTimer = 20f;
-                corruptus = false;
-            }
-        }
-    }
-    #endregion
 }
