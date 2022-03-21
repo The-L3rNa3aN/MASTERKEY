@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Offline\PlayInterpreter1.cs" />
     <Compile Include="Assets\Scripts\TerminalManager.cs" />
+    <Compile Include="Assets\Scripts\PlayertagManager.cs" />
     <Compile Include="Assets\Scripts\Scripts (UI Gradient)\UITextGradient.cs" />
     <Compile Include="Assets\Scripts\CameraFollowScript.cs" />
     <Compile Include="Assets\Scripts\Scripts (UI Gradient)\UICornersGradient.cs" />
@@ -73,12 +74,12 @@
     <Compile Include="Assets\Scripts\PlayerManager.cs" />
     <Compile Include="Assets\Scripts\PowerupScript.cs" />
     <Compile Include="Assets\Scripts\CustomNetworkManager.cs" />
+    <Compile Include="Assets\Scripts\PlayerTags.cs" />
     <Compile Include="Assets\Scripts\MessagesTest.cs" />
     <Compile Include="Assets\Scripts\PlayInterpreter.cs" />
     <Compile Include="Assets\Scripts\Offline\PlayTerminalManager1.cs" />
     <Compile Include="Assets\Scripts\PlayTerminalManager.cs" />
-    <Compile Include="Assets\Scripts\PlayerTags.cs" />
-    <Compile Include="Assets\Scripts\PlayertagManager.cs" />
+    <Compile Include="Assets\Scripts\VersusPlayerScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />

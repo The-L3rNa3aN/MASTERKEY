@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Mirror;
 
 public class PlayerManager : NetworkBehaviour
 {
-    public float conn;
     public Vector3 velocity, move;
     public GameObject playerCamera;
     public GameObject terminal;
@@ -25,8 +25,10 @@ public class PlayerManager : NetworkBehaviour
     [Header("Visualizers")]
         [Range(0f, 1f)] public float interp;
         public float interpSpeed;
-        public SpriteRenderer attackCircle;
         public bool enableCircle;
+        public SpriteRenderer attackCircle;
+        public RawImage hurtImage;
+        public RawImage deathImage;
 
     [Header("Health and Attack related Vars")]
         [SyncVar] public int health = 3;
@@ -73,11 +75,12 @@ public class PlayerManager : NetworkBehaviour
     private void Update()
     {
         #region Attack Circle Visualizer
+        ///WHY IS THIS NOT SYNCING ACROSS THE SERVER?!
         if (isLocalPlayer && enableCircle == true)
         {
             attackCircle.color = Color.Lerp(attackCircle.color, new Color(1, 1, 1, 1f), 3f * Time.deltaTime);
         }
-        
+
         if (isLocalPlayer && enableCircle == false)
         {
             attackCircle.color = Color.Lerp(attackCircle.color, new Color(1, 1, 1, 0f), 6f * Time.deltaTime);
@@ -88,11 +91,17 @@ public class PlayerManager : NetworkBehaviour
         if (health <= 0)                                                                    //Zooms in the place where the player died and zooms back when respawned.
         {
             playerCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(playerCamera.GetComponent<Camera>().fieldOfView, 30f, 0.5f * Time.deltaTime);
+            deathImage.color = Color.Lerp(deathImage.color, new Color(1, 1, 1, 1), Time.deltaTime);
         }
         else
         {
             playerCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(playerCamera.GetComponent<Camera>().fieldOfView, 60f, 3f * Time.deltaTime);
+            deathImage.color = Color.Lerp(deathImage.color, new Color(1, 1, 1, 0), 5f * Time.deltaTime);
         }
+        #endregion
+
+        #region Hurt-Image Fade Out
+        if (hurtImage.color.a > 0f) { hurtImage.color = Color.Lerp(hurtImage.color, new Color(1, 1, 1, 0), 2f * Time.deltaTime); }
         #endregion
 
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
@@ -257,6 +266,7 @@ public class PlayerManager : NetworkBehaviour
         {
             kills++;
             enemy.deaths++;
+            //RpcVersusHandler(enemy);
         }
 
         if (corruptus == true) { enemy.RpcTakeDamage(2, playerTag); }                                                       //Victim takes twice the damage because of the player's Corruptus.
@@ -279,6 +289,7 @@ public class PlayerManager : NetworkBehaviour
 
     [ClientRpc] public void RpcTakeDamage(int dmg, string attackerTag)                                                       //This RPC method handles taking damage and death.
     {
+        hurtImage.color = new Color(1, 1, 1, 1);
         if (corruptus == true)                          //Players under the Corruptus effect take more damage then usual.
         {
             if (escren == true) escren = false;         //Players under the Escren effect don't take damage. The effect disppears after taking any form of damage.
@@ -299,6 +310,17 @@ public class PlayerManager : NetworkBehaviour
             GFX.gameObject.SetActive(false);
             characterController.enabled = false;
             StopMovement();
+        }
+    }
+
+    public void RpcVersusHandler(PlayerManager enemyPlayerManager)
+    {
+        foreach (var item in GetComponent<VersusPlayerScript>().versusKills)
+        {
+            if (item.Key == enemyPlayerManager)
+            {
+                GetComponent<VersusPlayerScript>().versusKills[item.Key]++;
+            }
         }
     }
     #endregion

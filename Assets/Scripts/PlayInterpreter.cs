@@ -164,6 +164,15 @@ public class PlayInterpreter : MonoBehaviour
             commandsRun++;
             return response;
         }
+
+        if(args[0] == "versusscores")
+        {
+            foreach(var item in player.GetComponent<VersusPlayerScript>().versusKills)
+            {
+                response.Add(item.Key.playerTag + ", " + item.Value);
+            }
+            return response;
+        }
         #endregion
 
         #region Gameplay Commands

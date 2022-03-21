@@ -47,8 +47,8 @@ public class PlayerTags : NetworkBehaviour
             else
             {
                 ///ERROR: InvalidOperationException: Collection was modified; enumeration operation may not execute.
-                ///This code shoots this error. It doesn't break the game, but I'm skeptical of a problem that may
-                ///arise in the future. NEEDS FIXING!
+                ///The code below shoots this error. It doesn't break the game, but I'm skeptical of a problem that
+                ///may arise in the future. NEEDS FIXING!
                 Destroy(item.Key.gameObject);
                 playerDict.Remove(item.Key);
             }
