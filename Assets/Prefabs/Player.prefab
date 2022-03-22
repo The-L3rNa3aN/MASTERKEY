@@ -280,7 +280,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 724321029828341351}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10, y: 3, z: 10}
+  m_LocalPosition: {x: 10, y: 3, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 724321030141257388}
@@ -343,9 +343,10 @@ MonoBehaviour:
   playerTag: 
   kills: 0
   deaths: 0
+  circleVis: {x: 0, y: 0, z: 0, w: 0}
+  enableCircle: 0
   interp: 0.72
   interpSpeed: 3
-  enableCircle: 0
   attackCircle: {fileID: 5188318030426614216}
   hurtImage: {fileID: 965965083517499843}
   deathImage: {fileID: 6309492065610102983}

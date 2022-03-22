@@ -221,8 +221,8 @@ public class PlayInterpreter : MonoBehaviour
 
         if(args[0] == "attack")
         {
-            player.doAttack = true;
-            //player.enableCircle = true;
+            //player.doAttack = true;
+            player.CmdDoAttack();
             player.StopMovement();
             commandsRun++;
             return response;

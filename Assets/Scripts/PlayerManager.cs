@@ -37,7 +37,7 @@ public class PlayerManager : NetworkBehaviour
         public Vector3 attackerPos;
         private SphereCollider attackSphere;
         private float healthTimer = 5f;
-        [HideInInspector] public bool doAttack;
+        [SyncVar] public bool doAttack;
         [HideInInspector] public bool toRespawn;
 
     [Header("Powerup Effects")]
@@ -97,7 +97,7 @@ public class PlayerManager : NetworkBehaviour
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
         CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
 
-        /*if (isLocalPlayer && doAttack == true)
+        /*if (doAttack == true)
         {
             doAttack = false;
             StartCoroutine(AttackDelay(0.3f));                                                                          //The player character takes 0.3s to attack after typing "attack".
@@ -213,21 +213,6 @@ public class PlayerManager : NetworkBehaviour
     #endregion
 
     #region Attacking and Damage
-    private IEnumerator AttackDelay(float t)
-    {
-        enableCircle = true;
-        yield return new WaitForSeconds(t);
-        attackSphere.enabled = true;
-        enableCircle = false;
-        yield return new WaitForSeconds(0.05f);
-        attackSphere.enabled = false;
-    }
-
-    private void OnTriggerEnter(Collider other)                                                                             //This is used by the attackSphere collider by default.
-    {
-        if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false) CmdDoDamage(other.GetComponent<NetworkIdentity>().gameObject);
-    }
-
     [Command] public void CmdDoDamage(GameObject enemyGameObject)
     {
         var enemy = enemyGameObject.GetComponent<PlayerManager>();
@@ -293,6 +278,21 @@ public class PlayerManager : NetworkBehaviour
             }
         }
     }
+
+    private IEnumerator AttackDelay(float t)
+    {
+        //enableCircle = true;
+        yield return new WaitForSeconds(t);
+        attackSphere.enabled = true;
+        //enableCircle = false;
+        yield return new WaitForSeconds(0.05f);
+        attackSphere.enabled = false;
+    }
+
+    private void OnTriggerEnter(Collider other)                                                                             //This is used by the attackSphere collider by default.
+    {
+        if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false) CmdDoDamage(other.GetComponent<NetworkIdentity>().gameObject);
+    }
     #endregion
 
     #region Player Respawning
@@ -336,15 +336,17 @@ public class PlayerManager : NetworkBehaviour
     }
     #endregion
 
+    [Command] public void CmdDoAttack() => doAttack = true;
+
     [Command] public void CmdCircleVisualizer()
     {
-        if (isLocalPlayer && doAttack == true)
+        if(doAttack == true)
         {
             doAttack = false;
-            //enableCircle bool doesn't activate for clients...
+            enableCircle = true;
             StartCoroutine(AttackDelay(0.3f));
-            //return;
         }
+
         RpcCircleVisualizer();
     }
 
@@ -354,6 +356,11 @@ public class PlayerManager : NetworkBehaviour
         {
             circleVis = Vector4.Lerp(circleVis, new Vector4(1, 1, 1, 1), 3f * Time.deltaTime);
             attackCircle.color = circleVis;
+
+            if(attackCircle.color.a >= 0.6f)
+            {
+                enableCircle = false;
+            }
         }
 
         if (enableCircle == false)
