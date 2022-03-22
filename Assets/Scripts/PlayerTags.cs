@@ -8,13 +8,13 @@ public class PlayerTags : NetworkBehaviour
 {
     public GameObject nameTagObject;
     public Canvas canvas;
-    public Camera cam;
+    Camera cam;
     Image image;
     Dictionary<Image, PlayerManager> playerDict = new Dictionary<Image, PlayerManager>();
 
     private void Start()
     {
-        //if(!isLocalPlayer) { return; }
+        cam = FindObjectOfType<Camera>();
     }
 
     private void LateUpdate()

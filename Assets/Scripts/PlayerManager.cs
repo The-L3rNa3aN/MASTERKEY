@@ -15,45 +15,56 @@ public class PlayerManager : NetworkBehaviour
     private float gravity = -20f;
     private float mass = 3f;
 
+    Dictionary<string, string> colors = new Dictionary<string, string>()
+    {
+        {"red", "#ff0000" },
+        {"light blue", "#7070ff" },
+        {"green", "#00ff00" },
+        {"orange", "ffab0f" },
+        {"yellow", "#ffea00" },
+        {"aqua", "#00f7ff" },
+        {"white", "#ffffff" }
+    };
+
     [Header("Player Stats and Scores")]
-        [SyncVar] public string playerTag;
-        [SyncVar] public int kills;
-        [SyncVar] public int deaths;
-        private int oldKills;
-        private int oldDeaths;
+    [SyncVar] public string playerTag;
+    [SyncVar] public int kills;
+    [SyncVar] public int deaths;
+    private int oldKills;
+    private int oldDeaths;
 
     [Header("Visualizers")]
-        [SyncVar] public Vector4 circleVis;
-        [SyncVar] public bool enableCircle;
-        [Range(0f, 1f)] public float interp;
-        public float interpSpeed;
-        public SpriteRenderer attackCircle;
-        public RawImage hurtImage;
-        public RawImage deathImage;
+    [SyncVar] public Vector4 circleVis;
+    [SyncVar] public bool enableCircle;
+    [Range(0f, 1f)] public float interp;
+    public float interpSpeed;
+    public SpriteRenderer attackCircle;
+    public RawImage hurtImage;
+    public RawImage deathImage;
 
     [Header("Health and Attack related Vars")]
-        [SyncVar] public int health = 3;
-        public Vector3 impact = Vector3.zero;
-        public Vector3 attackerPos;
-        private SphereCollider attackSphere;
-        private float healthTimer = 5f;
-        [SyncVar] public bool doAttack;
-        [HideInInspector] public bool toRespawn;
+    [SyncVar] public int health = 3;
+    public Vector3 impact = Vector3.zero;
+    public Vector3 attackerPos;
+    private SphereCollider attackSphere;
+    private float healthTimer = 5f;
+    [SyncVar] public bool doAttack;
+    [HideInInspector] public bool toRespawn;
 
     [Header("Powerup Effects")]
-        [SyncVar] public bool corruptus;
-        [SyncVar] public bool escren;
-        private float corruptusTimer = 20f;
+    [SyncVar] public bool corruptus;
+    [SyncVar] public bool escren;
+    private float corruptusTimer = 20f;
 
     [Header("Normal Movement-Related Vars")]
-        public string directLR;
-        public string directUD;
+    public string directLR;
+    public string directUD;
 
     [Header("Dash Related Vars")]
-        public Vector3 dest;
-        public string dashDir;
-        public Vector3 dashOldPos;
-        [SerializeField] private float dashTimer = 1f;
+    public Vector3 dest;
+    public string dashDir;
+    public Vector3 dashOldPos;
+    [SerializeField] private float dashTimer = 1f;
 
     public List<GameObject> spawnPoints = new List<GameObject>();                           //A list of spawnpoints for the player. I hope this doesn't hinder performance.
 
@@ -71,10 +82,17 @@ public class PlayerManager : NetworkBehaviour
 
         //Randomized spawnpoints on start.
         networkManager.GetComponent<NetworkManager>().playerPrefab.transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;
+
+        playerCamera = FindObjectOfType<Camera>().gameObject;
     }
 
     private void Update()
     {
+        if(isLocalPlayer)
+        {
+            playerCamera.GetComponent<CameraFollowScript>().target = transform;
+        }
+
         #region Death Camera Close-Up
         if (health <= 0)                                                                    //Zooms in the place where the player died and zooms back when respawned.
         {
@@ -92,26 +110,19 @@ public class PlayerManager : NetworkBehaviour
         if (hurtImage.color.a > 0f) { hurtImage.color = Color.Lerp(hurtImage.color, new Color(1, 1, 1, 0), 2f * Time.deltaTime); }
         #endregion
 
-        CmdCircleVisualizer();
+        CircleVisualizer();
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
         CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
 
-        /*if (doAttack == true)
-        {
-            doAttack = false;
-            StartCoroutine(AttackDelay(0.3f));                                                                          //The player character takes 0.3s to attack after typing "attack".
-            return;
-        }*/
-
         if (!isLocalPlayer)
         {
-            playerCamera.GetComponent<Camera>().enabled = false;
-            playerCamera.GetComponent<AudioListener>().enabled = false;
+            //playerCamera.GetComponent<Camera>().enabled = false;
+            //playerCamera.GetComponent<AudioListener>().enabled = false;
             terminal.SetActive(false);
         }
 
-        if(health <= 0 && toRespawn == true)
+        if (health <= 0 && toRespawn == true)
         {
             CmdRespawn();                                                                                                  //Adding the "Command" attribute to Update() wasn't a good idea.
             toRespawn = false;
@@ -123,7 +134,7 @@ public class PlayerManager : NetworkBehaviour
         if (characterController.isGrounded == true && velocity.y < 0f) { velocity.y = -2f; }                                //Gravity.
         velocity.y += gravity * Time.deltaTime;
 
-        if(dashDir == null) { dashOldPos = transform.position; }
+        if (dashDir == null) { dashOldPos = transform.position; }
 
         //Dashing.
         switch (dashDir)
@@ -131,7 +142,7 @@ public class PlayerManager : NetworkBehaviour
             case "left":
                 move = Vector3.left * 7.5f;
                 dashTimer -= Time.deltaTime;
-                if(dashTimer <= 0f)
+                if (dashTimer <= 0f)
                 {
                     dashDir = null;
                     move = Vector3.zero;
@@ -174,7 +185,7 @@ public class PlayerManager : NetworkBehaviour
         }
 
         //Horizontal Movement.
-        switch(directLR)
+        switch (directLR)
         {
             case "left":
                 move = new Vector3(-1f, 0f, move.z);
@@ -186,7 +197,7 @@ public class PlayerManager : NetworkBehaviour
         }
 
         //Vertical Movement.
-        switch(directUD)
+        switch (directUD)
         {
             case "up":
                 move = new Vector3(move.x, 0f, 1f);
@@ -196,7 +207,7 @@ public class PlayerManager : NetworkBehaviour
                 move = new Vector3(move.x, 0f, -1f);
                 break;
         }
-        
+
         characterController.Move(move * 3f * Time.deltaTime);
         characterController.Move(velocity * Time.deltaTime);
     }
@@ -206,7 +217,7 @@ public class PlayerManager : NetworkBehaviour
     public void CmdSetName(string name)
     {
         RpcSetName(name);
-        NetworkServer.SendToAll(new Notification { content = name + " has joined." });                                      //Running this in Start() prevents the client from joining the server.
+        NetworkServer.SendToAll(new Notification { content = ColorString(name, colors["yellow"]) + " has joined." });       //Running this in Start() prevents the client from joining the server.
     }
 
     [ClientRpc] public void RpcSetName(string name) => playerTag = name;
@@ -235,6 +246,8 @@ public class PlayerManager : NetworkBehaviour
 
     [Command] public void CmdDoSelfDamage(int helth) => RpcTakeDamage(helth, string.Empty);
 
+    [Command] public void CmdEnableCircle() => enableCircle = true;
+
     [Command] public void CmdSeppuku()                                                                                      //Player committing suicide by running the "kill" command.
     {
         RpcTakeDamage(health, string.Empty);
@@ -259,8 +272,8 @@ public class PlayerManager : NetworkBehaviour
         if (health <= 0)                                        //DIE!
         {
             //Prevents the notification from being sent if the player commits suicide.
-            if (attackerTag != string.Empty) { NetworkServer.SendToAll(new Notification { content = attackerTag + " has slain " + playerTag }); }
-            else { NetworkServer.SendToAll(new Notification { content = playerTag + " committed suicide." }); }
+            if (attackerTag != string.Empty) { NetworkServer.SendToAll(new Notification { content = ColorString(attackerTag, colors["yellow"]) + " has slain " + ColorString(playerTag, colors["yellow"]) }); }
+            else { NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " committed suicide." }); }
 
             GFX.gameObject.SetActive(false);
             characterController.enabled = false;
@@ -279,12 +292,37 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
+    public void CircleVisualizer()
+    {
+        if (doAttack == true)
+        {
+            doAttack = false;
+            StartCoroutine(AttackDelay(0.3f));                                                                          //The player character takes 0.3s to attack after typing "attack".
+            return;
+        }
+
+        if (enableCircle == true)
+        {
+            circleVis = Vector4.Lerp(circleVis, new Vector4(1, 1, 1, 1), 3f * Time.deltaTime);
+            attackCircle.color = circleVis;
+
+            if (attackCircle.color.a >= 0.6f)
+            {
+                enableCircle = false;
+            }
+        }
+
+        if (enableCircle == false)
+        {
+            circleVis = Vector4.Lerp(circleVis, new Vector4(1, 1, 1, 0), 6f * Time.deltaTime);
+            attackCircle.color = circleVis;
+        }
+    }
+
     private IEnumerator AttackDelay(float t)
     {
-        //enableCircle = true;
         yield return new WaitForSeconds(t);
         attackSphere.enabled = true;
-        //enableCircle = false;
         yield return new WaitForSeconds(0.05f);
         attackSphere.enabled = false;
     }
@@ -336,46 +374,12 @@ public class PlayerManager : NetworkBehaviour
     }
     #endregion
 
-    [Command] public void CmdDoAttack() => doAttack = true;
-
-    [Command] public void CmdCircleVisualizer()
-    {
-        if(doAttack == true)
-        {
-            doAttack = false;
-            enableCircle = true;
-            StartCoroutine(AttackDelay(0.3f));
-        }
-
-        RpcCircleVisualizer();
-    }
-
-    [ClientRpc] public void RpcCircleVisualizer()
-    {
-        if (enableCircle == true)
-        {
-            circleVis = Vector4.Lerp(circleVis, new Vector4(1, 1, 1, 1), 3f * Time.deltaTime);
-            attackCircle.color = circleVis;
-
-            if(attackCircle.color.a >= 0.6f)
-            {
-                enableCircle = false;
-            }
-        }
-
-        if (enableCircle == false)
-        {
-            circleVis = Vector4.Lerp(circleVis, new Vector4(1, 1, 1, 0), 6f * Time.deltaTime);
-            attackCircle.color = circleVis;
-        }
-    }
-
     [Command] public void DisconnectAsClient()                                                                              //Called when disconnecting either as host or as client.
     {
         PlayerPrefs.SetInt("PlayerKills", oldKills + kills);
         PlayerPrefs.SetInt("PlayerDeaths", oldDeaths + deaths);
         PlayerPrefs.Save();
-        NetworkServer.SendToAll(new Notification { content = playerTag + " has left." });
+        NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " has left." });
     }
 
     [ClientRpc] public void RpcKnockBack(Vector3 dir, float force)
@@ -440,5 +444,13 @@ public class PlayerManager : NetworkBehaviour
                 CmdDoSelfDamage(1);
             }
         }
+    }
+
+    public string ColorString(string s, string color)
+    {
+        string leftTag = "<color=" + color + ">";
+        string rightTag = "</color>";
+
+        return leftTag + s + rightTag;
     }
 }

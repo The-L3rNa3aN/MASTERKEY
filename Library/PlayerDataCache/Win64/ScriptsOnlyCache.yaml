@@ -16,6 +16,7 @@ ScriptsOnlyBuild:
     - ScoreboardItemManager
     - TerminalManager
     - UIGradient
+    - VersusPlayerScript
     Mirror.Components.dll:
     - Mirror.NetworkTransform
     - Mirror.NetworkTransformChild
@@ -236,7 +237,9 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 6976}
     - Class: 114
-      Script: {instanceID: 7154}
+      Script: {instanceID: 7098}
+    - Class: 114
+      Script: {instanceID: 7156}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1073,7 +1076,7 @@ ScriptsOnlyBuild:
     className: UIFoldout
   - hash:
       serializedVersion: 2
-      Hash: 8c04c60eb51ccb3f8b31795916efaca5
+      Hash: 8247bc17935fdb16bbd0a7eed13f5841
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager
@@ -1437,6 +1440,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.RenderPipelines.Core.Runtime.dll
     namespaceName: UnityEngine.Rendering
     className: Volume
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: VersusPlayerScript
   - hash:
       serializedVersion: 2
       Hash: 36025d42bf23fda83a55bf1429201821
