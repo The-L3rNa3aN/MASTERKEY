@@ -75,11 +75,70 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
+        #region Connecting and Hosting
+        if (args[0] == "ipaddress")
+        {
+            response.Add("Your network address: " + ColorString(networkManager.networkAddress, colors["white"]));
+            return response;
+        }
+
+        if (args[0] == "start" && args[1] == "host")
+        {
+            networkManager.StartHost();
+            return response;
+        }
+
+        if (args[0] == "connect" && args[1] != null)
+        {
+            networkManager.networkAddress = args[1];
+            response.Add("Connecting to " + ColorString(args[1], colors["white"]) + "...");
+            networkManager.StartClient();
+            return response;
+        }
+        #endregion
+
+        #region Easter Eggs
+        if (args[0] == "masterkey")
+        {
+            LoadTitle("ascii.txt", "aqua", 2);
+            response.Add("At your service!");
+            return response;
+        }
+
+        if (args[0] == "Lernaean" || args[0] == "lernaean" || args[0] == "L3rNa3aN" || args[0] == "The Lernaean" || args[0] == "the lernaean" || args[0] == "The L3rNa3aN")
+        {
+            LoadTitle("lernaean 160.txt", "green", 2);
+            response.Add("What is it you want?");
+            return response;
+        }
+
+        if (args[0] == "Hi" || args[0] == "hi" || args[0] == "Hey" || args[0] == "hey")
+        {
+            response.Add("Hey!");
+            return response;
+        }
+
+        if (args[0] == "Shakira" || args[0] == "shakira")
+        {
+            response.Add("Three golden words: " + ColorString("HIPS DON'T LIE", colors["yellow"]));
+            return response;
+        }
+
+        if (args[0] == "who" || args[0] == "Who" && args[1] == "are" && args[2] == "you")
+        {
+            response.Add("I'm a machine written by The L3rNa3aN.");
+            return response;
+        }
+        #endregion
+
+        #region Utilitarian
         if (args[0] == "stats" && args[1] == "display")
         {
             response.Add("Thy p'rsonal r'cord, " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]) + ": -");
             ListEntry("Times thee has't slay'd", PlayerPrefs.GetInt("PlayerKills").ToString());
             ListEntry("Times thee has't fallen", PlayerPrefs.GetInt("PlayerDeaths").ToString());
+            ListEntry("Killing sprees thee did start", PlayerPrefs.GetInt("PlayerSpreesStarted").ToString());
+            ListEntry("Killing sprees thee end'd", PlayerPrefs.GetInt("PlayerSpreesEnded").ToString());
             ListEntry("Thy swiftness", PlayerAverageSpeed().ToString());
             ListEntry("Times thee've did join combat", PlayerPrefs.GetInt("PlayerMatches").ToString());
             ListEntry("The total hests thee've runneth", PlayerPrefs.GetInt("PlayerTotalCommands").ToString());
@@ -108,14 +167,14 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0] == "settag" && args[1] != null)
+        if (args[0] == "settag" && args[1] != null)
         {
             response.Add("Your player tag is now set to " + ColorString(args[1], colors["yellow"]));
             PlayerPrefs.SetString("PlayerName", args[1]);
             return response;
         }
 
-        if(args[0] == "about")
+        if (args[0] == "about")
         {
             response.Add(ColorString("MASTERKEY", colors["green"]) + " is a game where you need to type in order to play, a little like other typing games but this time with a little action involved.");
             return response;
@@ -127,59 +186,7 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0] == "ipaddress")
-        {
-            response.Add("Your network address: " + ColorString(networkManager.networkAddress, colors["white"]));
-            return response;
-        }
-
-        if (args[0] == "start" && args[1] == "host")
-        {
-            networkManager.StartHost();
-            return response;
-        }
-
-        if(args[0] == "connect" && args[1] != null)
-        {
-            networkManager.networkAddress = args[1];
-            response.Add("Connecting to " + ColorString(args[1], colors["white"]) + "...");
-            networkManager.StartClient();
-            return response;
-        }
-
-        if (args[0] == "masterkey")
-        {
-            LoadTitle("ascii.txt", "aqua", 2);
-            response.Add("At your service!");
-            return response;
-        }
-
-        if(args[0] == "Lernaean" || args[0] == "lernaean" || args[0] == "L3rNa3aN" || args[0] == "The Lernaean" || args[0] == "the lernaean" || args[0] == "The L3rNa3aN")
-        {
-            LoadTitle("lernaean 160.txt", "green", 2);
-            response.Add("What is it you want?");
-            return response;
-        }
-
-        if(args[0] == "Hi" || args[0] == "hi" || args[0] == "Hey" || args[0] == "hey")
-        {
-            response.Add("Hey!");
-            return response;
-        }
-
-        if(args[0] == "Shakira" || args[0] == "shakira")
-        {
-            response.Add("Three golden words: " + ColorString("HIPS DON'T LIE", colors["yellow"]));
-            return response;
-        }
-
-        if(args[0] == "who" || args[0] == "Who" && args[1] == "are" && args[2] == "you")
-        {
-            response.Add("I'm a machine written by The L3rNa3aN.");
-            return response;
-        }
-
-        if(args[0] == "quit" || args[0] == "exit")
+        if (args[0] == "quit" || args[0] == "exit")
         {
             PlayerPrefs.SetInt("PlayerTime", PlayerPrefs.GetInt("PlayerTime") + (int)networkManager.timeSession);
             Application.Quit();
@@ -190,6 +197,7 @@ public class Interpreter : MonoBehaviour
             response.Add(ColorString("Command not recognized. Type ", colors["red"]) + ColorString("help", colors["yellow"]) + ColorString(" for a list of commands", colors["red"]));
             return response;
         }
+        #endregion
     }
 
     public string ColorString(string s, string color)

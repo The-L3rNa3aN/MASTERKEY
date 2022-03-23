@@ -152,14 +152,11 @@ public class PlayInterpreter : MonoBehaviour
         if (args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == false)
         {
             scoreboard.gameObject.SetActive(true);
-            scoreboard.FindPlayers();                   //Scoreboard updates only when its toggled on.
             commandsRun++;
             return response;
         }
         else if (args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == true)
         {
-            scoreboard.playerList.Clear();
-            scoreboard.RemoveScoreboardItems();         //I'm still skeptical if this won't have any impact. I anyways need to find a better way of updating and toggling scoreboards.
             scoreboard.gameObject.SetActive(false);
             commandsRun++;
             return response;

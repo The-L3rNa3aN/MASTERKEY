@@ -1,38 +1,48 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 
 public class ScoreBoard : MonoBehaviour
 {
     public Transform container;
     public GameObject scoreBoardItem;
-    public List<PlayerManager> playerList = new List<PlayerManager>();
+    Dictionary<ScoreboardItemManager, PlayerManager> itemsDict = new Dictionary<ScoreboardItemManager, PlayerManager>();
 
     private void Start() => gameObject.SetActive(false);
 
-    public void FindPlayers()
+    private void Update()
     {
         var searchPlayer = FindObjectsOfType<PlayerManager>();
-        for (int i = 0; i < searchPlayer.Length; i++) { playerList.Add(searchPlayer[i]); }
+        ScoreboardItemManager sim = default;
 
-        foreach (PlayerManager player in playerList) { AddScoreboardItem(player); }
-    }
-
-    public void AddScoreboardItem(PlayerManager player)
-    {
-        ScoreboardItemManager item = Instantiate(scoreBoardItem, container).GetComponent<ScoreboardItemManager>();
-        item.Initialize(player);
-    }
-
-    public void RemoveScoreboardItems()
-    {
-        for (var i = gameObject.transform.childCount - 1; i >= 0; i--)
+        foreach (PlayerManager player in searchPlayer)               //Adding players to the list.
         {
-            if(gameObject.transform.GetChild(i).name != "ScoreBoardDirectory")
+            if (!itemsDict.ContainsValue(player))
             {
-                Destroy(gameObject.transform.GetChild(i).gameObject);
+                ScoreboardItemManager item = Instantiate(scoreBoardItem, container).GetComponent<ScoreboardItemManager>();
+                item.Initialize(player);
+                itemsDict[item] = player;
             }
+        }
+
+        foreach (var item in itemsDict)
+        {
+            if (item.Value != null)
+            {
+                Debug.Log("Not null.");
+                //sim = item.Key;
+            }
+            else
+            {
+                Debug.Log("Null.");
+                sim = item.Key;
+            }
+        }
+
+        if (sim != null)
+        {
+            Destroy(itemsDict[sim]);
+            itemsDict.Remove(sim);
         }
     }
 }

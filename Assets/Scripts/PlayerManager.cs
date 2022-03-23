@@ -30,8 +30,13 @@ public class PlayerManager : NetworkBehaviour
     [SyncVar] public string playerTag;
     [SyncVar] public int kills;
     [SyncVar] public int deaths;
+    [SyncVar] public int killsNoDeath;
+    [SyncVar] public int spreesStarted;
+    [SyncVar] public int spreesEnded;
     private int oldKills;
     private int oldDeaths;
+    private int oldSpreesStarted;
+    private int oldSpreesEnded;
 
     [Header("Visualizers")]
     [SyncVar] public Vector4 circleVis;
@@ -72,6 +77,9 @@ public class PlayerManager : NetworkBehaviour
     {
         oldKills = PlayerPrefs.GetInt("PlayerKills");
         oldDeaths = PlayerPrefs.GetInt("PlayerDeaths");
+        oldSpreesStarted = PlayerPrefs.GetInt("PlayerSpreesStarted");
+        oldSpreesEnded = PlayerPrefs.GetInt("PlayerSpreesEnded");
+
         characterController = GetComponent<CharacterController>();
         attackSphere = GetComponent<SphereCollider>();
         networkManager = GameObject.Find("NetworkManager");
@@ -83,23 +91,18 @@ public class PlayerManager : NetworkBehaviour
         //Randomized spawnpoints on start.
         networkManager.GetComponent<NetworkManager>().playerPrefab.transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;
 
-        playerCamera = FindObjectOfType<Camera>().gameObject;
+        playerCamera = FindObjectOfType<Camera>().gameObject;                               //The camera in the scene will be assigned to the player upon connecting.
     }
 
     private void Update()
     {
-        if(isLocalPlayer)
-        {
-            playerCamera.GetComponent<CameraFollowScript>().target = transform;
-        }
-
         #region Death Camera Close-Up
-        if (health <= 0)                                                                    //Zooms in the place where the player died and zooms back when respawned.
+        if (isLocalPlayer && health <= 0)                                           //Zooms in the place where the player died and zooms back when respawned. Zoom effect will sync with all clients if not using bool.
         {
             playerCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(playerCamera.GetComponent<Camera>().fieldOfView, 30f, 0.5f * Time.deltaTime);
             deathImage.color = Color.Lerp(deathImage.color, new Color(1, 1, 1, 1), Time.deltaTime);
         }
-        else
+        else if(isLocalPlayer && health > 0)
         {
             playerCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(playerCamera.GetComponent<Camera>().fieldOfView, 60f, 3f * Time.deltaTime);
             deathImage.color = Color.Lerp(deathImage.color, new Color(1, 1, 1, 0), 5f * Time.deltaTime);
@@ -115,11 +118,10 @@ public class PlayerManager : NetworkBehaviour
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
         CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
 
-        if (!isLocalPlayer)
+        if (!isLocalPlayer) {terminal.SetActive(false);}
+        if (isLocalPlayer)
         {
-            //playerCamera.GetComponent<Camera>().enabled = false;
-            //playerCamera.GetComponent<AudioListener>().enabled = false;
-            terminal.SetActive(false);
+            playerCamera.GetComponent<CameraFollowScript>().target = transform;             //The unsynced camera will only follow the player of this machine.
         }
 
         if (health <= 0 && toRespawn == true)
@@ -232,7 +234,19 @@ public class PlayerManager : NetworkBehaviour
         {
             kills++;
             enemy.deaths++;
+            killsNoDeath++;
             //RpcVersusHandler(enemy);
+
+            if(enemy.killsNoDeath >= 5)
+            {
+                NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " has ended " + ColorString(enemy.playerTag + "'s", colors["yellow"]) + ColorString(" killing spree", colors["red"]) });
+            }
+        }
+
+        if (killsNoDeath == 5)          //Killing spree notification.
+        {
+            spreesStarted++;
+            NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " is on a " + ColorString("KILLING SPREE", colors["red"]) });
         }
 
         if (corruptus == true) { enemy.RpcTakeDamage(2, playerTag); }                                                       //Victim takes twice the damage because of the player's Corruptus.
@@ -251,8 +265,15 @@ public class PlayerManager : NetworkBehaviour
     [Command] public void CmdSeppuku()                                                                                      //Player committing suicide by running the "kill" command.
     {
         RpcTakeDamage(health, string.Empty);
+
+        if(killsNoDeath >= 5)                           //If the player committed suicide when on a killing spree.
+        {
+            NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " has ended their " + ColorString("killing spree", colors["red"]) });
+        }
+
         kills--;                                        //Because suicide sucks and the easy way out isn't always the best way.
         deaths++;                                       //You committed suicide like a coward, so that counts as dying.
+        killsNoDeath = 0;                               //Yeah, you ended your own spree.
     }
 
     [ClientRpc] public void RpcTakeDamage(int dmg, string attackerTag)                                                       //This RPC method handles taking damage and death.
@@ -275,6 +296,7 @@ public class PlayerManager : NetworkBehaviour
             if (attackerTag != string.Empty) { NetworkServer.SendToAll(new Notification { content = ColorString(attackerTag, colors["yellow"]) + " has slain " + ColorString(playerTag, colors["yellow"]) }); }
             else { NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " committed suicide." }); }
 
+            killsNoDeath = 0;
             GFX.gameObject.SetActive(false);
             characterController.enabled = false;
             StopMovement();
@@ -378,6 +400,8 @@ public class PlayerManager : NetworkBehaviour
     {
         PlayerPrefs.SetInt("PlayerKills", oldKills + kills);
         PlayerPrefs.SetInt("PlayerDeaths", oldDeaths + deaths);
+        PlayerPrefs.SetInt("PlayerSpreesStarted", oldSpreesStarted + spreesStarted);
+        PlayerPrefs.SetInt("PlayerSpreesEnded", oldSpreesEnded + spreesEnded);
         PlayerPrefs.Save();
         NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " has left." });
     }
