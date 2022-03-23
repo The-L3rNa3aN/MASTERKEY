@@ -45,6 +45,11 @@ public class TerminalManager : MonoBehaviour
         ScrollToBottom(AddInterpreterLines(interpreter.Interpret("disconnected"))); userInputLine.transform.SetAsLastSibling();
     }
 
+    public void Test()
+    {
+        ScrollToBottom(AddInterpreterLines(interpreter.Interpret("test"))); userInputLine.transform.SetAsLastSibling();
+    }
+
     public void ClearScreen()                                              //Method for clearing the screen.
     {
         foreach (Transform child in msgList.transform)
@@ -62,7 +67,8 @@ public class TerminalManager : MonoBehaviour
 
     private void OnGUI()
     {
-        if(terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return))     //As long as the text isn't blank, it will print whatever we write after pressing ENTER.
+        //As long as the text isn't blank, it will print whatever we write after pressing ENTER.
+        if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && interpreter.conn == false)
         {
             string userInput = terminalInput.text;                                      //Stores what the user typed.
 
@@ -77,6 +83,23 @@ public class TerminalManager : MonoBehaviour
             userInputLine.transform.SetAsLastSibling();                                 //Moves the user input to the end.
 
             terminalInput.ActivateInputField();                                         //Refocus the input field.
+            terminalInput.Select();
+        }
+        else if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && interpreter.conn == true)
+        {
+            string userInput = terminalInput.text;
+
+            ClearInputField();
+
+            AddDirectoryLine(userInput);
+
+            int lines = AddInterpreterLines(interpreter.ServerCreationWizard(userInput));
+
+            ScrollToBottom(lines);
+
+            userInputLine.transform.SetAsFirstSibling();
+
+            terminalInput.ActivateInputField();
             terminalInput.Select();
         }
     }

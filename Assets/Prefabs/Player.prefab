@@ -1669,7 +1669,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   container: {fileID: 6209594775389065867}
   scoreBoardItem: {fileID: 3943374870461788655, guid: 505a6358cf0ec6141a9984ef9697e4a7, type: 3}
-  playerList: []
 --- !u!1 &6545632903928191200
 GameObject:
   m_ObjectHideFlags: 0

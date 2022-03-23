@@ -8,6 +8,7 @@ public class Interpreter : MonoBehaviour
 {
     public CustomNetworkManager networkManager;
     TerminalManager terminalManager;
+    public bool conn = false;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
     {
@@ -72,6 +73,12 @@ public class Interpreter : MonoBehaviour
             ListEntry("ipaddress", "Prints your IP Address and your status as the host or the client.");
             ListEntry("disconnect", "Disconnects and returns to the main terminal screen. This saves your stats.");
             ListEntry("quit / exit", "Immediately exits the game. This also saves your stats.");
+            return response;
+        }
+
+        if(args[0] == "play" && args[1] == "lan" && args[2] == "create")
+        {
+            conn = true;
             return response;
         }
 
@@ -198,6 +205,23 @@ public class Interpreter : MonoBehaviour
             return response;
         }
         #endregion
+    }
+
+    public List<string> ServerCreationWizard(string userInput)
+    {
+        response.Clear();
+        string[] args = userInput.Split();
+
+        if(args[0] == "leave")
+        {
+            conn = false;
+            return response;
+        }
+        else
+        {
+            response.Add("We couldn't recognize that. Try again, perhaps?");
+            return response;
+        }
     }
 
     public string ColorString(string s, string color)
