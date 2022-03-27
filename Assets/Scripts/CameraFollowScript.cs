@@ -39,14 +39,14 @@ public class CameraFollowScript : MonoBehaviour
                 objColor = new Color(objColor.r, objColor.g, objColor.b, fade);
                 hit.transform.GetComponent<Renderer>().material.color = objColor;
             }
-            else if(oldObs == default)
+            else if(oldObs == default)                  //Prevents an error that appears when the ray no longer hits any world geometry. Works with both "DEFAULT" and "NULL".
             {
                 return;
             }
             else
             {
                 Color objColor = oldObs.GetComponent<Renderer>().material.color;
-                float fade = objColor.a + (7.5f * Time.deltaTime);
+                float fade = objColor.a + (10f * Time.deltaTime);
 
                 objColor = new Color(objColor.r, objColor.g, objColor.b, fade);
                 oldObs.GetComponent<Renderer>().material.color = objColor;

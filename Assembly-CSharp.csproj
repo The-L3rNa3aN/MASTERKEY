@@ -80,7 +80,6 @@
     <Compile Include="Assets\Scripts\Offline\PlayTerminalManager1.cs" />
     <Compile Include="Assets\Scripts\PlayTerminalManager.cs" />
     <Compile Include="Assets\Scripts\VersusPlayerScript.cs" />
-    <Compile Include="Assets\Scripts\FadeObstruction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />
