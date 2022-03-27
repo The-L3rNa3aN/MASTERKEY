@@ -40,14 +40,15 @@ public class TerminalManager : MonoBehaviour
         ScrollToBottom(AddInterpreterLines(interpreter.Interpret(welcomeHelp))); userInputLine.transform.SetAsLastSibling();
     }
 
+    public void ServerWizardStart()
+    {
+        string wizard = "wizard";
+        ScrollToBottom(AddInterpreterLines(interpreter.ServerCreationWizard(wizard))); userInputLine.transform.SetAsLastSibling();
+    }
+
     public void DisconnectedToLobby()
     {
         ScrollToBottom(AddInterpreterLines(interpreter.Interpret("disconnected"))); userInputLine.transform.SetAsLastSibling();
-    }
-
-    public void Test()
-    {
-        ScrollToBottom(AddInterpreterLines(interpreter.Interpret("test"))); userInputLine.transform.SetAsLastSibling();
     }
 
     public void ClearScreen()                                              //Method for clearing the screen.
@@ -90,15 +91,14 @@ public class TerminalManager : MonoBehaviour
             string userInput = terminalInput.text;
 
             ClearInputField();
+            //ClearScreen();
 
             AddDirectoryLine(userInput);
 
-            int lines = AddInterpreterLines(interpreter.ServerCreationWizard(userInput));
+            ScrollToBottom(AddInterpreterLines(interpreter.ServerCreationWizard(userInput)));
+            //ScrollToBottom(AddInterpreterLines(interpreter.ServerCreationWizard("wizard")));
 
-            ScrollToBottom(lines);
-
-            userInputLine.transform.SetAsFirstSibling();
-
+            userInputLine.transform.SetAsLastSibling();
             terminalInput.ActivateInputField();
             terminalInput.Select();
         }

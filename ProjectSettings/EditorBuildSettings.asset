@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PlayScene.unity
     guid: 796d6b90c0c22be4299e0a1a07d50852
+  - enabled: 1
+    path: Assets/Scenes/Maps/Map_Village.unity
+    guid: c87b95e9c2ba1db45a1ee66402ff3c67
   m_configObjects: {}

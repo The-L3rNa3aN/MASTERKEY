@@ -8,6 +8,7 @@ TagManager:
   - Spawn Point
   - UI
   - Scoreboard Item
+  - World
   layers:
   - Default
   - TransparentFX
@@ -15,7 +16,7 @@ TagManager:
   - Name Tags
   - Water
   - UI
-  - 
+  - World
   - 
   - 
   - 

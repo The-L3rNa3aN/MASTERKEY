@@ -10,6 +10,11 @@ public class Interpreter : MonoBehaviour
     TerminalManager terminalManager;
     public bool conn = false;
 
+    [Header("Server Creation Wizard")]
+    public string hostName;
+    public int fragLimit;
+    public int timeLimit;
+
     Dictionary<string, string> colors = new Dictionary<string, string>()
     {
         {"red", "#ff0000" },
@@ -18,7 +23,8 @@ public class Interpreter : MonoBehaviour
         {"orange", "ffab0f" },
         {"yellow", "#ffea00" },
         {"aqua", "#00f7ff" },
-        {"white", "ffffff" }
+        {"white", "ffffff" },
+        {"flesh tint", "#ff5e97" }
     };
 
     List<string> response = new List<string>();
@@ -79,6 +85,7 @@ public class Interpreter : MonoBehaviour
         if(args[0] == "play" && args[1] == "lan" && args[2] == "create")
         {
             conn = true;
+            terminalManager.ServerWizardStart();
             return response;
         }
 
@@ -212,14 +219,57 @@ public class Interpreter : MonoBehaviour
         response.Clear();
         string[] args = userInput.Split();
 
-        if(args[0] == "leave")
+        if(userInput == "wizard")
+        {
+            response.Add(ColorString("Welcome to the SERVER CREATION WIZARD!", colors["flesh tint"]));
+            response.Add("For more information about commands here, type " + ColorString("help", colors["white"]) + " to get started.");
+            response.Add("To leave this wizard, type " + ColorString("leave", colors["white"]));
+            return response;
+        }
+
+        if(args[0] == "settings")
+        {
+            response.Add(ColorString("Your server settings so far...", colors["flesh tint"]));
+            response.Add(ColorString("Host Name  : ", colors["flesh tint"]) + ColorString(hostName, colors["white"]));
+            response.Add(ColorString("Map        : ", colors["flesh tint"]) + ColorString("WIP", colors["white"]));
+            response.Add(ColorString("Frag Limit : ", colors["flesh tint"]) + ColorString(fragLimit.ToString(), colors["white"]));
+            response.Add(ColorString("Time Limit : ", colors["flesh tint"]) + ColorString(timeLimit.ToString(), colors["white"]));
+            response.Add("");
+            response.Add(ColorString("Always make sure to check your server settings before hosting!", colors["red"]));
+            return response;
+        }
+
+        if (args[0] == "fraglimit" && args[1] != null)
+        {
+            fragLimit = int.Parse(args[1]);
+            response.Add(ColorString("Frag Limit", colors["white"]) + " has been set to " + args[1]);
+            return response;
+        }
+
+        if (args[0] == "timelimit" && args[1] != null)
+        {
+            timeLimit = int.Parse(args[1]);
+            response.Add(ColorString("Time Limit", colors["white"]) + " has been set to " + args[1]);
+            return response;
+        }
+
+        if(args[0] == "clear")
+        {
+            terminalManager.ClearScreen();
+            response.Add("You are still running the " + ColorString("Server Creation Wizard", colors["flesh tint"]));
+            response.Add("If you wish to leave, type " + ColorString("leave", colors["flesh tint"]));
+            return response;
+        }
+
+        if (args[0] == "leave")
         {
             conn = false;
+            response.Add("Exiting the server creation wizard...");
             return response;
         }
         else
         {
-            response.Add("We couldn't recognize that. Try again, perhaps?");
+            response.Add(ColorString("We couldn't recognize that. Try again, perhaps?", colors["red"]));
             return response;
         }
     }

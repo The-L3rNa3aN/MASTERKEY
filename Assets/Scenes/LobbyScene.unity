@@ -501,6 +501,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkManager: {fileID: 2104403858}
+  conn: 0
+  hostName: 
+  fragLimit: 0
+  timeLimit: 0
 --- !u!1 &701916302
 GameObject:
   m_ObjectHideFlags: 0
@@ -1131,7 +1135,7 @@ MonoBehaviour:
   autoStartServerBuild: 1
   serverTickRate: 30
   offlineScene: Assets/Scenes/LobbyScene.unity
-  onlineScene: Assets/Scenes/PlayScene.unity
+  onlineScene: Assets/Scenes/Maps/Map_Village.unity
   transport: {fileID: 2104403857}
   networkAddress: localhost
   maxConnections: 100
