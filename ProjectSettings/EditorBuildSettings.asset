@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/PlayScene.unity
     guid: 796d6b90c0c22be4299e0a1a07d50852
   - enabled: 1
-    path: Assets/Scenes/Maps/Map_Village.unity
+    path: Assets/Scenes/Maps/Map_Chapel.unity
     guid: c87b95e9c2ba1db45a1ee66402ff3c67
+  - enabled: 1
+    path: Assets/Scenes/Maps/Map_Ruins.unity
+    guid: fd160acbbaa0d3a47a01c3e3010278e7
   m_configObjects: {}
