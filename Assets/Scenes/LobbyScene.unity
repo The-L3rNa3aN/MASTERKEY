@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 25fe21a881934d24195020444aa85383, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -1135,7 +1135,7 @@ MonoBehaviour:
   autoStartServerBuild: 1
   serverTickRate: 30
   offlineScene: Assets/Scenes/LobbyScene.unity
-  onlineScene: Assets/Scenes/Maps/Map_Ruins.unity
+  onlineScene: Assets/Scenes/Maps/Map_Siege.unity
   transport: {fileID: 2104403857}
   networkAddress: localhost
   maxConnections: 100
