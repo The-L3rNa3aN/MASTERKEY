@@ -2919,7 +2919,7 @@ LightingSettings:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   serializedVersion: 3
-  m_GIWorkflowMode: 1
+  m_GIWorkflowMode: 0
   m_EnableBakedLightmaps: 1
   m_EnableRealtimeLightmaps: 0
   m_RealtimeEnvironmentLighting: 1
@@ -8912,7 +8912,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: b201076bff8000848a93c0e5cc9876e8, type: 2}
+  sharedProfile: {fileID: 0}
 --- !u!1 &1523635297
 GameObject:
   m_ObjectHideFlags: 0

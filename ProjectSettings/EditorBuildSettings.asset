@@ -12,18 +12,18 @@ EditorBuildSettings:
     path: Assets/Scenes/PlayScene.unity
     guid: 796d6b90c0c22be4299e0a1a07d50852
   - enabled: 1
-    path: Assets/Scenes/Maps/Map_Chapel.unity
+    path: Assets/Scenes/Maps/map_chapel.unity
     guid: c87b95e9c2ba1db45a1ee66402ff3c67
   - enabled: 1
-    path: Assets/Scenes/Maps/Map_Ruins.unity
+    path: Assets/Scenes/Maps/map_ruins.unity
     guid: fd160acbbaa0d3a47a01c3e3010278e7
   - enabled: 1
-    path: Assets/Scenes/Maps/Map_Heahlond.unity
+    path: Assets/Scenes/Maps/map_heahlond.unity
     guid: 39c0bc6fbfc13c24fbf9010bd9516095
   - enabled: 1
-    path: Assets/Scenes/Maps/Map_Waelstow.unity
+    path: Assets/Scenes/Maps/map_waelstow.unity
     guid: a1031463d0b077d409b0ca9290e89ecd
   - enabled: 1
-    path: Assets/Scenes/Maps/Map_Siege.unity
+    path: Assets/Scenes/Maps/map_siege.unity
     guid: 8751889a71508a44a80cedf8c6dd0349
   m_configObjects: {}

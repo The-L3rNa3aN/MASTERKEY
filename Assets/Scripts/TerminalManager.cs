@@ -42,8 +42,7 @@ public class TerminalManager : MonoBehaviour
 
     public void ServerWizardStart()
     {
-        string wizard = "wizard";
-        ScrollToBottom(AddInterpreterLines(interpreter.ServerCreationWizard(wizard))); userInputLine.transform.SetAsLastSibling();
+        ScrollToBottom(AddInterpreterLines(interpreter.ServerCreationWizard("wizard"))); userInputLine.transform.SetAsLastSibling();
     }
 
     public void DisconnectedToLobby()

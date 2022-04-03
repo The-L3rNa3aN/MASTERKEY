@@ -12,13 +12,14 @@ public class Interpreter : MonoBehaviour
 
     [Header("Server Creation Wizard")]
     public string hostName;
+    public string mapName;
     public int fragLimit;
     public int timeLimit;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
     {
         {"red", "#ff0000" },
-        {"light blue", "#7070ff" },
+        {"light blue", "#347deb" },
         {"green", "#00ff00" },
         {"orange", "ffab0f" },
         {"yellow", "#ffea00" },
@@ -82,13 +83,6 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0] == "play" && args[1] == "lan" && args[2] == "create")
-        {
-            conn = true;
-            terminalManager.ServerWizardStart();
-            return response;
-        }
-
         #region Connecting and Hosting
         if (args[0] == "ipaddress")
         {
@@ -96,9 +90,10 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if (args[0] == "start" && args[1] == "host")
+        if (args[0] == "play" && args[1] == "lan" && args[2] == "create")
         {
-            networkManager.StartHost();
+            conn = true;
+            terminalManager.ServerWizardStart();
             return response;
         }
 
@@ -227,16 +222,59 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
+        if(args[0] == "help")
+        {
+            ListEntry("hostname <name>", "Sets the name of the host.");
+            ListEntry("map <mapname>", "Set the map for the server.");
+            ListEntry("fraglimit", "Sets the frag limit of the server. For no limit, type 0.");
+            ListEntry("timelimit", "Sets the time limit in seconds. For no limit, type 0");
+            ListEntry("maplist", "Returns a list of map names.");
+            ListEntry("settings", "Displays the server settings you have configured in the wizard.");
+            ListEntry("start", "Starts the server based on the settings you've configured.");
+            return response;
+        }
+
         if(args[0] == "settings")
         {
             response.Add(ColorString("Your server settings so far...", colors["flesh tint"]));
             response.Add(ColorString("Host Name  : ", colors["flesh tint"]) + ColorString(hostName, colors["white"]));
-            response.Add(ColorString("Map        : ", colors["flesh tint"]) + ColorString("WIP", colors["white"]));
+            response.Add(ColorString("Map        : ", colors["flesh tint"]) + ColorString(mapName, colors["white"]));
             response.Add(ColorString("Frag Limit : ", colors["flesh tint"]) + ColorString(fragLimit.ToString(), colors["white"]));
             response.Add(ColorString("Time Limit : ", colors["flesh tint"]) + ColorString(timeLimit.ToString(), colors["white"]));
             response.Add("");
             response.Add(ColorString("Always make sure to check your server settings before hosting!", colors["red"]));
             return response;
+        }
+
+        if(args[0] == "maplist")
+        {
+            response.Add("Here is a list of maps: -");
+            response.Add(ColorString("map_chapel", colors["light blue"]));
+            response.Add(ColorString("map_heahlond", colors["light blue"]));
+            response.Add(ColorString("map_ruins", colors["light blue"]));
+            response.Add(ColorString("map_siege", colors["light blue"]));
+            response.Add(ColorString("map_waelstow", colors["light blue"]));
+            return response;
+        }
+
+        if(args[0] == "map" && args[1] != null)
+        {
+            if(args[1] == "map_chapel" || args[1] == "map_heahlond" || args[1] == "map_ruins" || args[1] == "map_siege" || args[1] == "map_waelstow")
+            {
+                mapName = args[1];
+                response.Add("The map has been set to " + ColorString(args[1], colors["yellow"]));
+                return response;
+            }
+            else if(args[1] == "blackmesa" || args[1] == "black_mesa")
+            {
+                response.Add("Unfortunately, you cannot visit Black Mesa at the moment. There appears to be a containment breach and the facility has been quarantined. Apologies for the inconvenience.");
+                return response;
+            }
+            else
+            {
+                response.Add(ColorString("Map not recognizable. Use ", colors["red"]) + ColorString("maplist", colors["yellow"]) + ColorString(" to get a list of maps you can refer to.", colors["red"]));
+                return response;
+            }
         }
 
         if (args[0] == "fraglimit" && args[1] != null)
@@ -259,6 +297,21 @@ public class Interpreter : MonoBehaviour
             response.Add("You are still running the " + ColorString("Server Creation Wizard", colors["flesh tint"]));
             response.Add("If you wish to leave, type " + ColorString("leave", colors["flesh tint"]));
             return response;
+        }
+
+        if(args[0] == "start")
+        {
+            if(mapName != null)
+            {
+            networkManager.onlineScene = mapName;
+            networkManager.StartHost();
+            return response;
+            }
+            else
+            {
+                response.Add(ColorString("You haven't chosen a map you want to play on! Use ", colors["red"]) + ColorString("map", colors["yellow"]) + ColorString(" to set the server's map.", colors["red"]));
+                return response;
+            }
         }
 
         if (args[0] == "leave")
