@@ -47,6 +47,8 @@ public class PlayInterpreter : MonoBehaviour
         if (args[0] == "help")
         {
             response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
+            ListEntry("match end", "Host command that immediately ends the match and announces the winner based on the highest kill count.");
+            ListEntry("match start", "Host command that starts a match on the same map after it has gotten over.");
             ListEntry("move <direction>", "To move the character around. Directions include: up, down, left and right.");
             ListEntry("stop <param>", "Stops all movement in any direction. Parameters include: lateral, medial and all.");
             ListEntry("dash <direction>", "Performs a high speed, short ranged dash. Refreshes every 10 seconds.");
@@ -162,8 +164,22 @@ public class PlayInterpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0] == "versusscores")
+        if (args[0].ToLower() == "match" && args[1].ToLower() == "end" && player.isServer)
         {
+            player.CmdHostEndedMatch();
+            commandsRun++;
+            return response;
+        }
+        else if (args[0].ToLower() == "match" && args[1].ToLower() == "end" && player.isClient)
+        {
+            response.Add("Only the " + ColorString("host", colors["yellow"]) + " of the match can run this command.");
+            commandsRun++;
+            return response;
+        }
+
+        if (args[0] == "versusscores")
+        {
+            commandsRun++;
             foreach(var item in player.GetComponent<VersusPlayerScript>().versusKills)
             {
                 response.Add(item.Key.playerTag + ", " + item.Value);

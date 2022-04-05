@@ -100,7 +100,9 @@ public class Interpreter : MonoBehaviour
         if (args[0] == "play" && args[1] == "lan" && args[2] == "create")
         {
             conn = true;
-            terminalManager.ServerWizardStart();
+            response.Add(ColorString("Welcome to the SERVER CREATION WIZARD!", colors["flesh tint"]));
+            response.Add("For more information about commands here, type " + ColorString("help", colors["white"]) + " to get started.");
+            response.Add("To leave this wizard, type " + ColorString("leave", colors["white"]));
             return response;
         }
 
@@ -265,14 +267,6 @@ public class Interpreter : MonoBehaviour
         response.Clear();
         string[] args = userInput.Split();
 
-        if(userInput == "wizard")
-        {
-            response.Add(ColorString("Welcome to the SERVER CREATION WIZARD!", colors["flesh tint"]));
-            response.Add("For more information about commands here, type " + ColorString("help", colors["white"]) + " to get started.");
-            response.Add("To leave this wizard, type " + ColorString("leave", colors["white"]));
-            return response;
-        }
-
         if(args[0] == "help")
         {
             ListEntry("hostname <name>", "Sets the name of the host.");
@@ -331,14 +325,14 @@ public class Interpreter : MonoBehaviour
         if (args[0] == "fraglimit" && args[1] != null)
         {
             fragLimit = int.Parse(args[1]);
-            response.Add(ColorString("Frag Limit", colors["white"]) + " has been set to " + args[1]);
+            response.Add(ColorString("Frag Limit", colors["white"]) + " has been set to " + ColorString(args[1], colors["white"]));
             return response;
         }
 
         if (args[0] == "timelimit" && args[1] != null)
         {
             timeLimit = int.Parse(args[1]);
-            response.Add(ColorString("Time Limit", colors["white"]) + " has been set to " + args[1]);
+            response.Add(ColorString("Time Limit", colors["white"]) + " has been set to " + ColorString(args[1], colors["white"]) + "seconds.");
             return response;
         }
 
@@ -354,9 +348,11 @@ public class Interpreter : MonoBehaviour
         {
             if(mapName != null)
             {
-            networkManager.onlineScene = mapName;
-            networkManager.StartHost();
-            return response;
+                networkManager.onlineScene = mapName;
+                PlayerPrefs.SetInt("FragLimit", fragLimit);
+                PlayerPrefs.SetInt("TimeLimit", timeLimit);
+                networkManager.StartHost();
+                return response;
             }
             else if(mapName == null)
             {
@@ -401,7 +397,37 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if(args[0].ToLower() == "exit" || args[0].ToLower() == "quit")
+        if(args[0].ToLower() == "gus" || args[0].ToLower() == "gustavo" && args[1].ToLower() == "fring")
+        {
+            response.Add("What does an honest chicken restaurant owner got to do with Blue Sky?");
+            return response;
+        }
+
+        if(args[0].ToLower() == "walter" && args[1].ToLower() == "white")
+        {
+            response.Add("Chemistry is the study of change, a wise man once said. It is time for you to change cities, my friend.");
+            return response;
+        }
+
+        if(args[0].ToLower() == "jesse" && args[1].ToLower() == "pinkman")
+        {
+            response.Add("Yeah, he's a hard man to find.");
+            return response;
+        }
+
+        if(args[0].ToLower() == "cartel")
+        {
+            response.Add("Because of your little stunt there trying to enquire about our product, one of our high ranking members now has the Federales in his rosebushes. You happy about that?");
+            return response;
+        }
+
+        if(args[0].ToLower() == "heisenberg")
+        {
+            response.Add("Yeah, that's another reason why the DEA is coming.");
+            return response;
+        }
+
+        if(args[0].ToLower() == "exit" || args[0].ToLower() == "quit" || args[0].ToLower() == "mike")
         {
             PlayerPrefs.Save();
             Application.Quit();

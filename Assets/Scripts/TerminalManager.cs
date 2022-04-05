@@ -16,10 +16,6 @@ public class TerminalManager : MonoBehaviour
 
     Interpreter interpreter;
 
-    [Header("Startup Responses")]
-    string welcome;
-    string welcomeHelp;
-
     private void Start()
     {
         //DontDestroyOnLoad(this);
@@ -31,18 +27,8 @@ public class TerminalManager : MonoBehaviour
 
     public void StartupResponses()
     {
-        #region Responses
-        welcome = "welcome";
-        welcomeHelp = "welcomehelp";
-        #endregion
-
-        ScrollToBottom(AddInterpreterLines(interpreter.Interpret(welcome))); userInputLine.transform.SetAsLastSibling();
-        ScrollToBottom(AddInterpreterLines(interpreter.Interpret(welcomeHelp))); userInputLine.transform.SetAsLastSibling();
-    }
-
-    public void ServerWizardStart()
-    {
-        ScrollToBottom(AddInterpreterLines(interpreter.ServerCreationWizard("wizard"))); userInputLine.transform.SetAsLastSibling();
+        ScrollToBottom(AddInterpreterLines(interpreter.Interpret("welcome"))); userInputLine.transform.SetAsLastSibling();
+        ScrollToBottom(AddInterpreterLines(interpreter.Interpret("welcomehelp"))); userInputLine.transform.SetAsLastSibling();
     }
 
     public void DisconnectedToLobby()
@@ -68,7 +54,7 @@ public class TerminalManager : MonoBehaviour
     private void OnGUI()
     {
         //As long as the text isn't blank, it will print whatever we write after pressing ENTER.
-        if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && interpreter.conn == false)
+        if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && interpreter.conn == false && interpreter.dea == false)
         {
             string userInput = terminalInput.text;                                      //Stores what the user typed.
 
@@ -85,7 +71,7 @@ public class TerminalManager : MonoBehaviour
             terminalInput.ActivateInputField();                                         //Refocus the input field.
             terminalInput.Select();
         }
-        else if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && interpreter.conn == true)
+        else if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && interpreter.conn == true && interpreter.dea == false)
         {
             string userInput = terminalInput.text;
 
@@ -101,7 +87,7 @@ public class TerminalManager : MonoBehaviour
             terminalInput.ActivateInputField();
             terminalInput.Select();
         }
-        else if(terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && interpreter.dea == true)
+        else if(terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && interpreter.conn == false && interpreter.dea == true)
         {
             string userInput = terminalInput.text;
 

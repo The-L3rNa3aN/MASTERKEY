@@ -334,6 +334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  matchOver: 0
   velocity: {x: 0, y: 0, z: 0}
   move: {x: 0, y: 0, z: 0}
   playerCamera: {fileID: 0}
@@ -345,6 +346,8 @@ MonoBehaviour:
   killsNoDeath: 0
   spreesStarted: 0
   spreesEnded: 0
+  fragLimit: 0
+  timeLimit: 0
   circleVis: {x: 0, y: 0, z: 0, w: 0}
   enableCircle: 0
   interp: 0.72
@@ -361,7 +364,6 @@ MonoBehaviour:
   escren: 0
   directLR: 
   directUD: 
-  dest: {x: 0, y: 0, z: 0}
   dashDir: 
   dashOldPos: {x: 0, y: 0, z: 0}
   dashTimer: 1
@@ -1100,6 +1102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2664b755fb77d9a428450e95c5eb2c7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeLimit: {fileID: 0}
 --- !u!1 &2910168011801804839
 GameObject:
   m_ObjectHideFlags: 0

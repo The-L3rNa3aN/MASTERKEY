@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,11 +35,12 @@ public class PlayerManager : NetworkBehaviour
     [SyncVar] public int killsNoDeath;
     [SyncVar] public int spreesStarted;
     [SyncVar] public int spreesEnded;
+    [SyncVar] public int fragLimit;
+    [SyncVar] public float timeLimit;
     private int oldKills;
     private int oldDeaths;
     private int oldSpreesStarted;
     private int oldSpreesEnded;
-    private int fragLimit = 3;
 
     [Header("Visualizers")]
     [SyncVar] public Vector4 circleVis;
@@ -68,7 +70,6 @@ public class PlayerManager : NetworkBehaviour
     public string directUD;
 
     [Header("Dash Related Vars")]
-    public Vector3 dest;
     public string dashDir;
     public Vector3 dashOldPos;
     [SerializeField] private float dashTimer = 1f;
@@ -77,6 +78,24 @@ public class PlayerManager : NetworkBehaviour
 
     private void Start()
     {
+        if(isServer)                                                                        //Assigns the limits depending on the player being the host or the client.
+        {
+            fragLimit = PlayerPrefs.GetInt("FragLimit");
+            timeLimit = PlayerPrefs.GetInt("TimeLimit");
+        }
+        else
+        {
+            var networkPlayers = FindObjectsOfType<NetworkIdentity>();
+            foreach(NetworkIdentity player in networkPlayers)
+            {
+                if(player.isServer)
+                {
+                    player.GetComponent<PlayerManager>().fragLimit = fragLimit;
+                    player.GetComponent<PlayerManager>().timeLimit = timeLimit;
+                }
+            }
+        }
+
         oldKills = PlayerPrefs.GetInt("PlayerKills");
         oldDeaths = PlayerPrefs.GetInt("PlayerDeaths");
         oldSpreesStarted = PlayerPrefs.GetInt("PlayerSpreesStarted");
@@ -120,10 +139,15 @@ public class PlayerManager : NetworkBehaviour
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
         CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
 
-        if(kills >= fragLimit)
+        if(fragLimit != 0 && kills >= fragLimit)
         {
             CmdLimitReached();
         }
+
+        /*if(timeLimit != 0f)
+        {
+            timeLimit -= Time.deltaTime;
+        }*/
 
         if (!isLocalPlayer) {terminal.SetActive(false);}
         if (isLocalPlayer)
@@ -221,21 +245,47 @@ public class PlayerManager : NetworkBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
+    #region Match Over
     [Command] public void CmdLimitReached()
     {
         var players = FindObjectsOfType<PlayerManager>();
+        int highestKills = players.Max<PlayerManager>().kills;
+
         foreach (PlayerManager pManager in players)
         {
             pManager.StopMovement();
             pManager.RpcLimitReached();
+
+            if (pManager.kills == highestKills)     ///Returns an error and disconnects the client when they reach the score limit.
+            {
+                NetworkServer.SendToAll(new Notification { content = "Champion of the match: " + ColorString(pManager.playerTag, colors["yellow"]) + " with " + ColorString(highestKills.ToString(), colors["yellow"]) + " kills." });
+            }
+        }
+    }
+
+    [Command] public void CmdHostEndedMatch()
+    {
+        NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " ended the match." });
+        var players = FindObjectsOfType<PlayerManager>();
+        int highestKills = players.Max<PlayerManager>().kills;
+
+        foreach (PlayerManager pManager in players)
+        {
+            pManager.StopMovement();
+            pManager.RpcLimitReached();
+
+            if(pManager.kills == highestKills)
+            {
+                NetworkServer.SendToAll(new Notification { content = "Champion of the match: " + ColorString(pManager.playerTag, colors["yellow"]) + " with " + ColorString(highestKills.ToString(), colors["yellow"]) + " kills." });
+            }
         }
     }
 
     [ClientRpc] public void RpcLimitReached() => matchOver = true;
+    #endregion
 
     #region Name Set Up
-    [Command]
-    public void CmdSetName(string name)
+    [Command] public void CmdSetName(string name)
     {
         RpcSetName(name);
         NetworkServer.SendToAll(new Notification { content = ColorString(name, colors["yellow"]) + " has joined." });       //Running this in Start() prevents the client from joining the server.
