@@ -6,6 +6,7 @@ using Mirror;
 
 public class PlayerManager : NetworkBehaviour
 {
+    [SyncVar] public bool matchOver = false;
     public Vector3 velocity, move;
     public GameObject playerCamera;
     public GameObject terminal;
@@ -37,6 +38,7 @@ public class PlayerManager : NetworkBehaviour
     private int oldDeaths;
     private int oldSpreesStarted;
     private int oldSpreesEnded;
+    private int fragLimit = 3;
 
     [Header("Visualizers")]
     [SyncVar] public Vector4 circleVis;
@@ -117,6 +119,11 @@ public class PlayerManager : NetworkBehaviour
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
         CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
+
+        if(kills >= fragLimit)
+        {
+            CmdLimitReached();
+        }
 
         if (!isLocalPlayer) {terminal.SetActive(false);}
         if (isLocalPlayer)
@@ -213,6 +220,18 @@ public class PlayerManager : NetworkBehaviour
         characterController.Move(move * 3f * Time.deltaTime);
         characterController.Move(velocity * Time.deltaTime);
     }
+
+    [Command] public void CmdLimitReached()
+    {
+        var players = FindObjectsOfType<PlayerManager>();
+        foreach (PlayerManager pManager in players)
+        {
+            pManager.StopMovement();
+            pManager.RpcLimitReached();
+        }
+    }
+
+    [ClientRpc] public void RpcLimitReached() => matchOver = true;
 
     #region Name Set Up
     [Command]

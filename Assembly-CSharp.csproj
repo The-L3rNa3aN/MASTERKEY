@@ -78,7 +78,7 @@
     <Compile Include="Assets\Scripts\PlayInterpreter.cs" />
     <Compile Include="Assets\Scripts\PlayTerminalManager.cs" />
     <Compile Include="Assets\Scripts\VersusPlayerScript.cs" />
-    <Compile Include="Assets\Scripts\MapHandler.cs" />
+    <Compile Include="Assets\Scripts\TimeAndFragLimits.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />
@@ -87,8 +87,8 @@
     <None Include="Assets\ScriptTemplates\51-Mirror__Network Authenticator-NewNetworkAuthenticator.cs.txt" />
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.Pdb.dll" />
     <None Include="Assets\ScriptTemplates\56-Mirror__Network Discovery-NewNetworkDiscovery.cs.txt" />
+    <None Include="Assets\StreamingAssets\kevin costner.txt" />
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.Rocks.dll" />
-    <None Include="Assets\StreamingAssets\lernaean 100.txt" />
     <None Include="Assets\Mirror\Version.txt" />
     <None Include="Assets\Mirror\Readme.txt" />
     <None Include="Assets\ScriptTemplates\57-Mirror__Network Transform-NewNetworkTransform.cs.txt" />
@@ -99,7 +99,6 @@
     <None Include="Assets\Simple Toon Shader\MainLight.hlsl" />
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\License.txt" />
     <None Include="Assets\ScriptTemplates\55-Mirror__Network Room Player-NewNetworkRoomPlayer.cs.txt" />
-    <None Include="Assets\StreamingAssets\lernaean 80.txt" />
     <None Include="Assets\ScriptTemplates\53-Mirror__Custom Interest Management-CustomInterestManagement.cs.txt" />
     <None Include="Assets\ScriptTemplates\50-Mirror__Network Manager-NewNetworkManager.cs.txt" />
     <None Include="Assets\ScriptTemplates\54-Mirror__Network Room Manager-NewNetworkRoomManager.cs.txt" />

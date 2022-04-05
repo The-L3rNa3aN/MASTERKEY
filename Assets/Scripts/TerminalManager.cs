@@ -101,6 +101,21 @@ public class TerminalManager : MonoBehaviour
             terminalInput.ActivateInputField();
             terminalInput.Select();
         }
+        else if(terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && interpreter.dea == true)
+        {
+            string userInput = terminalInput.text;
+
+            ClearInputField();
+            //ClearScreen();
+
+            AddDirectoryLine(userInput);
+
+            ScrollToBottom(AddInterpreterLines(interpreter.BreakingBadDEA(userInput)));
+
+            userInputLine.transform.SetAsLastSibling();
+            terminalInput.ActivateInputField();
+            terminalInput.Select();
+        }
     }
 
     private void ClearInputField()

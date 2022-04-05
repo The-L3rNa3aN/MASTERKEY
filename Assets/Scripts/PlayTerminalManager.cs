@@ -69,7 +69,7 @@ public class PlayTerminalManager : MonoBehaviour
     private void OnGUI()
     {
         LPMFunction();
-        if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return))
+        if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && player.GetComponent<PlayerManager>().matchOver == false)
         {
             string userInput = terminalInput.text;                  //Stores what the user typed.
 
@@ -86,6 +86,22 @@ public class PlayTerminalManager : MonoBehaviour
             userInputLine.transform.SetAsLastSibling();             //Moves the user input to the end.
 
             //Refocus the input field.
+            terminalInput.ActivateInputField();
+            terminalInput.Select();
+        }
+        else if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return) && player.GetComponent<PlayerManager>() == true)
+        {
+            string userInput = terminalInput.text;
+
+            ClearInputField();
+
+            AddDirectoryLine(userInput);
+
+            int lines = AddInterpreterLines(interpreter.MatchOver(userInput));
+            ScrollToBottom(lines);
+
+            userInputLine.transform.SetAsLastSibling();
+
             terminalInput.ActivateInputField();
             terminalInput.Select();
         }

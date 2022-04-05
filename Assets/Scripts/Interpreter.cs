@@ -9,6 +9,7 @@ public class Interpreter : MonoBehaviour
     public CustomNetworkManager networkManager;
     TerminalManager terminalManager;
     public bool conn = false;
+    public bool dea = false;
 
     [Header("Server Creation Wizard")]
     public string hostName;
@@ -39,6 +40,12 @@ public class Interpreter : MonoBehaviour
     {
         response.Clear();
         string[] args = userInput.Split();
+
+        /*for (int i = 0; i < args.Length; i++)
+        {
+            response.Add(args.Length.ToString());
+            return response;
+        }*/
 
         #region Welcome Responses
         if (userInput == "welcome")
@@ -133,11 +140,55 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if (args[0] == "who" || args[0] == "Who" && args[1] == "are" && args[2] == "you")
+        if(args[0] == "Fortnite" || args[0] == "fortnite")
+        {
+            response.Add("You mean 'Fornight'?");
+            return response;
+        }
+
+        if(args[0] == "Zork" || args[0] == "zork")
+        {
+            response.Add("Zork isn't at your service.");
+            return response;
+        }
+
+        if(args[0].ToLower() == "saul" && args[1].ToLower() == "goodman")
+        {
+            LoadTitle("kevin costner.txt", "green", 2);
+            response.Add("Is this Kevin Costner?");
+            return response;
+        }
+
+        if(args[0].ToLower() == "gordon" && args[1].ToLower() == "freeman")
+        {
+            response.Add("Are you talking about the 27 year old scientist or the 52 year old coughing meth emperor?");
+            return response;
+        }
+
+        if(args[0].ToLower() == "blue" && args[1].ToLower() == "sky")
+        {
+            dea = true;
+            response.Add(ColorString("The DEA would like to know your location.", colors["light blue"]));
+            return response;
+        }
+
+        if(args[0].ToLower() == "ezekiel" && args[1] == "25" && args[2] == "17")
+        {
+            response.Add("If you don't know what this scripture is, you are not a Pulp Fiction fan.");
+            return response;
+        }
+
+        if(args[0].ToLower() == "pulp" && args[1].ToLower() == "fiction")
+        {
+            response.Add("This game is medieval themed anyway. Marsellus will love this one.");
+            return response;
+        }
+
+        /*if (args[0] == "who" || args[0] == "Who" && args[1] == "are" && args[2] == "you")
         {
             response.Add("I'm a machine written by The L3rNa3aN.");
             return response;
-        }
+        }*/
         #endregion
 
         #region Utilitarian
@@ -307,7 +358,7 @@ public class Interpreter : MonoBehaviour
             networkManager.StartHost();
             return response;
             }
-            else
+            else if(mapName == null)
             {
                 response.Add(ColorString("You haven't chosen a map you want to play on! Use ", colors["red"]) + ColorString("map", colors["yellow"]) + ColorString(" to set the server's map.", colors["red"]));
                 return response;
@@ -323,6 +374,42 @@ public class Interpreter : MonoBehaviour
         else
         {
             response.Add(ColorString("We couldn't recognize that. Try again, perhaps?", colors["red"]));
+            return response;
+        }
+    }
+
+    public List<string> BreakingBadDEA(string userInput)
+    {
+        response.Clear();
+        string[] args = userInput.Split();
+
+        if(args[0].ToLower() == "dea")
+        {
+            response.Add(ColorString("Yes. The DEA is coming for you. You can't play this game anymore. I don't want to go to jail.", colors["light blue"]));
+            return response;
+        }
+
+        if(args[0].ToLower() == "help")
+        {
+            response.Add(ColorString("I can't help you. You're on your own.", colors["light blue"]));
+            return response;
+        }
+
+        if (args[0].ToLower() == "saul" && args[1].ToLower() == "goodman")
+        {
+            response.Add(ColorString("Saul Goodman left the game a long time ago.", colors["light blue"]));
+            return response;
+        }
+
+        if(args[0].ToLower() == "exit" || args[0].ToLower() == "quit")
+        {
+            PlayerPrefs.Save();
+            Application.Quit();
+            return response;
+        }
+        else
+        {
+            response.Add(ColorString("You seem to be under a lot of stress. Use the terminal when you see things more clearly.", colors["light blue"]));
             return response;
         }
     }

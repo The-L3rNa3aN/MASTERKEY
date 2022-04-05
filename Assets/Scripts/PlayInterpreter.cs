@@ -310,6 +310,125 @@ public class PlayInterpreter : MonoBehaviour
         #endregion
     }
 
+    public List<string> MatchOver(string userInput)
+    {
+        response.Clear();
+        string[] args = userInput.Split();
+
+        if(args[0] == "move" || args[0] == "attack" || args[0] == "dash" || args[0] == "kill")
+        {
+            response.Add("The fight is over. The best you can do is leave.");
+            return response;
+        }
+
+        #region Multiplayer Related Commands
+        if (args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isServer)
+        {
+            if (commandsRun != 0)                   //Disconnecting without having typed anything will not affect specific stats.
+            {
+                commandsRun++;
+                PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
+                PlayerPrefs.SetInt("PlayerMatches", PlayerPrefs.GetInt("PlayerMatches") + 1);
+                PlayerPrefs.SetInt("PlayerLPM", PlayerPrefs.GetInt("PlayerLPM") + (int)terminalManager.AverageLPM());
+                PlayerPrefs.SetInt("PlayerErrors", PlayerPrefs.GetInt("PlayerErrors") + errors);
+            }
+            player.DisconnectAsClient();
+            PlayerPrefs.Save();
+            networkManager.GetComponent<NetworkManager>().StopHost();
+            return response;
+        }
+        else if (args[0].ToLower() == "disconnect" && player.GetComponent<NetworkBehaviour>().isClient)
+        {
+            if (commandsRun != 0)
+            {
+                commandsRun++;
+                PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
+                PlayerPrefs.SetInt("PlayerMatches", PlayerPrefs.GetInt("PlayerMatches") + 1);
+                PlayerPrefs.SetInt("PlayerLPM", PlayerPrefs.GetInt("PlayerLPM") + (int)terminalManager.AverageLPM());
+                PlayerPrefs.SetInt("PlayerErrors", PlayerPrefs.GetInt("PlayerErrors") + errors);
+            }
+            player.DisconnectAsClient();
+            PlayerPrefs.Save();
+            StartCoroutine(GetOut());
+            return response;
+        }
+
+        if (args[0] == "ipaddress" && player.GetComponent<NetworkBehaviour>().isServer)
+        {
+            response.Add("Your IP Address: " + ColorString(networkManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("host", colors["white"]));
+            commandsRun++;
+            return response;
+        }
+        else if (args[0] == "ipaddress" && player.GetComponent<NetworkBehaviour>().isClient)
+        {
+            response.Add("Your IP Address: " + ColorString(networkManager.GetComponent<GameManager>().GetIP(), colors["white"]) + ". You are the " + ColorString("client", colors["white"]));
+            commandsRun++;
+            return response;
+        }
+
+        if (args[0] == "gettag")
+        {
+            response.Add("Your gamertag: " + ColorString(player.playerTag, colors["yellow"]));
+            commandsRun++;
+            return response;
+        }
+
+        if (args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == false)
+        {
+            scoreboard.gameObject.SetActive(true);
+            commandsRun++;
+            return response;
+        }
+        else if (args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == true)
+        {
+            scoreboard.gameObject.SetActive(false);
+            commandsRun++;
+            return response;
+        }
+
+        if (args[0] == "versusscores")
+        {
+            foreach (var item in player.GetComponent<VersusPlayerScript>().versusKills)
+            {
+                response.Add(item.Key.playerTag + ", " + item.Value);
+            }
+            return response;
+        }
+        #endregion
+
+        #region Normal Commands
+        if (args[0] == "clear")
+        {
+            terminalManager.ClearScreen();
+            commandsRun++;
+            return response;
+        }
+
+        if (args[0] == "quit" || args[0] == "exit")
+        {
+            if (commandsRun != 0)
+            {
+                commandsRun++;
+                PlayerPrefs.SetInt("PlayerTotalCommands", PlayerPrefs.GetInt("PlayerTotalCommands") + commandsRun);
+                PlayerPrefs.SetInt("PlayerMatches", PlayerPrefs.GetInt("PlayerMatches") + 1);
+                PlayerPrefs.SetInt("PlayerLPM", PlayerPrefs.GetInt("PlayerLPM") + (int)terminalManager.AverageLPM());
+                PlayerPrefs.SetInt("PlayerErrors", PlayerPrefs.GetInt("PlayerErrors") + errors);
+            }
+            player.DisconnectAsClient();
+            PlayerPrefs.Save();
+            Application.Quit();
+            return response;
+        }
+        else
+        {
+            response.Add(ColorString("Command not recognized. Type ", colors["red"]) + ColorString("help", colors["yellow"]) + ColorString(" for a list of commands", colors["red"]));
+            commandsRun++;
+            errors++;
+            return response;
+        }
+        #endregion
+    }
+
     public string ColorString(string s, string color)
     {
         string leftTag = "<color=" + color + ">";
