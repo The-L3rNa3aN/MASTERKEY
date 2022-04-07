@@ -208,6 +208,7 @@ public class PlayInterpreter : MonoBehaviour
         {
             player.directLR = null;
             player.move = new Vector3(0f, 0f, player.move.z);
+            player.enableFootStep = false;
             commandsRun++;
             return response;
         }
@@ -215,6 +216,7 @@ public class PlayInterpreter : MonoBehaviour
         {
             player.directUD = null;
             player.move = new Vector3(player.move.x, 0f, 0f);
+            player.enableFootStep = false;
             commandsRun++;
             return response;
         }

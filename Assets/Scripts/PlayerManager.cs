@@ -74,6 +74,14 @@ public class PlayerManager : NetworkBehaviour
     public Vector3 dashOldPos;
     [SerializeField] private float dashTimer = 1f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource playerAudioSource = default;
+    [SerializeField] private float footStepSpeed;
+    [SerializeField] private float footStepTimer;
+    [SerializeField] private AudioClip[] footSteps;
+    [SerializeField] private AudioClip[] attacks;
+    public bool enableFootStep = false;
+
     public List<GameObject> spawnPoints = new List<GameObject>();                           //A list of spawnpoints for the player. I hope this doesn't hinder performance.
     Dictionary<PlayerManager, int> playerNameScore = new Dictionary<PlayerManager, int>();
 
@@ -139,8 +147,9 @@ public class PlayerManager : NetworkBehaviour
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
         CorruptusTimer();                                                                                               //20-second timer activated if the player picks up Corruptus.
+        PlayFootSteps();
 
-        if(fragLimit != 0 && kills >= fragLimit)
+        if (fragLimit != 0 && kills >= fragLimit)
         {
             CmdLimitReached();
         }
@@ -223,10 +232,12 @@ public class PlayerManager : NetworkBehaviour
         {
             case "left":
                 move = new Vector3(-1f, 0f, move.z);
+                enableFootStep = true;
                 break;
 
             case "right":
                 move = new Vector3(1f, 0f, move.z);
+                enableFootStep = true;
                 break;
         }
 
@@ -235,10 +246,12 @@ public class PlayerManager : NetworkBehaviour
         {
             case "up":
                 move = new Vector3(move.x, 0f, 1f);
+                enableFootStep = true;
                 break;
 
             case "down":
                 move = new Vector3(move.x, 0f, -1f);
+                enableFootStep = true;
                 break;
         }
 
@@ -447,6 +460,7 @@ public class PlayerManager : NetworkBehaviour
     {
         yield return new WaitForSeconds(t);
         attackSphere.enabled = true;
+        PlayAttackSound();
         yield return new WaitForSeconds(0.05f);
         attackSphere.enabled = false;
     }
@@ -518,6 +532,7 @@ public class PlayerManager : NetworkBehaviour
     {
         directLR = null;
         directUD = null;
+        enableFootStep = false;
         move = Vector3.zero;
     }
 
@@ -578,5 +593,24 @@ public class PlayerManager : NetworkBehaviour
         string rightTag = "</color>";
 
         return leftTag + s + rightTag;
+    }
+
+    public void PlayFootSteps()
+    {
+        if (directLR != null || directUD != null)
+        {
+            if (Time.time > footStepTimer && characterController.isGrounded && enableFootStep == true)
+            {
+                footStepTimer = Time.time + 1f / footStepSpeed;
+                AudioClip fp = footSteps[Random.Range(0, footSteps.Length - 1)];
+                playerAudioSource.PlayOneShot(fp);
+            }
+        }
+    }
+
+    public void PlayAttackSound()
+    {
+        AudioClip att = attacks[Random.Range(0, attacks.Length - 1)];
+        playerAudioSource.PlayOneShot(att);
     }
 }
