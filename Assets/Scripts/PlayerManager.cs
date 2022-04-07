@@ -75,6 +75,7 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField] private float dashTimer = 1f;
 
     public List<GameObject> spawnPoints = new List<GameObject>();                           //A list of spawnpoints for the player. I hope this doesn't hinder performance.
+    Dictionary<PlayerManager, int> playerNameScore = new Dictionary<PlayerManager, int>();
 
     private void Start()
     {
@@ -249,39 +250,66 @@ public class PlayerManager : NetworkBehaviour
     [Command] public void CmdLimitReached()
     {
         var players = FindObjectsOfType<PlayerManager>();
-        int highestKills = players.Max<PlayerManager>().kills;
 
         foreach (PlayerManager pManager in players)
         {
             pManager.StopMovement();
             pManager.RpcLimitReached();
-
-            if (pManager.kills == highestKills)     ///Returns an error and disconnects the client when they reach the score limit.
-            {
-                NetworkServer.SendToAll(new Notification { content = "Champion of the match: " + ColorString(pManager.playerTag, colors["yellow"]) + " with " + ColorString(highestKills.ToString(), colors["yellow"]) + " kills." });
-            }
         }
     }
 
     [Command] public void CmdHostEndedMatch()
     {
-        NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " ended the match." });
         var players = FindObjectsOfType<PlayerManager>();
-        int highestKills = players.Max<PlayerManager>().kills;
 
         foreach (PlayerManager pManager in players)
         {
             pManager.StopMovement();
             pManager.RpcLimitReached();
-
-            if(pManager.kills == highestKills)
-            {
-                NetworkServer.SendToAll(new Notification { content = "Champion of the match: " + ColorString(pManager.playerTag, colors["yellow"]) + " with " + ColorString(highestKills.ToString(), colors["yellow"]) + " kills." });
-            }
         }
+
+        NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " ended the match." });
+        IEWinMessage();
+    }
+
+    [Command] public void CmdChampionMessage()
+    {
+        NetworkServer.SendToAll(new Notification { content = "Champion of the match: " + ColorString(WinnerName(), colors["yellow"]) + " with " + ColorString(HighestScore().ToString(), colors["yellow"]) + " kills!" });
     }
 
     [ClientRpc] public void RpcLimitReached() => matchOver = true;
+
+    public int HighestScore()
+    {
+        var players = FindObjectsOfType<PlayerManager>();
+
+        foreach (PlayerManager pManager in players)
+        {
+            playerNameScore.Add(pManager, pManager.kills);
+        }
+
+        int test = playerNameScore.Values.Max();
+        return test;
+    }
+
+    public string WinnerName()
+    {
+        var players = FindObjectsOfType<PlayerManager>();
+
+        foreach (PlayerManager pManager in players)
+        {
+            playerNameScore.Add(pManager, pManager.kills);
+        }
+
+        PlayerManager player = playerNameScore.Keys.Max();
+        return player.playerTag;
+    }
+
+    IEnumerator IEWinMessage()
+    {
+        yield return new WaitForSeconds(1f);
+        CmdChampionMessage();
+    }
     #endregion
 
     #region Name Set Up
@@ -305,6 +333,11 @@ public class PlayerManager : NetworkBehaviour
             enemy.deaths++;
             killsNoDeath++;
             //RpcVersusHandler(enemy);
+
+            if(kills == fragLimit)
+            {
+                NetworkServer.SendToAll(new Notification { content = "Champion of the match: " + ColorString(WinnerName(), colors["yellow"]) + " with " + ColorString(HighestScore().ToString(), colors["yellow"]) + " kills!" });
+            }
 
             if(enemy.killsNoDeath >= 5)
             {

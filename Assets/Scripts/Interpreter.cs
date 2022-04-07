@@ -312,7 +312,7 @@ public class Interpreter : MonoBehaviour
             }
             else if(args[1] == "blackmesa" || args[1] == "black_mesa")
             {
-                response.Add("Unfortunately, you cannot visit Black Mesa at the moment. There appears to be a containment breach and the facility has been quarantined. Apologies for the inconvenience.");
+                response.Add(ColorString("The Administrator>", colors["green"]) + " You cannot visit Black Mesa at the moment. There is a containment breach but it is being handled, so fear not.");
                 return response;
             }
             else
@@ -399,31 +399,31 @@ public class Interpreter : MonoBehaviour
 
         if(args[0].ToLower() == "gus" || args[0].ToLower() == "gustavo" && args[1].ToLower() == "fring")
         {
-            response.Add("What does an honest chicken restaurant owner got to do with Blue Sky?");
+            response.Add(ColorString("What does an honest chicken restaurant owner got to do with Blue Sky?", colors["light blue"]));
             return response;
         }
 
         if(args[0].ToLower() == "walter" && args[1].ToLower() == "white")
         {
-            response.Add("Chemistry is the study of change, a wise man once said. It is time for you to change cities, my friend.");
+            response.Add(ColorString("Chemistry is the study of change, a wise man once said. It is time for you to change cities, my friend.", colors["light blue"]));
             return response;
         }
 
         if(args[0].ToLower() == "jesse" && args[1].ToLower() == "pinkman")
         {
-            response.Add("Yeah, he's a hard man to find.");
+            response.Add(ColorString("Yeah, he's a hard man to find.", colors["light blue"]));
             return response;
         }
 
         if(args[0].ToLower() == "cartel")
         {
-            response.Add("Because of your little stunt there trying to enquire about our product, one of our high ranking members now has the Federales in his rosebushes. You happy about that?");
+            response.Add(ColorString("Because of your little stunt trying to enquire about our product, one of our high ranking members now has the Federales in his rosebushes.", colors["light blue"]));
             return response;
         }
 
         if(args[0].ToLower() == "heisenberg")
         {
-            response.Add("Yeah, that's another reason why the DEA is coming.");
+            response.Add(ColorString("Yeah, that's another reason why the DEA is coming.", colors["light blue"]));
             return response;
         }
 

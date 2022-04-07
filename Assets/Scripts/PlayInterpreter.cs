@@ -167,6 +167,7 @@ public class PlayInterpreter : MonoBehaviour
         if (args[0].ToLower() == "match" && args[1].ToLower() == "end" && player.isServer)
         {
             player.CmdHostEndedMatch();
+            //player.CmdChampionMessage();
             commandsRun++;
             return response;
         }
