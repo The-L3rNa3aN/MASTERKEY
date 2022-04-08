@@ -281,7 +281,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 724321029828341351}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -25.8, y: 3, z: 14.1}
+  m_LocalPosition: {x: 16, y: 38.8, z: 10.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 724321030141257388}
@@ -361,6 +361,7 @@ MonoBehaviour:
   attackerPos: {x: 0, y: 0, z: 0}
   doAttack: 0
   toRespawn: 0
+  playAttack: 0
   corruptus: 0
   escren: 0
   directLR: 
@@ -381,8 +382,17 @@ MonoBehaviour:
   attacks:
   - {fileID: 8300000, guid: f64396083956c8c4dbd699e5da48c3db, type: 3}
   - {fileID: 8300000, guid: 6422e5f3d8d6a1742b43b9640bb3dc24, type: 3}
+  hits:
+  - {fileID: 8300000, guid: 3974c2c4742f5d84ea108cbc85a3ed14, type: 3}
+  - {fileID: 8300000, guid: efc1ddd16d82f4247a5a03037bc8d9ae, type: 3}
+  - {fileID: 8300000, guid: 2bccd2d1d19c07b41ae6b48c5ac23f2b, type: 3}
+  deathSound: {fileID: 8300000, guid: 3b7f2ff14bf3dad4f9fdc8cc7ae8da09, type: 3}
+  matchOverSound: {fileID: 8300000, guid: 9d85960c9c925f14cac1cf41fd22fc6c, type: 3}
+  respawnSound: {fileID: 8300000, guid: f848214be5a14c643bfb91b2175fe2e3, type: 3}
   enableFootStep: 0
+  playMatchOverSound: 0
   spawnPoints: []
+  playersList: []
 --- !u!114 &3106698324159840784
 MonoBehaviour:
   m_ObjectHideFlags: 0

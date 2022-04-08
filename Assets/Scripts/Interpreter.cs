@@ -41,12 +41,6 @@ public class Interpreter : MonoBehaviour
         response.Clear();
         string[] args = userInput.Split();
 
-        /*for (int i = 0; i < args.Length; i++)
-        {
-            response.Add(args.Length.ToString());
-            return response;
-        }*/
-
         #region Welcome Responses
         if (userInput == "welcome")
         {
@@ -65,9 +59,9 @@ public class Interpreter : MonoBehaviour
         {
             response.Add("Here is a list of commands you can use." + ColorString("CAUTION", colors["red"]) + ": " + "Commands are case sensitive!");
             ListEntry("help", "Returns a list of commands.");
-            ListEntry("about", "Returns a small but brief paragraph about this game.");
+            ListEntry("about", "Returns some information about the game.");
             ListEntry("clear", "Clears the terminal screen.");
-            ListEntry("start host", "Starts a LAN server on your computer.");
+            ListEntry("create server", "Starts a server creation wizard used to host LAN games.");
             ListEntry("connect <IP Address>", "Manually connect to a LAN host in the network.");
             ListEntry("ipaddress", "Reveal your machine's IP Address. Useful when someone needs to connect to a server you're hosting.");
             ListEntry("settag", "Set your name.");
@@ -97,7 +91,7 @@ public class Interpreter : MonoBehaviour
             return response;
         }
 
-        if (args[0] == "play" && args[1] == "lan" && args[2] == "create")
+        if (args[0] == "create" && args[1] == "server")
         {
             conn = true;
             response.Add(ColorString("Welcome to the SERVER CREATION WIZARD!", colors["flesh tint"]));
@@ -196,17 +190,17 @@ public class Interpreter : MonoBehaviour
         #region Utilitarian
         if (args[0] == "stats" && args[1] == "display")
         {
-            response.Add("Thy p'rsonal r'cord, " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]) + ": -");
-            ListEntry("Times thee has't slay'd", PlayerPrefs.GetInt("PlayerKills").ToString());
-            ListEntry("Times thee has't fallen", PlayerPrefs.GetInt("PlayerDeaths").ToString());
-            ListEntry("Killing sprees thee did start", PlayerPrefs.GetInt("PlayerSpreesStarted").ToString());
-            ListEntry("Killing sprees thee end'd", PlayerPrefs.GetInt("PlayerSpreesEnded").ToString());
-            ListEntry("Thy swiftness", PlayerAverageSpeed().ToString());
-            ListEntry("Times thee've did join combat", PlayerPrefs.GetInt("PlayerMatches").ToString());
-            ListEntry("The total hests thee've runneth", PlayerPrefs.GetInt("PlayerTotalCommands").ToString());
-            ListEntry("The total mishaps thee've madeth", PlayerPrefs.GetInt("PlayerErrors").ToString());
-            ListEntry("Thy exactness", PlayerAccuracy().ToString() + "%");
-            ListEntry("Thy timeth hath spent h're", PlayerTimeFormat());
+            response.Add("Your personal records, " + ColorString(PlayerPrefs.GetString("PlayerName"), colors["yellow"]) + ": -");
+            ListEntry("The number of times you slayed           ", PlayerPrefs.GetInt("PlayerKills").ToString());
+            ListEntry("The number of times you died             ", PlayerPrefs.GetInt("PlayerDeaths").ToString());
+            ListEntry("The number of killing sprees you started ", PlayerPrefs.GetInt("PlayerSpreesStarted").ToString());
+            ListEntry("The number of killing sprees you ended   ", PlayerPrefs.GetInt("PlayerSpreesEnded").ToString());
+            ListEntry("Your typing speed                        ", PlayerAverageSpeed().ToString());
+            ListEntry("The number of matches you participated in", PlayerPrefs.GetInt("PlayerMatches").ToString());
+            ListEntry("The number of commands you ran           ", PlayerPrefs.GetInt("PlayerTotalCommands").ToString());
+            ListEntry("The number of mistakes you made          ", PlayerPrefs.GetInt("PlayerErrors").ToString());
+            ListEntry("Your accuracy                            ", PlayerAccuracy().ToString() + "%");
+            ListEntry("The total time that you spent here       ", PlayerTimeFormat());
             return response;
         }
 
@@ -238,7 +232,17 @@ public class Interpreter : MonoBehaviour
 
         if (args[0] == "about")
         {
-            response.Add(ColorString("MASTERKEY", colors["green"]) + " is a game where you need to type in order to play, a little like other typing games but this time with a little action involved.");
+            LoadTitle("ascii.txt", "aqua", 2);
+            response.Add("A game where typing and action go together. Made with UNITY (and injured fingers).");
+            response.Add("");
+            response.Add(ColorString("Meet the team!", colors["light blue"]));
+            response.Add(ColorString("  Veman ", colors["yellow"]) + ColorString("'The L3rNa3aN'", colors["red"]) + ColorString(" Jadhav.", colors["yellow"]) + ": Programming, sound and general game design.");
+            response.Add(ColorString("  Adarsh Kumar ", colors["yellow"]) + ColorString("'Thunderbolt'", colors["red"]) + ColorString(" Singh.", colors["yellow"]) + ": Modelling, texturing and animation.");
+            response.Add("");
+            response.Add(ColorString("Special thanks...", colors["light blue"]));
+            response.Add("  Tarang Vijay 'Scoobs' Soni.");
+            response.Add("  FourierSoft.");
+            response.Add("  The Mirror development team and community.");
             return response;
         }
 
@@ -269,10 +273,8 @@ public class Interpreter : MonoBehaviour
 
         if(args[0] == "help")
         {
-            ListEntry("hostname <name>", "Sets the name of the host.");
             ListEntry("map <mapname>", "Set the map for the server.");
             ListEntry("fraglimit", "Sets the frag limit of the server. For no limit, type 0.");
-            ListEntry("timelimit", "Sets the time limit in seconds. For no limit, type 0");
             ListEntry("maplist", "Returns a list of map names.");
             ListEntry("settings", "Displays the server settings you have configured in the wizard.");
             ListEntry("start", "Starts the server based on the settings you've configured.");
@@ -282,10 +284,8 @@ public class Interpreter : MonoBehaviour
         if(args[0] == "settings")
         {
             response.Add(ColorString("Your server settings so far...", colors["flesh tint"]));
-            response.Add(ColorString("Host Name  : ", colors["flesh tint"]) + ColorString(hostName, colors["white"]));
             response.Add(ColorString("Map        : ", colors["flesh tint"]) + ColorString(mapName, colors["white"]));
             response.Add(ColorString("Frag Limit : ", colors["flesh tint"]) + ColorString(fragLimit.ToString(), colors["white"]));
-            response.Add(ColorString("Time Limit : ", colors["flesh tint"]) + ColorString(timeLimit.ToString(), colors["white"]));
             response.Add("");
             response.Add(ColorString("Always make sure to check your server settings before hosting!", colors["red"]));
             return response;
@@ -314,6 +314,10 @@ public class Interpreter : MonoBehaviour
             {
                 response.Add(ColorString("The Administrator>", colors["green"]) + " You cannot visit Black Mesa at the moment. There is a containment breach but it is being handled, so fear not.");
                 return response;
+            }
+            else if(args[1] == "dust2" || args[1] == "de_dust2")
+            {
+                response.Add("Are you sure you are playing the correct game? This is " + ColorString("MASTERKEY", colors["aqua"]) + ", not " + ColorString("COUNTER STRIKE", colors["yellow"]));
             }
             else
             {
@@ -350,7 +354,6 @@ public class Interpreter : MonoBehaviour
             {
                 networkManager.onlineScene = mapName;
                 PlayerPrefs.SetInt("FragLimit", fragLimit);
-                PlayerPrefs.SetInt("TimeLimit", timeLimit);
                 networkManager.StartHost();
                 return response;
             }
@@ -369,7 +372,7 @@ public class Interpreter : MonoBehaviour
         }
         else
         {
-            response.Add(ColorString("We couldn't recognize that. Try again, perhaps?", colors["red"]));
+            response.Add(ColorString("Command not recognizable. Please try again.", colors["red"]));
             return response;
         }
     }

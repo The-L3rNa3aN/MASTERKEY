@@ -16,6 +16,8 @@ public class PlayerManager : NetworkBehaviour
     private GameObject networkManager;
     private float gravity = -20f;
     private float mass = 3f;
+    private float sendWinMessage = 0f;
+    private PlayerManager temp = default;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
     {
@@ -59,6 +61,7 @@ public class PlayerManager : NetworkBehaviour
     private float healthTimer = 5f;
     [SyncVar] public bool doAttack;
     [HideInInspector] public bool toRespawn;
+    public float playAttack;
 
     [Header("Powerup Effects")]
     [SyncVar] public bool corruptus;
@@ -80,10 +83,15 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField] private float footStepTimer;
     [SerializeField] private AudioClip[] footSteps;
     [SerializeField] private AudioClip[] attacks;
+    [SerializeField] private AudioClip[] hits;
+    [SerializeField] private AudioClip deathSound;
+    [SerializeField] private AudioClip matchOverSound;
+    [SerializeField] private AudioClip respawnSound;
     public bool enableFootStep = false;
+    public bool playMatchOverSound = false;
 
     public List<GameObject> spawnPoints = new List<GameObject>();                           //A list of spawnpoints for the player. I hope this doesn't hinder performance.
-    Dictionary<PlayerManager, int> playerNameScore = new Dictionary<PlayerManager, int>();
+    public List<PlayerManager> playersList = new List<PlayerManager>();
 
     private void Start()
     {
@@ -143,6 +151,37 @@ public class PlayerManager : NetworkBehaviour
         if (hurtImage.color.a > 0f) { hurtImage.color = Color.Lerp(hurtImage.color, new Color(1, 1, 1, 0), 2f * Time.deltaTime); }
         #endregion
 
+        #region Camera Placement - During and after a match
+        if (matchOver == true)
+        {
+            sendWinMessage += Time.deltaTime;
+        }
+
+        if (sendWinMessage > 10f)
+        {
+            sendWinMessage = 10f;
+        }
+
+        if (isLocalPlayer && sendWinMessage < 10f)
+        {
+            playerCamera.GetComponent<CameraFollowScript>().target = transform;             //The unsynced camera will only follow the player of this machine.
+        }
+        else if (isLocalPlayer && sendWinMessage == 10f)
+        {
+            foreach (PlayerManager plr in playersList)
+            {
+                if (plr.kills >= temp.kills)
+                {
+                    temp = plr;
+                }
+                else
+                    break;
+            }
+
+            playerCamera.GetComponent<CameraFollowScript>().target = temp.transform;
+        }
+        #endregion
+
         CircleVisualizer();
         DirectionRotation();                                                                                            //Player rotates based on which direction they are going.
         ClientHealthDecay();                                                                                            //Health decays every 10 seconds if beyond 3.
@@ -154,16 +193,13 @@ public class PlayerManager : NetworkBehaviour
             CmdLimitReached();
         }
 
-        /*if(timeLimit != 0f)
+        if(playMatchOverSound == true)
         {
-            timeLimit -= Time.deltaTime;
-        }*/
+            PlayMatchOverSound();
+            playMatchOverSound = false;
+        }
 
         if (!isLocalPlayer) {terminal.SetActive(false);}
-        if (isLocalPlayer)
-        {
-            playerCamera.GetComponent<CameraFollowScript>().target = transform;             //The unsynced camera will only follow the player of this machine.
-        }
 
         if (health <= 0 && toRespawn == true)
         {
@@ -279,49 +315,21 @@ public class PlayerManager : NetworkBehaviour
         {
             pManager.StopMovement();
             pManager.RpcLimitReached();
+            playersList.Add(pManager);
         }
 
-        NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " ended the match." });
-        IEWinMessage();
+        NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " ended the match. Calculating scores..." });
     }
 
     [Command] public void CmdChampionMessage()
     {
-        NetworkServer.SendToAll(new Notification { content = "Champion of the match: " + ColorString(WinnerName(), colors["yellow"]) + " with " + ColorString(HighestScore().ToString(), colors["yellow"]) + " kills!" });
+        NetworkServer.SendToAll(new Notification { content = "Champion of the match: " + ColorString(temp.playerTag, colors["yellow"]) + " with " + ColorString(temp.kills.ToString(), colors["yellow"]) + " kills!" });
     }
 
-    [ClientRpc] public void RpcLimitReached() => matchOver = true;
-
-    public int HighestScore()
+    [ClientRpc] public void RpcLimitReached()
     {
-        var players = FindObjectsOfType<PlayerManager>();
-
-        foreach (PlayerManager pManager in players)
-        {
-            playerNameScore.Add(pManager, pManager.kills);
-        }
-
-        int test = playerNameScore.Values.Max();
-        return test;
-    }
-
-    public string WinnerName()
-    {
-        var players = FindObjectsOfType<PlayerManager>();
-
-        foreach (PlayerManager pManager in players)
-        {
-            playerNameScore.Add(pManager, pManager.kills);
-        }
-
-        PlayerManager player = playerNameScore.Keys.Max();
-        return player.playerTag;
-    }
-
-    IEnumerator IEWinMessage()
-    {
-        yield return new WaitForSeconds(1f);
-        CmdChampionMessage();
+        matchOver = true;
+        playMatchOverSound = true;
     }
     #endregion
 
@@ -349,7 +357,7 @@ public class PlayerManager : NetworkBehaviour
 
             if(kills == fragLimit)
             {
-                NetworkServer.SendToAll(new Notification { content = "Champion of the match: " + ColorString(WinnerName(), colors["yellow"]) + " with " + ColorString(HighestScore().ToString(), colors["yellow"]) + " kills!" });
+                //NetworkServer.SendToAll(new Notification { content = "Champion of the match: " + ColorString(WinnerName().playerTag, colors["yellow"]) + " with " + ColorString(HighestScore().ToString(), colors["yellow"]) + " kills!" });
             }
 
             if(enemy.killsNoDeath >= 5)
@@ -407,6 +415,7 @@ public class PlayerManager : NetworkBehaviour
 
         if (health <= 0)                                        //DIE!
         {
+            PlayDeathSound();
             //Prevents the notification from being sent if the player commits suicide.
             if (attackerTag != string.Empty) { NetworkServer.SendToAll(new Notification { content = ColorString(attackerTag, colors["yellow"]) + " has slain " + ColorString(playerTag, colors["yellow"]) }); }
             else { NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " committed suicide." }); }
@@ -415,6 +424,10 @@ public class PlayerManager : NetworkBehaviour
             GFX.gameObject.SetActive(false);
             characterController.enabled = false;
             StopMovement();
+        }
+        else
+        {
+            PlayHitSound();
         }
     }
 
@@ -446,6 +459,7 @@ public class PlayerManager : NetworkBehaviour
             if (attackCircle.color.a >= 0.6f)
             {
                 enableCircle = false;
+                CmdPlayAttackSound();
             }
         }
 
@@ -460,7 +474,6 @@ public class PlayerManager : NetworkBehaviour
     {
         yield return new WaitForSeconds(t);
         attackSphere.enabled = true;
-        PlayAttackSound();
         yield return new WaitForSeconds(0.05f);
         attackSphere.enabled = false;
     }
@@ -474,9 +487,9 @@ public class PlayerManager : NetworkBehaviour
     #region Player Respawning
     [Command] public void CmdRespawn() => RpcRespawn();
 
-    [ClientRpc]
-    public void RpcRespawn()                        //And you're ALIVE!
+    [ClientRpc] public void RpcRespawn()                        //And you're ALIVE!
     {
+        PlayRespawnSound();
         health = 3;
         transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].transform.position;                            //New position on respawning.
         GFX.rotation = Quaternion.Euler(0f, 0f, 0f);                                                                        //The player's graphics object rotation will be reset on respawn.
@@ -510,6 +523,41 @@ public class PlayerManager : NetworkBehaviour
             }
         }
     }
+    #endregion
+
+    #region Sounds
+    [Command] public void CmdPlayAttackSound() => RpcPlayAttackSound();
+
+    [ClientRpc] public void RpcPlayAttackSound()
+    {
+        AudioClip att = attacks[Random.Range(0, attacks.Length - 1)];
+        playerAudioSource.PlayOneShot(att);
+    }
+
+    public void PlayFootSteps()
+    {
+        if (directLR != null || directUD != null)
+        {
+            if (Time.time > footStepTimer && characterController.isGrounded && enableFootStep == true)
+            {
+                footStepTimer = Time.time + 1f / footStepSpeed;
+                AudioClip fp = footSteps[Random.Range(0, footSteps.Length - 1)];
+                playerAudioSource.PlayOneShot(fp);
+            }
+        }
+    }
+
+    public void PlayHitSound()
+    {
+        AudioClip hs = hits[Random.Range(0, hits.Length - 1)];
+        playerAudioSource.PlayOneShot(hs);
+    }
+
+    public void PlayDeathSound() => playerAudioSource.PlayOneShot(deathSound);
+
+    public void PlayMatchOverSound() => playerAudioSource.PlayOneShot(matchOverSound);
+
+    public void PlayRespawnSound() => playerAudioSource.PlayOneShot(respawnSound);
     #endregion
 
     [Command] public void DisconnectAsClient()                                                                              //Called when disconnecting either as host or as client.
@@ -593,24 +641,5 @@ public class PlayerManager : NetworkBehaviour
         string rightTag = "</color>";
 
         return leftTag + s + rightTag;
-    }
-
-    public void PlayFootSteps()
-    {
-        if (directLR != null || directUD != null)
-        {
-            if (Time.time > footStepTimer && characterController.isGrounded && enableFootStep == true)
-            {
-                footStepTimer = Time.time + 1f / footStepSpeed;
-                AudioClip fp = footSteps[Random.Range(0, footSteps.Length - 1)];
-                playerAudioSource.PlayOneShot(fp);
-            }
-        }
-    }
-
-    public void PlayAttackSound()
-    {
-        AudioClip att = attacks[Random.Range(0, attacks.Length - 1)];
-        playerAudioSource.PlayOneShot(att);
     }
 }
