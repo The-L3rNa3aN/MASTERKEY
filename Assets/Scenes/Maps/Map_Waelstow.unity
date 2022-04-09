@@ -1226,6 +1226,8 @@ MonoBehaviour:
   target: {fileID: 0}
   offset: {x: 0, y: 17, z: -10}
   smooth: 0.125
+  currentlyObstructing: []
+  alreadyTransparent: []
 --- !u!81 &1502930637
 AudioListener:
   m_ObjectHideFlags: 0

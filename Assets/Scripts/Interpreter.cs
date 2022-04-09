@@ -157,7 +157,7 @@ public class Interpreter : MonoBehaviour
 
         if(args[0].ToLower() == "gordon" && args[1].ToLower() == "freeman")
         {
-            response.Add("Are you talking about the 27 year old scientist or the 52 year old coughing meth emperor?");
+            response.Add("Are you talking about the 27-year-old scientist or the 52-year-old coughing meth emperor?");
             return response;
         }
 
@@ -420,7 +420,7 @@ public class Interpreter : MonoBehaviour
 
         if(args[0].ToLower() == "cartel")
         {
-            response.Add(ColorString("Because of your little stunt trying to enquire about our product, one of our high ranking members now has the Federales in his rosebushes.", colors["light blue"]));
+            response.Add(ColorString("Because of your little stunt trying to enquire about our product, one of our high-ranking members now has the Federales in his rosebushes.", colors["light blue"]));
             return response;
         }
 

@@ -11,7 +11,9 @@ public class CameraFollowScript : MonoBehaviour
     private Transform oldObs = default;
     public Vector3 offset;
     public float smooth = 0.125f;
-    //public LayerMask mask;
+
+    [SerializeField] private List<ObstructingObjects> currentlyObstructing = new List<ObstructingObjects>();
+    [SerializeField] private List<ObstructingObjects> alreadyTransparent = new List<ObstructingObjects>();
 
     void Update()
     {
@@ -52,6 +54,71 @@ public class CameraFollowScript : MonoBehaviour
                 oldObs.GetComponent<Renderer>().material.color = objColor;
 
                 if(fade >= 1) { oldObs = default; }
+            }
+        }
+
+        //GetAllObjectsInTheWay();
+        //MakeObjectsTransparent();
+        //MakeObjectsSolid();
+    }
+
+    private void GetAllObjectsInTheWay()
+    {
+        currentlyObstructing.Clear();
+
+        float cameraPlayerDistance = Vector3.Magnitude(transform.position - target.position);
+        Ray ray1_forward = new Ray(transform.position, target.position - transform.position);
+        Ray ray1_backward = new Ray(target.position, transform.position - target.position);
+        var hits1_forward = Physics.RaycastAll(ray1_forward, cameraPlayerDistance);
+        var hits1_backward = Physics.RaycastAll(ray1_backward, cameraPlayerDistance);
+
+        foreach (var hit in hits1_forward)
+        {
+            if(hit.collider.gameObject.TryGetComponent(out ObstructingObjects obstruct))
+            {
+                if(!currentlyObstructing.Contains(obstruct))
+                {
+                    currentlyObstructing.Add(obstruct);
+                }
+            }
+        }
+
+        foreach (var hit in hits1_backward)
+        {
+            if (hit.collider.gameObject.TryGetComponent(out ObstructingObjects obstruct))
+            {
+                if (!currentlyObstructing.Contains(obstruct))
+                {
+                    currentlyObstructing.Add(obstruct);
+                }
+            }
+        }
+    }
+
+    private void MakeObjectsTransparent()
+    {
+        for(int i = 0; i < currentlyObstructing.Count; i++)
+        {
+            ObstructingObjects obstructing = currentlyObstructing[i];
+
+            if(!alreadyTransparent.Contains(obstructing))
+            {
+                obstructing.ShowTransparent();
+                alreadyTransparent.Add(obstructing);
+            }
+        }
+    }
+
+    private void MakeObjectsSolid()
+    {
+        for(int i = alreadyTransparent.Count - 1; i >= 0; i--)
+        {
+            ObstructingObjects obstructing = alreadyTransparent[i];
+
+            if (!currentlyObstructing.Contains(obstructing))
+            {
+                obstructing.ShowSolid();
+                alreadyTransparent.Remove(obstructing);
             }
         }
     }
