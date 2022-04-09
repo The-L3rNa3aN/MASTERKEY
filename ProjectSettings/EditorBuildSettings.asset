@@ -21,9 +21,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Maps/map_heahlond.unity
     guid: 39c0bc6fbfc13c24fbf9010bd9516095
   - enabled: 1
-    path: Assets/Scenes/Maps/map_waelstow.unity
-    guid: a1031463d0b077d409b0ca9290e89ecd
-  - enabled: 1
     path: Assets/Scenes/Maps/map_siege.unity
     guid: 8751889a71508a44a80cedf8c6dd0349
+  - enabled: 1
+    path: Assets/Scenes/Maps/map_waelstow.unity
+    guid: 8ea41884ec74b4a4f846cace9d7f8036
   m_configObjects: {}
