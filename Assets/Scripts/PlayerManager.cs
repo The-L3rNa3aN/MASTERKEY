@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using DG.Tweening;
 
 public class PlayerManager : NetworkBehaviour
 {
@@ -18,6 +19,7 @@ public class PlayerManager : NetworkBehaviour
     private float mass = 3f;
     private float sendWinMessage = 0f;
     private PlayerManager temp = default;
+    public Animator anim;
 
     Dictionary<string, string> colors = new Dictionary<string, string>()
     {
@@ -269,11 +271,13 @@ public class PlayerManager : NetworkBehaviour
             case "left":
                 move = new Vector3(-1f, 0f, move.z);
                 enableFootStep = true;
+                anim.SetFloat("velocity", move.magnitude);
                 break;
 
             case "right":
                 move = new Vector3(1f, 0f, move.z);
                 enableFootStep = true;
+                anim.SetFloat("velocity", move.magnitude);
                 break;
         }
 
@@ -283,14 +287,17 @@ public class PlayerManager : NetworkBehaviour
             case "up":
                 move = new Vector3(move.x, 0f, 1f);
                 enableFootStep = true;
+                //anim.SetFloat("velocity", move.magnitude);
                 break;
 
             case "down":
                 move = new Vector3(move.x, 0f, -1f);
                 enableFootStep = true;
+                //anim.SetFloat("velocity", move.magnitude);
                 break;
         }
 
+        CmdSetPlayerMove(move.magnitude);
         characterController.Move(move * 3f * Time.deltaTime);
         characterController.Move(velocity * Time.deltaTime);
     }
@@ -344,14 +351,32 @@ public class PlayerManager : NetworkBehaviour
     #endregion
 
     #region Attacking and Damage
+
+    [Command] public void CmdSetPlayerDeadState(bool isDead)
+    {
+        anim.SetBool("isDead", isDead);
+    }
+
+    [Command] public void CmdSetPlayerAttack()
+    {
+        anim.SetTrigger("attack");
+    }
+
+    [Command] public void CmdSetPlayerMove(float vel)
+    {
+        anim.SetFloat("velocity", vel);
+    }
+
     [Command] public void CmdDoDamage(GameObject enemyGameObject)
     {
+        CmdSetPlayerAttack();
         var enemy = enemyGameObject.GetComponent<PlayerManager>();
 
         if (enemy.health <= 1)           //Because the info before striking is different from the final reduced health of the enemy / enemies.
         {
             kills++;
             enemy.deaths++;
+            enemy.CmdSetPlayerDeadState(true);
             killsNoDeath++;
             //RpcVersusHandler(enemy);
 
@@ -383,9 +408,14 @@ public class PlayerManager : NetworkBehaviour
 
     [Command] public void CmdDoSelfDamage(int helth) => RpcTakeDamage(helth, string.Empty);
 
-    [Command] public void CmdEnableCircle() => enableCircle = true;
+    [Command]
+    public void CmdEnableCircle()
+    {
+        enableCircle = true;
+        anim.SetFloat("velocity", move.magnitude);
+    }
 
-    [Command] public void CmdSeppuku()                                                                                      //Player committing suicide by running the "kill" command.
+        [Command] public void CmdSeppuku()                                                                                      //Player committing suicide by running the "kill" command.
     {
         RpcTakeDamage(health, string.Empty);
 
@@ -393,7 +423,7 @@ public class PlayerManager : NetworkBehaviour
         {
             NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " has ended their " + ColorString("killing spree", colors["red"]) });
         }
-
+        anim.SetBool("isDead", true);
         kills--;                                        //Because suicide sucks and the easy way out isn't always the best way.
         deaths++;                                       //You committed suicide like a coward, so that counts as dying.
         killsNoDeath = 0;                               //Yeah, you ended your own spree.
@@ -421,7 +451,8 @@ public class PlayerManager : NetworkBehaviour
             else { NetworkServer.SendToAll(new Notification { content = ColorString(playerTag, colors["yellow"]) + " committed suicide." }); }
 
             killsNoDeath = 0;
-            GFX.gameObject.SetActive(false);
+            //GFX.gameObject.SetActive(false);
+            DisableOnDeath();
             characterController.enabled = false;
             StopMovement();
         }
@@ -478,6 +509,13 @@ public class PlayerManager : NetworkBehaviour
         attackSphere.enabled = false;
     }
 
+    private IEnumerator DisableOnDeath()
+    {
+        anim.SetBool("isDead", true);
+        yield return new WaitForSeconds(2f);
+        GFX.gameObject.SetActive(false);
+    }
+
     private void OnTriggerEnter(Collider other)                                                                             //This is used by the attackSphere collider by default.
     {
         if (other.GetComponent<NetworkIdentity>().isLocalPlayer == false) CmdDoDamage(other.GetComponent<NetworkIdentity>().gameObject);
@@ -485,7 +523,12 @@ public class PlayerManager : NetworkBehaviour
     #endregion
 
     #region Player Respawning
-    [Command] public void CmdRespawn() => RpcRespawn();
+    [Command]
+    public void CmdRespawn()
+    {
+        CmdSetPlayerDeadState(false);
+        RpcRespawn();
+    }
 
     [ClientRpc] public void RpcRespawn()                        //And you're ALIVE!
     {
@@ -496,6 +539,7 @@ public class PlayerManager : NetworkBehaviour
         corruptus = false;                                                                                                  //Any powerup effects on the player will disappear on death.
         escren = false;
         GFX.gameObject.SetActive(true);
+        anim.SetBool("isDead", false);
         characterController.enabled = true;
     }
     #endregion

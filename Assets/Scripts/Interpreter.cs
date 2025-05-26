@@ -234,6 +234,7 @@ public class Interpreter : MonoBehaviour
         {
             LoadTitle("ascii.txt", "aqua", 2);
             response.Add("A game where typing and action go together. Made with UNITY (and injured fingers).");
+            response.Add("College Copy. GNU General Public License v3.0");
             response.Add("");
             response.Add(ColorString("Meet the team!", colors["light blue"]));
             response.Add(ColorString("  Veman ", colors["yellow"]) + ColorString("'The L3rNa3aN'", colors["red"]) + ColorString(" Jadhav.", colors["yellow"]) + ": Programming, sound and general game design.");

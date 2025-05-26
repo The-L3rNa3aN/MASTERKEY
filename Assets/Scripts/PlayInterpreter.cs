@@ -154,12 +154,14 @@ public class PlayInterpreter : MonoBehaviour
         if (args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == false)
         {
             scoreboard.gameObject.SetActive(true);
+            scoreboard.FindPlayers();
             commandsRun++;
             return response;
         }
         else if (args[0] == "scoreboard" && scoreboard.gameObject.activeSelf == true)
         {
             scoreboard.gameObject.SetActive(false);
+            scoreboard.RemoveScoreboardItems();
             commandsRun++;
             return response;
         }
@@ -201,11 +203,13 @@ public class PlayInterpreter : MonoBehaviour
         if(args[0] == "stop" && args[1] == "all")
         {
             player.StopMovement();
+            player.anim.SetFloat("velocity", player.move.magnitude);
             commandsRun++;
             return response;
         }
         else if(args[0] == "stop" && args[1] == "lateral")
         {
+            player.anim.SetFloat("velocity", player.move.magnitude);
             player.directLR = null;
             player.move = new Vector3(0f, 0f, player.move.z);
             player.enableFootStep = false;
@@ -214,6 +218,7 @@ public class PlayInterpreter : MonoBehaviour
         }
         else if(args[0] == "stop" && args[1] == "medial")
         {
+            player.anim.SetFloat("velocity", player.move.magnitude);
             player.directUD = null;
             player.move = new Vector3(player.move.x, 0f, 0f);
             player.enableFootStep = false;
@@ -238,8 +243,10 @@ public class PlayInterpreter : MonoBehaviour
         if(args[0] == "attack")
         {
             player.doAttack = true;
+            player.anim.SetTrigger("attack");
             player.CmdEnableCircle();
             player.StopMovement();
+            
             commandsRun++;
             return response;
         }
@@ -260,6 +267,7 @@ public class PlayInterpreter : MonoBehaviour
         if(args[0] == "kill")
         {
             player.CmdSeppuku();
+            
             response.Add("You acquitted yourself with honor, I guess.");
             commandsRun++;
             return response;
